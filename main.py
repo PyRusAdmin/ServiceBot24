@@ -5,7 +5,7 @@ from system.dispatcher import dp
 
 
 def main() -> None:
-    """Запуск бота"""
+    """Запуск бота https://t.me/h24service_bot"""
     executor.start_polling(dp, skip_updates=True)
     greeting_handler()
 
