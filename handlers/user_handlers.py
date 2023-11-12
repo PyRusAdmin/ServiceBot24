@@ -59,10 +59,10 @@ async def get_password(callback_query: types.CallbackQuery):
         else:
             # Пользователь не имеет ID в базе данных
             await bot.send_message(chat_id,
-                                   "Вы должны быть зарегистрированы и подписаны на канал @bot_telegram_SMM_help.")
+                                   "Вы должны быть зарегистрированы и подписаны на канал @master_tg_d.")
     else:
         # Пользователь не подписан, отправляем сообщение с просьбой подписаться
-        await bot.send_message(chat_id, "Пожалуйста, подпишитесь на канал @bot_telegram_SMM_help и попробуйте снова.")
+        await bot.send_message(chat_id, "Пожалуйста, подпишитесь на канал @master_tg_d и попробуйте снова.")
 
 
 @dp.callback_query_handler(text='get_password_tg_com')
@@ -81,7 +81,7 @@ async def get_password_tg_com(callback_query: types.CallbackQuery):
             await bot.send_document(chat_id, password_file)
     else:
         # Пользователь не подписан, отправьте сообщение с просьбой подписаться.
-        await bot.send_message(chat_id, "Пожалуйста, подпишитесь на канал @bot_telegram_SMM_help и попробуйте снова.")
+        await bot.send_message(chat_id, "Пожалуйста, подпишитесь на канал @master_tg_d и попробуйте снова.")
 
 
 # Инициализация базы данных SQLite
