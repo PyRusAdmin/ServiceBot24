@@ -23,7 +23,7 @@ message_text_faq = ("📢 Вы можете связаться со мной в 
                     "Telegram: <a href='https://t.me/rusdnpy'>@rusdnpy</a>\n"
                     "VKontakte (VK): <a href='https://vk.com/zh.vitaliy'>@zh.vitaliy</a>\n\n"
                     "🚀 Мой основной проект в Telegram:\n"
-                    "<a href='https://t.me/bot_telegram_SMM_help'>@master_tg_d</a>\n"
+                    "<a href='https://t.me/master_tg_d'>@master_tg_d</a>\n"
                     "Мой основной проект в Вконтакте (VK):\n"
                     "<a href='https://vk.com/tg_smm2'>@tg_smm2</a>\n\n"
                     "Для возврата нажмите на /start")
