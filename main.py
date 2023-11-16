@@ -1,5 +1,7 @@
 from aiogram import executor
 from loguru import logger
+
+from handlers.sale_of_goods_handlers import buy_handler
 from handlers.user_handlers import greeting_handler
 from system.dispatcher import dp
 
@@ -10,6 +12,7 @@ def main() -> None:
     """Запуск бота https://t.me/h24service_bot"""
     executor.start_polling(dp, skip_updates=True)
     greeting_handler()
+    buy_handler()  # Купить Telegram_BOT_SMM
 
 
 if __name__ == '__main__':
