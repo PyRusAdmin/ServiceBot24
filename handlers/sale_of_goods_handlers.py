@@ -2,7 +2,7 @@ from aiogram import types
 
 from system.dispatcher import bot, dp
 
-yoomoney_wallet = '381764678:TEST:71453'  # Инициализация Юмани
+yoomoney_wallet = '381764678:TEST:71478'  # Инициализация Юмани
 PRICE = types.LabeledPrice(label='Telegram_BOT_SMM', amount=1000 * 100)  # Цена товара
 
 
