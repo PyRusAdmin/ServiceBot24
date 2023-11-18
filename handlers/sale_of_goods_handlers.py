@@ -2,8 +2,8 @@ from aiogram import types
 
 from system.dispatcher import bot, dp
 
-yoomoney_wallet = '381764678:TEST:71478'  # Инициализация Юмани
-PRICE = types.LabeledPrice(label='Telegram_BOT_SMM', amount=1000 * 100)  # Цена товара
+yoomoney_wallet = '390540012:LIVE:42649'  # Инициализация Юмани
+PRICE = types.LabeledPrice(label='Telegram_BOT_SMM', amount=100 * 100)  # Цена товара
 
 
 # Тестовая карта
@@ -28,15 +28,15 @@ async def buy(callback_query: types.CallbackQuery):
                            payload="test-invoice-payload")
 
 
-# pre checkout  (must be answered in 10 seconds)
 @dp.pre_checkout_query_handler(lambda query: True)
 async def pre_checkout_query(pre_checkout_q: types.PreCheckoutQuery):
+    """pre checkout  (must be answered in 10 seconds)"""
     await bot.answer_pre_checkout_query(pre_checkout_q.id, ok=True)
 
 
-# Ваш обработчик успешной оплаты
 @dp.message_handler(content_types=types.ContentType.SUCCESSFUL_PAYMENT)
 async def successful_payment(message: types.Message):
+    """Ваш обработчик успешной оплаты"""
     print("SUCCESSFUL PAYMENT:")
     payment_info = message.successful_payment.to_python()
     for k, v in payment_info.items():
