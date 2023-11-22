@@ -1,6 +1,6 @@
 import sqlite3
 import json
-
+import datetime  # Дата
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from loguru import logger  # Логирование с помощью loguru
@@ -91,14 +91,16 @@ async def check_payment(callback_query: types.CallbackQuery, state: FSMContext):
         conn.commit()
         # Создайте файл, который вы хотите отправить
         document_path = "setting/password/Telegram_SMM_BOT/password.txt"  # Укажите путь к вашему файлу
-        caption = f"Платеж на сумму 100 прошел успешно!!!"
+        caption = (f"Платеж на сумму 500 руб прошел успешно‼️ \n\n"
+                   f"Вы можете скачать программу https://t.me/master_tg_d/286")
         # Отправка файла
         with open(document_path, 'rb') as document:
             await bot.send_document(callback_query.from_user.id, document, caption=caption)
         # Отправка ссылки на программу
-        await bot.send_message(callback_query.from_user.id, "Вы можете скачать программу https://t.me/master_tg_d/286")
+        # await bot.send_message(callback_query.from_user.id, "Вы можете скачать программу https://t.me/master_tg_d/286")
     else:
         await bot.send_message(callback_query.message.chat.id, "Payment failed.")
+
 
 
 @dp.callback_query_handler(lambda c: c.data == "delivery")
@@ -113,20 +115,21 @@ async def buy(callback_query: types.CallbackQuery, state: FSMContext):
         # Пользователь уже делал покупку
         # Создайте файл, который вы хотите отправить
         document_path = "setting/password/Telegram_SMM_BOT/password.txt"  # Укажите путь к вашему файлу
-        caption = f"Вы уже совершили покупку"
+        caption = f"Вы можете скачать программу https://t.me/master_tg_d/286"
         # Отправка файла
         with open(document_path, 'rb') as document:
             await bot.send_document(callback_query.from_user.id, document, caption=caption)
         # Отправка ссылки на программу
-        await bot.send_message(callback_query.from_user.id, "Вы можете скачать программу https://t.me/master_tg_d/286")
-    else:
-        # Пользователь не делал покупку
+        # await bot.send_message(callback_query.from_user.id, "Вы можете скачать программу https://t.me/master_tg_d/286")
+    else:# Пользователь не делал покупку
+        current_date = datetime.datetime.now().strftime("%Y-%m-%d")
         url, payment = payment_yookassa()
         payment_keyboard_key = payment_keyboard(url, payment)
         payment_mes = ("Купить Тelegram_BOT_SMM. \n\n"
                        "На момент тестирования автоматизирования платежей через Юкассу, скидка на программу 50%. \n\n"
-                       "Цена на 20.11.2023 — 500 рублей. Скидка продлится до 26.11.2023. \n\n"
-                       "Если по какой-либо причине бот не выдал пароль или произошла ошибка платежа, писать: @PyAdminRU. 🤖🔒")
+                       f"Цена на {current_date} — 500 рублей. Скидка продлится до 30-11-2023. \n\n"
+                       "Если по какой-либо причине бот не выдал пароль или произошла ошибка платежа, писать: @PyAdminRU. 🤖🔒\n\n"
+                       "Для возврата в начальное меню, нажмите: /start")
         await bot.send_message(callback_query.message.chat.id, payment_mes, reply_markup=payment_keyboard_key)
 
 

@@ -42,7 +42,7 @@ def payment_yookassa_program_setup_service():
     return payment_url, payment_id
 
 
-@dp.callback_query_handler(lambda c: c.data.startswith("check_payment"))
+@dp.callback_query_handler(lambda c: c.data.startswith("check_service"))
 async def check_payment_program_setup_service(callback_query: types.CallbackQuery, state: FSMContext):
     split_data = callback_query.data.split("_")
     logger.info(split_data[2])
