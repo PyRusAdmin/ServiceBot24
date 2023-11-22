@@ -23,7 +23,7 @@ def payment_yookassa_program_setup_service():
     Configuration.secret_key = SECRET_KEY
 
     payment = Payment.create(
-        {"amount": {"value": 1.00, "currency": "RUB"},"capture": True,
+        {"amount": {"value": 500.00, "currency": "RUB"},"capture": True,
          "confirmation": {"type": "redirect", "return_url": "https://t.me/h24service_bot"},
          "description": "Помощь в настройке ПО (консультация)",
          "metadata": {'order_number': '1'},
@@ -32,7 +32,7 @@ def payment_yookassa_program_setup_service():
                          {
                              "description": "Помощь в настройке ПО (консультация)",  # Название товара
                              "quantity": "1",
-                             "amount": {"value": 1.00, "currency": "RUB"},  # Сумма и валюта
+                             "amount": {"value": 500.00, "currency": "RUB"},  # Сумма и валюта
                              "vat_code": "1"}]}})
 
     payment_data = json.loads(payment.json())

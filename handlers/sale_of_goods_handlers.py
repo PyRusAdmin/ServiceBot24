@@ -22,7 +22,7 @@ def payment_yookassa():
     Configuration.secret_key = SECRET_KEY
 
     payment = Payment.create(
-        {"amount": {"value": 1.00, "currency": "RUB"},"capture": True,
+        {"amount": {"value": 500.00, "currency": "RUB"}, "capture": True,
          "confirmation": {"type": "redirect", "return_url": "https://t.me/h24service_bot"},
          "description": "Покупка программы: Тelegram_BOT_SMM",
          "metadata": {'order_number': '1'},
@@ -31,7 +31,7 @@ def payment_yookassa():
                          {
                              "description": "Покупка программы: Тelegram_BOT_SMM",  # Название товара
                              "quantity": "1",
-                             "amount": {"value": 1.00, "currency": "RUB"},  # Сумма и валюта
+                             "amount": {"value": 500.00, "currency": "RUB"},  # Сумма и валюта
                              "vat_code": "1"}]}})
 
     payment_data = json.loads(payment.json())
@@ -44,7 +44,7 @@ def payment_yookassa():
 def payment_keyboard(url, id_pay) -> InlineKeyboardMarkup:
     """Клавиатура оплаты"""
     payment_keyboard_key = InlineKeyboardMarkup()
-    byy_baton = InlineKeyboardButton("Оплатить 500 руб.", url=url)
+    byy_baton = InlineKeyboardButton("💳 Оплатить 500 руб.", url=url)
     check_payment = InlineKeyboardButton('Проверить оплату', callback_data=f"check_payment_{id_pay}")
     payment_keyboard_key.row(byy_baton)
     payment_keyboard_key.row(check_payment)
@@ -92,15 +92,14 @@ async def check_payment(callback_query: types.CallbackQuery, state: FSMContext):
         # Создайте файл, который вы хотите отправить
         document_path = "setting/password/Telegram_SMM_BOT/password.txt"  # Укажите путь к вашему файлу
         caption = (f"Платеж на сумму 500 руб прошел успешно‼️ \n\n"
-                   f"Вы можете скачать программу https://t.me/master_tg_d/286")
+                   f"Вы можете скачать программу https://t.me/master_tg_d/286\n\n"
+                   f"Для возврата в начальное меню нажмите /start")
         # Отправка файла
         with open(document_path, 'rb') as document:
             await bot.send_document(callback_query.from_user.id, document, caption=caption)
         # Отправка ссылки на программу
-        # await bot.send_message(callback_query.from_user.id, "Вы можете скачать программу https://t.me/master_tg_d/286")
     else:
         await bot.send_message(callback_query.message.chat.id, "Payment failed.")
-
 
 
 @dp.callback_query_handler(lambda c: c.data == "delivery")
@@ -115,13 +114,12 @@ async def buy(callback_query: types.CallbackQuery, state: FSMContext):
         # Пользователь уже делал покупку
         # Создайте файл, который вы хотите отправить
         document_path = "setting/password/Telegram_SMM_BOT/password.txt"  # Укажите путь к вашему файлу
-        caption = f"Вы можете скачать программу https://t.me/master_tg_d/286"
+        caption = (f"Вы можете скачать программу https://t.me/master_tg_d/286\n\n"
+                   f"Для возврата в начальное меню нажмите /start")  # Отправка ссылки на программу
         # Отправка файла
         with open(document_path, 'rb') as document:
             await bot.send_document(callback_query.from_user.id, document, caption=caption)
-        # Отправка ссылки на программу
-        # await bot.send_message(callback_query.from_user.id, "Вы можете скачать программу https://t.me/master_tg_d/286")
-    else:# Пользователь не делал покупку
+    else:  # Пользователь не делал покупку
         current_date = datetime.datetime.now().strftime("%Y-%m-%d")
         url, payment = payment_yookassa()
         payment_keyboard_key = payment_keyboard(url, payment)
