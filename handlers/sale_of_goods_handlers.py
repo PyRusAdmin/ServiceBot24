@@ -1,57 +1,133 @@
+import sqlite3
+import json
+
 from aiogram import types
+from aiogram.dispatcher import FSMContext
+from loguru import logger  # Логирование с помощью loguru
+from yookassa import Configuration, Payment
+from system.dispatcher import bot, dp, ACCOUNT_ID, SECRET_KEY
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-from system.dispatcher import bot, dp
 
-yoomoney_wallet = '390540012:LIVE:42649'  # Инициализация Юмани
-PRICE = types.LabeledPrice(label='Telegram_BOT_SMM', amount=100 * 100)  # Цена товара
+# 2200000000000004 - проверочная карта
+
+class PaymentStates:  # Define your FSM states if needed
+    PROCESSING = "processing"
 
 
-# Тестовая карта
-# 1111 1111 1111 1026, 12/22, CVC 000
+def payment_yookassa():
+    """Оплата Юкасса"""
+
+    Configuration.account_id = ACCOUNT_ID
+    Configuration.secret_key = SECRET_KEY
+
+    payment = Payment.create(
+        {"amount": {"value": 1.00, "currency": "RUB"},"capture": True,
+         "confirmation": {"type": "redirect", "return_url": "https://t.me/h24service_bot"},
+         "description": "Покупка программы: Тelegram_BOT_SMM",
+         "metadata": {'order_number': '1'},
+         "receipt": {"customer": {"email": "zh.vitaliy92@yandex.ru"},
+                     "items": [
+                         {
+                             "description": "Покупка программы: Тelegram_BOT_SMM",  # Название товара
+                             "quantity": "1",
+                             "amount": {"value": 1.00, "currency": "RUB"},  # Сумма и валюта
+                             "vat_code": "1"}]}})
+
+    payment_data = json.loads(payment.json())
+    payment_id = payment_data['id']
+    payment_url = (payment_data['confirmation'])['confirmation_url']
+    logger.info(f"Ссылка для оплаты: {payment_url}, ID оплаты {payment_id}")
+    return payment_url, payment_id
+
+
+def payment_keyboard(url, id_pay) -> InlineKeyboardMarkup:
+    """Клавиатура оплаты"""
+    payment_keyboard_key = InlineKeyboardMarkup()
+    byy_baton = InlineKeyboardButton("Оплатить 500 руб.", url=url)
+    check_payment = InlineKeyboardButton('Проверить оплату', callback_data=f"check_payment_{id_pay}")
+    payment_keyboard_key.row(byy_baton)
+    payment_keyboard_key.row(check_payment)
+    return payment_keyboard_key
+
+
+@dp.callback_query_handler(lambda c: c.data.startswith("check_payment"))
+async def check_payment(callback_query: types.CallbackQuery, state: FSMContext):
+    split_data = callback_query.data.split("_")
+    logger.info(split_data[2])
+    # Check the payment status using the YooKassa API
+    payment_info = Payment.find_one(split_data[2])
+    logger.info(payment_info)
+    product = "Тelegram_BOT_SMM"
+    # Process the payment status
+    if payment_info.status == "succeeded":
+        payment_status = "succeeded"
+        date = payment_info.captured_at
+        logger.info(date)
+        conn = sqlite3.connect('setting/user_data.db')
+        cursor = conn.cursor()
+        cursor.execute(
+            '''CREATE TABLE IF NOT EXISTS users_pay (user_id,
+                                                     first_name,
+                                                     last_name,
+                                                     username,
+                                                     payment_info,
+                                                     product,
+                                                     date,
+                                                     payment_status)''')
+        cursor.execute(
+            '''INSERT INTO users_pay (user_id, 
+                                           first_name, 
+                                           last_name, 
+                                           username, 
+                                           payment_info, 
+                                           product, 
+                                           date, 
+                                           payment_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)''',
+            (callback_query.from_user.id,
+             callback_query.from_user.first_name,
+             callback_query.from_user.last_name,
+             callback_query.from_user.username, payment_info.id, product, date, payment_status))
+        conn.commit()
+        # Создайте файл, который вы хотите отправить
+        document_path = "setting/password/Telegram_SMM_BOT/password.txt"  # Укажите путь к вашему файлу
+        caption = f"Платеж на сумму 100 прошел успешно!!!"
+        # Отправка файла
+        with open(document_path, 'rb') as document:
+            await bot.send_document(callback_query.from_user.id, document, caption=caption)
+        # Отправка ссылки на программу
+        await bot.send_message(callback_query.from_user.id, "Вы можете скачать программу https://t.me/master_tg_d/286")
+    else:
+        await bot.send_message(callback_query.message.chat.id, "Payment failed.")
+
 
 @dp.callback_query_handler(lambda c: c.data == "delivery")
-async def buy(callback_query: types.CallbackQuery):
-    yoomoney_wallet.split(':')[1]
-
-    await bot.send_invoice(callback_query.message.chat.id,
-                           title="Теlegram_BOT_SMM",  # Заголовок
-                           description="Теlegram_BOT_SMM - программа для автоматизации действий в Telegram. Автоматизируй свой бизнес.",  # Описание
-                           provider_token=yoomoney_wallet,
-                           currency="rub",  # Валюта
-                           photo_url='https://telegra.ph/file/8e89afa5a11de76d87359.png',
-                           photo_width=435,
-                           photo_height=333,
-                           photo_size=435,
-                           is_flexible=False,
-                           prices=[PRICE],
-                           start_parameter="one-month-subscription",
-                           payload="test-invoice-payload")
-
-
-@dp.pre_checkout_query_handler(lambda query: True)
-async def pre_checkout_query(pre_checkout_q: types.PreCheckoutQuery):
-    """pre checkout  (must be answered in 10 seconds)"""
-    await bot.answer_pre_checkout_query(pre_checkout_q.id, ok=True)
-
-
-@dp.message_handler(content_types=types.ContentType.SUCCESSFUL_PAYMENT)
-async def successful_payment(message: types.Message):
-    """Ваш обработчик успешной оплаты"""
-    print("SUCCESSFUL PAYMENT:")
-    payment_info = message.successful_payment.to_python()
-    for k, v in payment_info.items():
-        print(f"{k} = {v}")
-
-    # Создайте файл, который вы хотите отправить
-    document_path = "setting/password/Telegram_SMM_BOT/password.txt"  # Укажите путь к вашему файлу
-    caption = f"Платеж на сумму {message.successful_payment.total_amount // 100} {message.successful_payment.currency} прошел успешно!!!"
-
-    # Отправка файла
-    with open(document_path, 'rb') as document:
-        await bot.send_document(message.chat.id, document, caption=caption)
-
-    # Отправка ссылки на программу
-    await bot.send_message(message.chat.id, "Вы можете скачать программу https://t.me/master_tg_d/286")
+async def buy(callback_query: types.CallbackQuery, state: FSMContext):
+    user_id = callback_query.from_user.id
+    conn = sqlite3.connect('setting/user_data.db')
+    cursor = conn.cursor()
+    # Проверка наличия записей для данного пользователя с определенным статусом заказа
+    cursor.execute("SELECT * FROM users_pay WHERE user_id=? AND payment_status=?", (user_id, "succeeded"))
+    result = cursor.fetchone()
+    if result:
+        # Пользователь уже делал покупку
+        # Создайте файл, который вы хотите отправить
+        document_path = "setting/password/Telegram_SMM_BOT/password.txt"  # Укажите путь к вашему файлу
+        caption = f"Вы уже совершили покупку"
+        # Отправка файла
+        with open(document_path, 'rb') as document:
+            await bot.send_document(callback_query.from_user.id, document, caption=caption)
+        # Отправка ссылки на программу
+        await bot.send_message(callback_query.from_user.id, "Вы можете скачать программу https://t.me/master_tg_d/286")
+    else:
+        # Пользователь не делал покупку
+        url, payment = payment_yookassa()
+        payment_keyboard_key = payment_keyboard(url, payment)
+        payment_mes = ("Купить Тelegram_BOT_SMM. \n\n"
+                       "На момент тестирования автоматизирования платежей через Юкассу, скидка на программу 50%. \n\n"
+                       "Цена на 20.11.2023 — 500 рублей. Скидка продлится до 26.11.2023. \n\n"
+                       "Если по какой-либо причине бот не выдал пароль или произошла ошибка платежа, писать: @PyAdminRU. 🤖🔒")
+        await bot.send_message(callback_query.message.chat.id, payment_mes, reply_markup=payment_keyboard_key)
 
 
 def buy_handler():

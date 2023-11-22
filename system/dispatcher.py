@@ -10,6 +10,8 @@ config.read("setting/config.ini")  # Чтение файла
 bot_token = config.get('BOT_TOKEN', 'BOT_TOKEN')  # Получение токена
 CHANNEL_ID = config.get('CHANNEL_ID', 'CHANNEL_ID')
 ADMIN_CHAT_ID = config.get('ADMIN_CHAT_ID', 'ADMIN_CHAT_ID')
+ACCOUNT_ID = config.get('ACCOUNT_ID', 'ACCOUNT_ID')
+SECRET_KEY = config.get('SECRET_KEY', 'SECRET_KEY')
 
 bot = Bot(token=bot_token, parse_mode="HTML")
 storage = MemoryStorage()  # Хранилище

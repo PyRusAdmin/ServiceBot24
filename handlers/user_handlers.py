@@ -36,7 +36,7 @@ async def greeting(message: types.Message, state: FSMContext):
     print(f'Запустили бота: {message.from_user.id, message.from_user.username, current_date}')
     keyboards_greeting = greeting_keyboards()
     # Клавиатура для Калькулятора цен или Контактов
-    await message.reply(greeting_post, reply_markup=keyboards_greeting, disable_web_page_preview=True,
+    await message.answer(greeting_post, reply_markup=keyboards_greeting, disable_web_page_preview=True,
                         parse_mode=types.ParseMode.HTML)
 
 
