@@ -114,7 +114,7 @@ async def buy(callback_query: types.CallbackQuery, state: FSMContext):
         # Пользователь уже делал покупку
         # Создайте файл, который вы хотите отправить
         document_path = "setting/password/Telegram_SMM_BOT/password.txt"  # Укажите путь к вашему файлу
-        caption = (f"Вы можете скачать программу https://t.me/master_tg_d/286\n\n"
+        caption = (f"Вы можете скачать программу https://t.me/master_tg_d/292\n\n"
                    f"Для возврата в начальное меню нажмите /start")  # Отправка ссылки на программу
         # Отправка файла
         with open(document_path, 'rb') as document:
