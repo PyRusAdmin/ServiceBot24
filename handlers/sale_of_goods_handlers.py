@@ -5,6 +5,7 @@ from aiogram import types
 from aiogram.dispatcher import FSMContext
 from loguru import logger  # Логирование с помощью loguru
 from yookassa import Configuration, Payment
+
 from system.dispatcher import bot, dp, ACCOUNT_ID, SECRET_KEY
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
@@ -22,7 +23,7 @@ def payment_yookassa():
     Configuration.secret_key = SECRET_KEY
 
     payment = Payment.create(
-        {"amount": {"value": 500.00, "currency": "RUB"}, "capture": True,
+        {"amount": {"value": 1000.00, "currency": "RUB"}, "capture": True,
          "confirmation": {"type": "redirect", "return_url": "https://t.me/h24service_bot"},
          "description": "Покупка программы: Тelegram_BOT_SMM",
          "metadata": {'order_number': '1'},
@@ -31,7 +32,7 @@ def payment_yookassa():
                          {
                              "description": "Покупка программы: Тelegram_BOT_SMM",  # Название товара
                              "quantity": "1",
-                             "amount": {"value": 500.00, "currency": "RUB"},  # Сумма и валюта
+                             "amount": {"value": 1000.00, "currency": "RUB"},  # Сумма и валюта
                              "vat_code": "1"}]}})
 
     payment_data = json.loads(payment.json())
@@ -44,7 +45,7 @@ def payment_yookassa():
 def payment_keyboard(url, id_pay) -> InlineKeyboardMarkup:
     """Клавиатура оплаты"""
     payment_keyboard_key = InlineKeyboardMarkup()
-    byy_baton = InlineKeyboardButton("💳 Оплатить 500 руб.", url=url)
+    byy_baton = InlineKeyboardButton("💳 Оплатить 1000 руб.", url=url)
     check_payment = InlineKeyboardButton('Проверить оплату', callback_data=f"check_payment_{id_pay}")
     payment_keyboard_key.row(byy_baton)
     payment_keyboard_key.row(check_payment)
@@ -91,7 +92,7 @@ async def check_payment(callback_query: types.CallbackQuery, state: FSMContext):
         conn.commit()
         # Создайте файл, который вы хотите отправить
         document_path = "setting/password/Telegram_SMM_BOT/password.txt"  # Укажите путь к вашему файлу
-        caption = (f"Платеж на сумму 500 руб прошел успешно‼️ \n\n"
+        caption = (f"Платеж на сумму 1000 руб прошел успешно‼️ \n\n"
                    f"Вы можете скачать программу https://t.me/master_tg_d/286\n\n"
                    f"Для возврата в начальное меню нажмите /start")
         # Отправка файла
@@ -124,8 +125,7 @@ async def buy(callback_query: types.CallbackQuery, state: FSMContext):
         url, payment = payment_yookassa()
         payment_keyboard_key = payment_keyboard(url, payment)
         payment_mes = ("Купить Тelegram_BOT_SMM. \n\n"
-                       "На момент тестирования автоматизирования платежей через Юкассу, скидка на программу 50%. \n\n"
-                       f"Цена на {current_date} — 500 рублей. Скидка продлится до 30-11-2023. \n\n"
+                       f"Цена на {current_date} — 1000 рублей.\n\n"
                        "Если по какой-либо причине бот не выдал пароль или произошла ошибка платежа, писать: @PyAdminRU. 🤖🔒\n\n"
                        "Для возврата в начальное меню, нажмите: /start")
         await bot.send_message(callback_query.message.chat.id, payment_mes, reply_markup=payment_keyboard_key)

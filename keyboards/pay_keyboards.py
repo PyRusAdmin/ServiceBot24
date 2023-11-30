@@ -9,3 +9,5 @@ def purchasing_a_program_setup_service(url, id_pay) -> InlineKeyboardMarkup:
     payment_keyboard_key.row(byy_baton)
     payment_keyboard_key.row(check_payment)
     return payment_keyboard_key
+
+
