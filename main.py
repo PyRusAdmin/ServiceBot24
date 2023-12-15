@@ -1,6 +1,7 @@
 from aiogram import executor
 from loguru import logger
 
+from handlers.admin_handlers import buy_handler_program_admin_service
 from handlers.fag_handlers import fag_register_message_handler
 from handlers.program_service_handlers import buy_handler_program_setup_service
 from handlers.sale_of_goods_handlers import buy_handler
@@ -13,10 +14,11 @@ logger.add("logs/log.log", retention="1 days", enqueue=True)  # Логирова
 def main() -> None:
     """Запуск бота https://t.me/h24service_bot"""
     executor.start_polling(dp, skip_updates=True)
-    greeting_handler()
+    greeting_handler()  # Пост приветствие пользователей бота
     buy_handler()  # Купить Telegram_BOT_SMM
     buy_handler_program_setup_service()  # Оплата настройки ПО
     fag_register_message_handler()  # Помощь по боту
+    buy_handler_program_admin_service()  # Удаление системных сообщений
 
 
 if __name__ == '__main__':
