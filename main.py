@@ -14,11 +14,11 @@ logger.add("logs/log.log", retention="1 days", enqueue=True)  # Логирова
 def main() -> None:
     """Запуск бота https://t.me/h24service_bot"""
     executor.start_polling(dp, skip_updates=True)
+    buy_handler_program_admin_service()  # Удаление системных сообщений
     greeting_handler()  # Пост приветствие пользователей бота
     buy_handler()  # Купить Telegram_BOT_SMM
     buy_handler_program_setup_service()  # Оплата настройки ПО
     fag_register_message_handler()  # Помощь по боту
-    buy_handler_program_admin_service()  # Удаление системных сообщений
 
 
 if __name__ == '__main__':
