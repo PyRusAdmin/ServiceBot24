@@ -42,10 +42,11 @@ async def deleting_message_about_adding_new_group_member(message: types.Message)
     first_name = message.new_chat_members[0].first_name  # Получаем имя пользователя который вступил в группу
     last_name = message.new_chat_members[0].last_name  # Получаем фамилию пользователя который вступил в группу
     date_now = datetime.datetime.now()  # Дата вступления участника в группу
-    await bot.delete_message(chat_id, message.message_id)  # Удаляем сообщение о новом участнике группы
     name_table = "group_members_add"  # Имя таблицы в которую записываем данные
     writing_to_the_database_about_a_new_user(name_table, chat_id, chat_title, user_id, username, first_name, last_name,
                                              date_now)
+    await bot.delete_message(chat_id, message.message_id)  # Удаляем сообщение о новом участнике группы
+
 
 
 @dp.message_handler(content_types=types.ContentTypes.LEFT_CHAT_MEMBER)
@@ -66,10 +67,12 @@ async def deleting_a_message_about_a_member_has_left_the_group(message: types.Me
     first_name = message.left_chat_member.first_name  # Получаем имя пользователя, того что вышел с группы
     last_name = message.left_chat_member.last_name  # Получаем фамилию пользователя, того что вышел с группы
     date_left = datetime.datetime.now()  # Дата выхода пользователя с группы
-    await bot.delete_message(message.chat.id, message.message_id)  # Удаляем сообщение о покинувшем участнике группы
     name_table = "group_members_left"  # Имя таблицы в которую записываем данные
     writing_to_the_database_about_a_new_user(name_table, chat_id, chat_title, user_id, username, first_name, last_name,
                                              date_left)
+    await bot.delete_message(message.chat.id, message.message_id)  # Удаляем сообщение о покинувшем участнике группы
+
+
 
 def buy_handler_program_admin_service():
     """Регистрируем handlers для бота"""
