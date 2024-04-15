@@ -1,5 +1,5 @@
-from aiogram import types
-from aiogram.dispatcher import FSMContext
+from aiogram import types, F
+from aiogram.fsm.context import FSMContext
 
 from system.dispatcher import bot, dp
 
@@ -22,7 +22,8 @@ fag_post = ("<i>Основные функции бота 🤖</i>\n\n"
             "Для возврата нажмите на /start")
 
 
-@dp.callback_query_handler(lambda c: c.data == "fag")
+# @dp.callback_query_handler(lambda c: c.data == "fag")
+@dp.callback_query(F.data == "fag")
 async def fag_handler(callback_query: types.CallbackQuery, state: FSMContext):
     await bot.send_message(callback_query.message.chat.id, fag_post)
 

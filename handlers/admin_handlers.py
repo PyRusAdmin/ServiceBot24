@@ -1,6 +1,6 @@
 import datetime
 import sqlite3
-from aiogram import types
+from aiogram import types, F
 from loguru import logger
 from system.dispatcher import dp, bot
 
@@ -23,7 +23,7 @@ def writing_to_the_database_about_a_new_user(chat_id, chat_title, user_id, usern
     conn.close()
 
 
-@dp.message_handler(content_types=types.ContentTypes.NEW_CHAT_MEMBERS)
+@dp.message(F.new_chat_members)
 async def deleting_message_about_adding_new_group_member(message: types.Message):
     """
     Удаляем сообщение о новом участнике группы и записываем данные в базу данных
@@ -35,6 +35,7 @@ async def deleting_message_about_adding_new_group_member(message: types.Message)
     last_name = Фамилия пользователя который вступил в группу
     """
     chat_id = message.chat.id  # Получаем ID чата
+    print(chat_id)
     print(chat_id)
     chat_title = message.chat.title  # Получаем название чата
     user_id = message.new_chat_members[0].id  # Получаем ID пользователя, который зашел в группу
@@ -48,7 +49,7 @@ async def deleting_message_about_adding_new_group_member(message: types.Message)
     await bot.delete_message(chat_id, message.message_id)  # Удаляем сообщение о новом участнике группы
 
 
-@dp.message_handler(content_types=types.ContentTypes.LEFT_CHAT_MEMBER)
+@dp.message(F.left_chat_member)
 async def deleting_a_message_about_a_member_has_left_the_group(message: types.Message):
     """
     Удаляем сообщение о покинувшем участнике группы и записываем данные в базу данных
@@ -70,7 +71,7 @@ async def deleting_a_message_about_a_member_has_left_the_group(message: types.Me
     await bot.delete_message(message.chat.id, message.message_id)  # Удаляем сообщение о покинувшем участнике группы
 
 
-def buy_handler_program_admin_service():
-    """Регистрируем handlers для бота"""
-    dp.register_message_handler(deleting_message_about_adding_new_group_member)
-    dp.register_message_handler(deleting_a_message_about_a_member_has_left_the_group)
+# def buy_handler_program_admin_service():
+#     """Регистрируем handlers для бота"""
+#     dp.register_message_handler(deleting_message_about_adding_new_group_member)
+#     dp.register_message_handler(deleting_a_message_about_a_member_has_left_the_group)

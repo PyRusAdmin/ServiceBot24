@@ -1,16 +1,15 @@
-import sqlite3
-import json
 import datetime  # Дата
-from aiogram import types
-from aiogram.dispatcher import FSMContext
+import json
+import sqlite3
+
+from aiogram import types, F
+from aiogram.fsm.context import FSMContext
 from loguru import logger  # Логирование с помощью loguru
 from yookassa import Configuration, Payment
 
+from keyboards.user_keyboards import payment_keyboard
 from system.dispatcher import bot, dp, ACCOUNT_ID, SECRET_KEY
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-
-# 2200000000000004 - проверочная карта
 
 class PaymentStates:  # Define your FSM states if needed
     PROCESSING = "processing"
@@ -42,17 +41,7 @@ def payment_yookassa():
     return payment_url, payment_id
 
 
-def payment_keyboard(url, id_pay) -> InlineKeyboardMarkup:
-    """Клавиатура оплаты"""
-    payment_keyboard_key = InlineKeyboardMarkup()
-    byy_baton = InlineKeyboardButton("💳 Оплатить 1000 руб.", url=url)
-    check_payment = InlineKeyboardButton('Проверить оплату', callback_data=f"check_payment_{id_pay}")
-    payment_keyboard_key.row(byy_baton)
-    payment_keyboard_key.row(check_payment)
-    return payment_keyboard_key
-
-
-@dp.callback_query_handler(lambda c: c.data.startswith("check_payment"))
+@dp.callback_query(F.data == "check_payment")
 async def check_payment(callback_query: types.CallbackQuery, state: FSMContext):
     split_data = callback_query.data.split("_")
     logger.info(split_data[2])
@@ -67,28 +56,14 @@ async def check_payment(callback_query: types.CallbackQuery, state: FSMContext):
         logger.info(date)
         conn = sqlite3.connect('setting/user_data.db')
         cursor = conn.cursor()
-        cursor.execute(
-            '''CREATE TABLE IF NOT EXISTS users_pay (user_id,
-                                                     first_name,
-                                                     last_name,
-                                                     username,
-                                                     payment_info,
-                                                     product,
-                                                     date,
-                                                     payment_status)''')
-        cursor.execute(
-            '''INSERT INTO users_pay (user_id, 
-                                           first_name, 
-                                           last_name, 
-                                           username, 
-                                           payment_info, 
-                                           product, 
-                                           date, 
-                                           payment_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)''',
-            (callback_query.from_user.id,
-             callback_query.from_user.first_name,
-             callback_query.from_user.last_name,
-             callback_query.from_user.username, payment_info.id, product, date, payment_status))
+        cursor.execute('''CREATE TABLE IF NOT EXISTS users_pay (user_id, first_name, last_name, username, payment_info,
+                                                                product, date, payment_status)''')
+        cursor.execute('''INSERT INTO users_pay (user_id, first_name, last_name, username, payment_info, 
+                                                      product, date, payment_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)''',
+                       (callback_query.from_user.id,
+                        callback_query.from_user.first_name,
+                        callback_query.from_user.last_name,
+                        callback_query.from_user.username, payment_info.id, product, date, payment_status))
         conn.commit()
         # Создайте файл, который вы хотите отправить
         document_path = "setting/password/Telegram_SMM_BOT/password.txt"  # Укажите путь к вашему файлу
@@ -103,7 +78,7 @@ async def check_payment(callback_query: types.CallbackQuery, state: FSMContext):
         await bot.send_message(callback_query.message.chat.id, "Payment failed.")
 
 
-@dp.callback_query_handler(lambda c: c.data == "delivery")
+@dp.callback_query(F.data == "delivery")
 async def buy(callback_query: types.CallbackQuery, state: FSMContext):
     user_id = callback_query.from_user.id
     conn = sqlite3.connect('setting/user_data.db')
@@ -124,9 +99,10 @@ async def buy(callback_query: types.CallbackQuery, state: FSMContext):
         current_date = datetime.datetime.now().strftime("%Y-%m-%d")
         url, payment = payment_yookassa()
         payment_keyboard_key = payment_keyboard(url, payment)
-        payment_mes = ("Купить Тelegram_BOT_SMM. \n\n"
+        payment_mes = ("Купить ТelegramMaster. \n\n"
                        f"Цена на {current_date} — 1000 рублей.\n\n"
-                       "Если по какой-либо причине бот не выдал пароль или произошла ошибка платежа, писать: @PyAdminRU. 🤖🔒\n\n"
+                       "Если по какой-либо причине бот не выдал пароль или произошла ошибка платежа, писать: "
+                       "@PyAdminRU. 🤖🔒\n\n"
                        "Для возврата в начальное меню, нажмите: /start")
         await bot.send_message(callback_query.message.chat.id, payment_mes, reply_markup=payment_keyboard_key)
 
