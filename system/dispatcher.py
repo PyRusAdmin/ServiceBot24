@@ -1,7 +1,7 @@
 import configparser
 import logging
 
-from aiogram import Bot, Dispatcher
+from aiogram import Bot, Dispatcher, Router
 from aiogram.fsm.storage.memory import MemoryStorage
 
 config = configparser.ConfigParser(empty_lines_in_values=False, allow_no_value=True)
@@ -16,3 +16,6 @@ bot = Bot(token=bot_token, parse_mode="HTML")
 storage = MemoryStorage()  # Хранилище
 dp = Dispatcher(storage=storage)
 logging.basicConfig(level=logging.INFO)  # Логирования
+
+form_router = Router()
+dp.include_router(form_router)

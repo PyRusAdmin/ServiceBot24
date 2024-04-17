@@ -7,6 +7,7 @@ from loguru import logger  # https://github.com/Delgan/loguru
 from handlers.fag_handlers import fag_register_message_handler
 from handlers.program_service_handlers import buy_handler_program_setup_service
 from handlers.sale_of_goods_handlers import buy_handler
+from handlers.sending_log_file import sending_log_file_register_handler
 from handlers.user_handlers.user_handlers import greeting_handler
 from system.dispatcher import dp, bot
 
@@ -21,6 +22,7 @@ async def main() -> None:
     buy_handler()  # Купить Telegram_BOT_SMM
     buy_handler_program_setup_service()  # Оплата настройки ПО
     fag_register_message_handler()  # Помощь по боту
+    sending_log_file_register_handler()
 
 
 if __name__ == '__main__':

@@ -1,14 +1,12 @@
 import datetime  # Дата
 import sqlite3
 
-from aiogram import F
-from aiogram import Router, types
-from aiogram.filters import Command
-from aiogram.filters import StateFilter
-from aiogram.fsm import state
+from aiogram import F, Router
+from aiogram import types
+from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
-from aiogram.types import FSInputFile
+from aiogram.types import FSInputFile, Message
 from loguru import logger
 
 from keyboards.user_keyboards import greeting_keyboards  # Клавиатуры поста приветствия
@@ -133,11 +131,11 @@ async def get_password(callback: types.CallbackQuery):
                     "🔗 @h24service_bot.")
             await bot.send_message(chat_id=callback.message.chat.id, text=text)  # ID пользователя нет в базе данных
             await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
-                                                                   f"ID {callback.from_user.id},\n"
-                                                                   f"Username: @{callback.from_user.username},\n"
-                                                                   f"Имя: {callback.from_user.first_name},\n"
-                                                                   f"Фамилия: {callback.from_user.last_name},\n"
-                                                                   f"Запросил пароль от TelegramMaster")   # ID пользователя нет в базе данных
+                                                               f"ID {callback.from_user.id},\n"
+                                                               f"Username: @{callback.from_user.username},\n"
+                                                               f"Имя: {callback.from_user.first_name},\n"
+                                                               f"Фамилия: {callback.from_user.last_name},\n"
+                                                               f"Запросил пароль от TelegramMaster")  # ID пользователя нет в базе данных
     except Exception as e:
         logger.error(e)
 
@@ -160,7 +158,8 @@ async def get_password_tg_com(callback: types.CallbackQuery):
                                                            f"Запросил пароль от Telegram_Commentator_GPT")  # ID пользователя нет в базе данных
     else:
         # Пользователь не подписан, отправьте сообщение с просьбой подписаться.
-        await bot.send_message(callback.message.chat.id, "Пожалуйста, подпишитесь на канал @master_tg_d и попробуйте снова.")
+        await bot.send_message(callback.message.chat.id,
+                               "Пожалуйста, подпишитесь на канал @master_tg_d и попробуйте снова.")
         await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
                                                            f"ID {callback.from_user.id},\n"
                                                            f"Username: @{callback.from_user.username},\n"
@@ -169,40 +168,6 @@ async def get_password_tg_com(callback: types.CallbackQuery):
                                                            f"Запросил пароль от Telegram_Commentator_GPT")  # ID пользователя нет в базе данных
 
 
-@dp.callback_query(F.data == "sending_file")
-async def sending_file_callback(callback_query: types.CallbackQuery):
-    """Обработчик коллбэков для кнопки "sending_file"""
-    # user_id = callback_query.from_user.id
-    chat_id = callback_query.message.chat.id
-    # Получение ID файла из данных коллбэка (пока кнопка не привязана к конкретному файлу)
-    # Отправляем сообщение с просьбой отправить файл
-    await bot.send_message(chat_id, "Пожалуйста, отправьте файл, который вы хотите отправить администратору.")
-    # Устанавливаем состояние, ожидая файла от пользователя
-    await state.set_state(SomeState.some_state)
-
-
-router = Router()
-
-
-@router.message(StateFilter(SomeState.some_state), F.photo, F.document, F.video)
-async def handle_file(message: types.Message, state: FSMContext):
-    """Обработчик отправки файла в состоянии "some_state"""
-    # Получаем ID пользователя и файловой ID
-    # user_id = message.from_user.id
-    file_id = None
-    if message.document:
-        file_id = message.document.file_id
-    elif message.photo:
-        file_id = message.photo[-1].file_id
-    elif message.video:
-        file_id = message.video.file_id
-    if file_id:
-        # Отправка файла администратору по его file_id
-        admin_chat_id = ADMIN_CHAT_ID  # Замените на ID чата администратора
-        await bot.send_document(admin_chat_id, document=file_id)
-        # Очищаем состояние
-        await state.clear()
-        await message.reply("Ваш файл успешно отправлен администратору.")
 
 
 @dp.callback_query(F.data == "reference")
@@ -216,3 +181,4 @@ def greeting_handler():
     dp.message.register(greeting)
     dp.message.register(get_password)
     dp.message.register(process_id_command)
+    dp.message.register(command_start)
