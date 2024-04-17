@@ -4,11 +4,13 @@ import sqlite3
 
 from aiogram import types, F
 from aiogram.fsm.context import FSMContext
+from aiogram.types import FSInputFile
 from loguru import logger  # Логирование с помощью loguru
 from yookassa import Configuration, Payment
 
+from handlers.user_handlers.user_handlers import checking_for_presence_in_the_user_database
 from keyboards.user_keyboards import payment_keyboard
-from system.dispatcher import bot, dp, ACCOUNT_ID, SECRET_KEY
+from system.dispatcher import bot, dp, ACCOUNT_ID, SECRET_KEY, ADMIN_CHAT_ID
 
 
 class PaymentStates:  # Define your FSM states if needed
@@ -22,16 +24,16 @@ def payment_yookassa():
     Configuration.secret_key = SECRET_KEY
 
     payment = Payment.create(
-        {"amount": {"value": 1000.00, "currency": "RUB"}, "capture": True,
+        {"amount": {"value": 1.00, "currency": "RUB"}, "capture": True,
          "confirmation": {"type": "redirect", "return_url": "https://t.me/h24service_bot"},
-         "description": "Покупка программы: Тelegram_BOT_SMM",
+         "description": "Покупка программы: ТelegramMaster",
          "metadata": {'order_number': '1'},
          "receipt": {"customer": {"email": "zh.vitaliy92@yandex.ru"},
                      "items": [
                          {
-                             "description": "Покупка программы: Тelegram_BOT_SMM",  # Название товара
+                             "description": "Покупка программы: ТelegramMaster",  # Название товара
                              "quantity": "1",
-                             "amount": {"value": 1000.00, "currency": "RUB"},  # Сумма и валюта
+                             "amount": {"value": 1.00, "currency": "RUB"},  # Сумма и валюта
                              "vat_code": "1"}]}})
 
     payment_data = json.loads(payment.json())
@@ -41,14 +43,14 @@ def payment_yookassa():
     return payment_url, payment_id
 
 
-@dp.callback_query(F.data == "check_payment")
+@dp.callback_query(F.data.startswith("check_payment"))
 async def check_payment(callback_query: types.CallbackQuery, state: FSMContext):
     split_data = callback_query.data.split("_")
     logger.info(split_data[2])
     # Check the payment status using the YooKassa API
     payment_info = Payment.find_one(split_data[2])
     logger.info(payment_info)
-    product = "Тelegram_BOT_SMM"
+    product = "TelegramaMaster"
     # Process the payment status
     if payment_info.status == "succeeded":
         payment_status = "succeeded"
@@ -66,35 +68,50 @@ async def check_payment(callback_query: types.CallbackQuery, state: FSMContext):
                         callback_query.from_user.username, payment_info.id, product, date, payment_status))
         conn.commit()
         # Создайте файл, который вы хотите отправить
-        document_path = "setting/password/Telegram_SMM_BOT/password.txt"  # Укажите путь к вашему файлу
+        # document_path = "setting/password/Telegram_SMM_BOT/password.txt"  # Укажите путь к вашему файлу
         caption = (f"Платеж на сумму 1000 руб прошел успешно‼️ \n\n"
                    f"Вы можете скачать программу https://t.me/master_tg_d/286\n\n"
                    f"Для возврата в начальное меню нажмите /start")
-        # Отправка файла
-        with open(document_path, 'rb') as document:
-            await bot.send_document(callback_query.from_user.id, document, caption=caption)
-        # Отправка ссылки на программу
+        document = FSInputFile("setting/password/Telegram_SMM_BOT/password.txt")
+        await bot.send_document(chat_id=callback_query.from_user.id, document=document, caption=caption)
+
+        result = checking_for_presence_in_the_user_database(callback_query.from_user.id)
+
+        if result is None:
+            cursor.execute('INSERT INTO users (id) VALUES (?)', (callback_query.from_user.id,))
+            conn.commit()
+
+            await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
+                                                               f"ID {callback_query.from_user.id},\n"
+                                                               f"Username: @{callback_query.from_user.username},\n"
+                                                               f"Имя: {callback_query.from_user.first_name},\n"
+                                                               f"Фамилия: {callback_query.from_user.last_name},\n\n"
+                                                               f"Приобрел TelegramMaster")  # ID пользователя нет в базе данных
     else:
         await bot.send_message(callback_query.message.chat.id, "Payment failed.")
 
 
-@dp.callback_query(F.data == "delivery")
-async def buy(callback_query: types.CallbackQuery, state: FSMContext):
-    user_id = callback_query.from_user.id
+def database(user_id):
     conn = sqlite3.connect('setting/user_data.db')
     cursor = conn.cursor()
     # Проверка наличия записей для данного пользователя с определенным статусом заказа
     cursor.execute("SELECT * FROM users_pay WHERE user_id=? AND payment_status=?", (user_id, "succeeded"))
     result = cursor.fetchone()
+    return result
+
+
+@dp.callback_query(F.data == "delivery")
+async def buy(callback_query: types.CallbackQuery, state: FSMContext):
+    user_id = callback_query.from_user.id
+    result = database(user_id)
     if result:
         # Пользователь уже делал покупку
         # Создайте файл, который вы хотите отправить
-        document_path = "setting/password/Telegram_SMM_BOT/password.txt"  # Укажите путь к вашему файлу
+        document = FSInputFile('setting/password/Telegram_SMM_BOT/password.txt')
         caption = (f"Вы можете скачать программу https://t.me/master_tg_d/292\n\n"
                    f"Для возврата в начальное меню нажмите /start")  # Отправка ссылки на программу
         # Отправка файла
-        with open(document_path, 'rb') as document:
-            await bot.send_document(callback_query.from_user.id, document, caption=caption)
+        await bot.send_document(chat_id=user_id, document=document, caption=caption)
     else:  # Пользователь не делал покупку
         current_date = datetime.datetime.now().strftime("%Y-%m-%d")
         url, payment = payment_yookassa()
@@ -109,4 +126,6 @@ async def buy(callback_query: types.CallbackQuery, state: FSMContext):
 
 def buy_handler():
     """Регистрируем handlers для бота"""
-    dp.register_message_handler(buy)
+    dp.message.register(buy)
+    dp.message.register(check_payment)
+

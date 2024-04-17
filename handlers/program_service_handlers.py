@@ -7,7 +7,7 @@ from loguru import logger  # Логирование с помощью loguru
 from yookassa import Configuration, Payment
 
 from keyboards.pay_keyboards import purchasing_a_program_setup_service
-from system.dispatcher import bot, dp, ACCOUNT_ID, SECRET_KEY
+from system.dispatcher import bot, dp, ACCOUNT_ID, SECRET_KEY, ADMIN_CHAT_ID
 
 
 class PaymentStates_program_setup_service:  # Define your FSM states if needed
@@ -63,6 +63,14 @@ async def check_payment_program_setup_service(callback_query: types.CallbackQuer
                         callback_query.from_user.last_name,
                         callback_query.from_user.username, payment_info.id, product, date, payment_status))
         conn.commit()
+
+        await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
+                                                           f"ID {callback_query.from_user.id},\n"
+                                                           f"Username: @{callback_query.from_user.username},\n"
+                                                           f"Имя: {callback_query.from_user.first_name},\n"
+                                                           f"Фамилия: {callback_query.from_user.last_name},\n\n"
+                                                           f"Приобрел 'Помощь в настройке ПО (консультация)'")  # ID пользователя нет в базе данных
+
         await bot.send_message(callback_query.from_user.id,
                                "Оплата прошла успешно‼️ \nДля согласования даты и времени , свяжитесь с администратором"
                                " через личные сообщения, используя указанный никнейм: @PyAdminRU. 🤖🔒\n\n"
@@ -84,4 +92,5 @@ async def buy_program_setup_service(callback_query: types.CallbackQuery, state: 
 
 def buy_handler_program_setup_service():
     """Регистрируем handlers для бота"""
-    dp.register_message_handler(buy_program_setup_service)
+    dp.message.register(buy_program_setup_service)
+    dp.message.register(check_payment_program_setup_service)

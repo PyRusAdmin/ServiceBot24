@@ -1,16 +1,20 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from aiogram.utils.keyboard import InlineKeyboardBuilder
+from aiogram.types import WebAppInfo
 
 
-def payment_keyboard(url, id_pay) -> InlineKeyboardBuilder:
+def payment_keyboard(url, id_pay) -> InlineKeyboardMarkup:
     """Клавиатура оплаты"""
-    payment_keyboard_key = InlineKeyboardBuilder()
-    payment_keyboard_key.add(InlineKeyboardButton(text="💳 Оплатить 1000 руб.", url=url))
-    payment_keyboard_key.add(InlineKeyboardButton(text='Проверить оплату', callback_data=f"check_payment_{id_pay}"))
+    rows = [
+        [InlineKeyboardButton(text="💳 Оплатить 1000 руб.", url=url)],
+        [InlineKeyboardButton(text='Проверить оплату', callback_data=f"check_payment_{id_pay}")],
+    ]
+
+    payment_keyboard_key = InlineKeyboardMarkup(inline_keyboard=rows)
+
     return payment_keyboard_key
 
 
-def greeting_keyboards():
+def greeting_keyboards() -> InlineKeyboardMarkup:
     """Клавиатуры поста приветствия 👋(Получения пароля от проектов, обратная связь, отправка логов)"""
 
     rows = [

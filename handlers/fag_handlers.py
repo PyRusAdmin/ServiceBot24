@@ -30,4 +30,4 @@ async def fag_handler(callback_query: types.CallbackQuery, state: FSMContext):
 
 def fag_register_message_handler():
     """Регистрируем handlers для бота"""
-    dp.register_message_handler(fag_handler)
+    dp.message.register(fag_handler)
