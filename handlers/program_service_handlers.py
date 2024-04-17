@@ -10,10 +10,6 @@ from keyboards.pay_keyboards import purchasing_a_program_setup_service
 from system.dispatcher import bot, dp, ACCOUNT_ID, SECRET_KEY, ADMIN_CHAT_ID
 
 
-class PaymentStates_program_setup_service:  # Define your FSM states if needed
-    PROCESSING = "processing"
-
-
 def payment_yookassa_program_setup_service():
     """Оплата Юкасса"""
     logger.info(f"ACCOUNT_ID: {ACCOUNT_ID}, SECRET_KEY {SECRET_KEY}")
@@ -21,7 +17,7 @@ def payment_yookassa_program_setup_service():
     Configuration.secret_key = SECRET_KEY
 
     payment = Payment.create(
-        {"amount": {"value": 500.00, "currency": "RUB"}, "capture": True,
+        {"amount": {"value": 1.00, "currency": "RUB"}, "capture": True,
          "confirmation": {"type": "redirect", "return_url": "https://t.me/h24service_bot"},
          "description": "Помощь в настройке ПО (консультация)",
          "metadata": {'order_number': '1'},
@@ -30,7 +26,7 @@ def payment_yookassa_program_setup_service():
                          {
                              "description": "Помощь в настройке ПО (консультация)",  # Название товара
                              "quantity": "1",
-                             "amount": {"value": 500.00, "currency": "RUB"},  # Сумма и валюта
+                             "amount": {"value": 1.00, "currency": "RUB"},  # Сумма и валюта
                              "vat_code": "1"}]}})
 
     payment_data = json.loads(payment.json())
@@ -40,7 +36,7 @@ def payment_yookassa_program_setup_service():
     return payment_url, payment_id
 
 
-@dp.callback_query(F.data == "check_service")
+@dp.callback_query(F.data.startswith("check_service"))
 async def check_payment_program_setup_service(callback_query: types.CallbackQuery, state: FSMContext):
     split_data = callback_query.data.split("_")
     logger.info(split_data[2])
@@ -69,7 +65,7 @@ async def check_payment_program_setup_service(callback_query: types.CallbackQuer
                                                            f"Username: @{callback_query.from_user.username},\n"
                                                            f"Имя: {callback_query.from_user.first_name},\n"
                                                            f"Фамилия: {callback_query.from_user.last_name},\n\n"
-                                                           f"Приобрел 'Помощь в настройке ПО (консультация)'")  # ID пользователя нет в базе данных
+                                                           f"Приобрел 'Помощь в настройке ПО (консультация)'")
 
         await bot.send_message(callback_query.from_user.id,
                                "Оплата прошла успешно‼️ \nДля согласования даты и времени , свяжитесь с администратором"
@@ -80,14 +76,18 @@ async def check_payment_program_setup_service(callback_query: types.CallbackQuer
 
 
 @dp.callback_query(F.data == "purchasing_a_program_setup_service")
-async def buy_program_setup_service(callback_query: types.CallbackQuery, state: FSMContext):
+async def buy_program_setup_service(callback_query: types.CallbackQuery):
     url, payment = payment_yookassa_program_setup_service()
     payment_keyboard_key = purchasing_a_program_setup_service(url, payment)
     payment_mes = ("Оплатите услуги по настройке и консультации. \n\n"
                    "После завершения процесса оплаты, свяжитесь с администратором через личные сообщения, используя "
                    "указанный никнейм: @PyAdminRU. 🤖🔒\n\n"
                    "Для возврата в начальное меню, нажмите: /start")
-    await bot.send_message(callback_query.message.chat.id, payment_mes, reply_markup=payment_keyboard_key)
+    await bot.edit_message_text(chat_id=callback_query.message.chat.id,
+                                message_id=callback_query.message.message_id,
+                                text=payment_mes,
+                                reply_markup=payment_keyboard_key,
+                                disable_web_page_preview=True)
 
 
 def buy_handler_program_setup_service():

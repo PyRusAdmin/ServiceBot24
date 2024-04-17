@@ -1,12 +1,12 @@
 import datetime  # Дата
 import sqlite3
 
-from aiogram import F, Router
+from aiogram import F
 from aiogram import types
-from aiogram.filters import Command, StateFilter
+from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
-from aiogram.types import FSInputFile, Message
+from aiogram.types import FSInputFile
 from loguru import logger
 
 from keyboards.user_keyboards import greeting_keyboards  # Клавиатуры поста приветствия
@@ -42,8 +42,66 @@ async def greeting(message: types.Message, state: FSMContext):
         text=greeting_post,
         reply_markup=keyboards_greeting,
         disable_web_page_preview=True,
-        # parse_mode=types.ParseMode.HTML
     )
+
+
+@dp.callback_query(F.data == 'start_menu')
+async def start_menu(callback_query: types.CallbackQuery, state: FSMContext):
+    """Обработчик команды /start, он же пост приветствия"""
+    await state.clear()
+    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # Получаем текущую дату и время
+    # Записываем данные пользователя в базу данных
+    # Инициализация базы данных SQLite
+    conn = sqlite3.connect('setting/user_data.db')
+    cursor = conn.cursor()
+    cursor.execute('''CREATE TABLE IF NOT EXISTS users_run (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, 
+                                                        first_name TEXT, last_name TEXT, username TEXT, date TEXT)''')
+    cursor.execute('''INSERT INTO users_run (user_id, first_name, last_name, username, date) VALUES (?, ?, ?, ?, ?)''',
+                   (
+                       callback_query.from_user.id, callback_query.from_user.first_name,
+                       callback_query.from_user.last_name,
+                       callback_query.from_user.username, current_date))
+    conn.commit()
+    print(f'Запустили бота: {callback_query.from_user.id, callback_query.from_user.username, current_date}')
+    keyboards_greeting = greeting_keyboards()
+    # Клавиатура для Калькулятора цен или Контактов
+    await bot.edit_message_text(
+        chat_id=callback_query.from_user.id,
+        message_id=callback_query.message.message_id,
+        text=greeting_post,
+        reply_markup=keyboards_greeting,
+        disable_web_page_preview=True,
+    )
+
+
+@dp.callback_query(F.data == 'start_menu_keyboard')
+async def start_menu_no_edit(callback_query: types.CallbackQuery, state: FSMContext):
+    """Обработчик команды /start, он же пост приветствия"""
+    await state.clear()
+    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # Получаем текущую дату и время
+    # Записываем данные пользователя в базу данных
+    # Инициализация базы данных SQLite
+    conn = sqlite3.connect('setting/user_data.db')
+    cursor = conn.cursor()
+    cursor.execute('''CREATE TABLE IF NOT EXISTS users_run (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, 
+                                                        first_name TEXT, last_name TEXT, username TEXT, date TEXT)''')
+    cursor.execute('''INSERT INTO users_run (user_id, first_name, last_name, username, date) VALUES (?, ?, ?, ?, ?)''',
+                   (
+                       callback_query.from_user.id, callback_query.from_user.first_name,
+                       callback_query.from_user.last_name,
+                       callback_query.from_user.username, current_date))
+    conn.commit()
+    print(f'Запустили бота: {callback_query.from_user.id, callback_query.from_user.username, current_date}')
+    keyboards_greeting = greeting_keyboards()
+    # Клавиатура для Калькулятора цен или Контактов
+    # await bot.edit_message_text(
+    #     chat_id=callback_query.from_user.id,
+    #     message_id=callback_query.message.message_id,
+    #     text=greeting_post,
+    #     reply_markup=keyboards_greeting,
+    #     disable_web_page_preview=True,
+    # )
+    await bot.send_message(callback_query.message.chat.id, greeting_post, reply_markup=keyboards_greeting)
 
 
 def checking_for_presence_in_the_user_database(user_id):
@@ -68,8 +126,7 @@ async def process_id_command(message: types.Message):
     """Обработчик команды /id"""
     try:
         user_id = int(message.text.split()[1])
-        # Запись ID в базу данных
-        result = checking_for_presence_in_the_user_database(user_id)
+        result = checking_for_presence_in_the_user_database(user_id)  # Запись ID в базу данных
         if result is None:
             cursor.execute('INSERT INTO users (id) VALUES (?)', (user_id,))
             conn.commit()
@@ -102,7 +159,7 @@ async def get_password(callback: types.CallbackQuery):
                                                                    f"Username: @{callback.from_user.username},\n"
                                                                    f"Имя: {callback.from_user.first_name},\n"
                                                                    f"Фамилия: {callback.from_user.last_name},\n"
-                                                                   f"Запросил пароль от TelegramMaster")  # ID пользователя нет в базе данных
+                                                                   f"Запросил пароль от TelegramMaster")
             else:
                 text = (
                     "Для того чтобы воспользоваться всеми возможностями бота 🤖, вам необходимо подписаться на канал "
@@ -119,7 +176,7 @@ async def get_password(callback: types.CallbackQuery):
                                                                    f"Username: @{callback.from_user.username},\n"
                                                                    f"Имя: {callback.from_user.first_name},\n"
                                                                    f"Фамилия: {callback.from_user.last_name},\n"
-                                                                   f"Запросил пароль от TelegramMaster")  # ID пользователя нет в базе данных
+                                                                   f"Запросил пароль от TelegramMaster")
         else:
             text = ("Для того чтобы воспользоваться всеми возможностями бота 🤖, вам необходимо подписаться на канал "
                     "🔗 @master_tg_d и купить TelegramMaster.\n\n"
@@ -135,7 +192,7 @@ async def get_password(callback: types.CallbackQuery):
                                                                f"Username: @{callback.from_user.username},\n"
                                                                f"Имя: {callback.from_user.first_name},\n"
                                                                f"Фамилия: {callback.from_user.last_name},\n"
-                                                               f"Запросил пароль от TelegramMaster")  # ID пользователя нет в базе данных
+                                                               f"Запросил пароль от TelegramMaster")
     except Exception as e:
         logger.error(e)
 
@@ -155,7 +212,7 @@ async def get_password_tg_com(callback: types.CallbackQuery):
                                                            f"Username: @{callback.from_user.username},\n"
                                                            f"Имя: {callback.from_user.first_name},\n"
                                                            f"Фамилия: {callback.from_user.last_name},\n"
-                                                           f"Запросил пароль от Telegram_Commentator_GPT")  # ID пользователя нет в базе данных
+                                                           f"Запросил пароль от Telegram_Commentator_GPT")
     else:
         # Пользователь не подписан, отправьте сообщение с просьбой подписаться.
         await bot.send_message(callback.message.chat.id,
@@ -165,20 +222,11 @@ async def get_password_tg_com(callback: types.CallbackQuery):
                                                            f"Username: @{callback.from_user.username},\n"
                                                            f"Имя: {callback.from_user.first_name},\n"
                                                            f"Фамилия: {callback.from_user.last_name},\n"
-                                                           f"Запросил пароль от Telegram_Commentator_GPT")  # ID пользователя нет в базе данных
-
-
-
-
-@dp.callback_query(F.data == "reference")
-async def faq_handler(callback_query: types.CallbackQuery):
-    """Пояснение для пользователя FAG"""
-    # disable_web_page_preview=True - скрыть предпросмотр ссылок в Telegram
-    await bot.send_message(callback_query.from_user.id, message_text_faq, disable_web_page_preview=True)
+                                                           f"Запросил пароль от Telegram_Commentator_GPT")
 
 
 def greeting_handler():
     dp.message.register(greeting)
     dp.message.register(get_password)
     dp.message.register(process_id_command)
-    dp.message.register(command_start)
+    dp.message.register(start_menu)

@@ -33,5 +33,25 @@ def greeting_keyboards() -> InlineKeyboardMarkup:
     return inline_keyboard_markup
 
 
+def start_menu() -> InlineKeyboardMarkup:
+    """Клавиатура начального меню"""
+    rows = [
+        [InlineKeyboardButton(text='В начальное меню', callback_data='start_menu')],
+    ]
+    inline_keyboard_markup = InlineKeyboardMarkup(inline_keyboard=rows)
+
+    return inline_keyboard_markup
+
+
+def start_menu_keyboard() -> InlineKeyboardMarkup:
+    """Клавиатура начального меню, не обновляемое сообщение"""
+    rows = [
+        [InlineKeyboardButton(text='В начальное меню', callback_data='start_menu_keyboard')],
+    ]
+    inline_keyboard_markup = InlineKeyboardMarkup(inline_keyboard=rows)
+
+    return inline_keyboard_markup
+
+
 if __name__ == '__main__':
     greeting_keyboards()

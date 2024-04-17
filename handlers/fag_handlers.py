@@ -1,6 +1,6 @@
 from aiogram import types, F
-from aiogram.fsm.context import FSMContext
 
+from keyboards.user_keyboards import start_menu
 from system.dispatcher import bot, dp
 
 fag_post = ("<i>Основные функции бота 🤖</i>\n\n"
@@ -22,10 +22,13 @@ fag_post = ("<i>Основные функции бота 🤖</i>\n\n"
             "Для возврата нажмите на /start")
 
 
-# @dp.callback_query_handler(lambda c: c.data == "fag")
 @dp.callback_query(F.data == "fag")
-async def fag_handler(callback_query: types.CallbackQuery, state: FSMContext):
-    await bot.send_message(callback_query.message.chat.id, fag_post)
+async def fag_handler(callback_query: types.CallbackQuery):
+    inline_keyboard_markup = start_menu()  # Отправляемся в главное меню
+    await bot.edit_message_text(chat_id=callback_query.message.chat.id,
+                                message_id=callback_query.message.message_id,
+                                text=fag_post,
+                                reply_markup=inline_keyboard_markup)
 
 
 def fag_register_message_handler():

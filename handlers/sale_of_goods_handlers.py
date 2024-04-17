@@ -9,12 +9,11 @@ from loguru import logger  # Логирование с помощью loguru
 from yookassa import Configuration, Payment
 
 from handlers.user_handlers.user_handlers import checking_for_presence_in_the_user_database
-from keyboards.user_keyboards import payment_keyboard
+from keyboards.user_keyboards import payment_keyboard, start_menu, start_menu_keyboard
 from system.dispatcher import bot, dp, ACCOUNT_ID, SECRET_KEY, ADMIN_CHAT_ID
 
 
-class PaymentStates:  # Define your FSM states if needed
-    PROCESSING = "processing"
+
 
 
 def payment_yookassa():
@@ -47,12 +46,10 @@ def payment_yookassa():
 async def check_payment(callback_query: types.CallbackQuery, state: FSMContext):
     split_data = callback_query.data.split("_")
     logger.info(split_data[2])
-    # Check the payment status using the YooKassa API
-    payment_info = Payment.find_one(split_data[2])
+    payment_info = Payment.find_one(split_data[2])  # Check the payment status using the YooKassa API
     logger.info(payment_info)
     product = "TelegramaMaster"
-    # Process the payment status
-    if payment_info.status == "succeeded":
+    if payment_info.status == "succeeded":  # Process the payment status
         payment_status = "succeeded"
         date = payment_info.captured_at
         logger.info(date)
@@ -68,12 +65,13 @@ async def check_payment(callback_query: types.CallbackQuery, state: FSMContext):
                         callback_query.from_user.username, payment_info.id, product, date, payment_status))
         conn.commit()
         # Создайте файл, который вы хотите отправить
-        # document_path = "setting/password/Telegram_SMM_BOT/password.txt"  # Укажите путь к вашему файлу
         caption = (f"Платеж на сумму 1000 руб прошел успешно‼️ \n\n"
                    f"Вы можете скачать программу https://t.me/master_tg_d/286\n\n"
                    f"Для возврата в начальное меню нажмите /start")
+        inline_keyboard_markup = start_menu()  # Отправляемся в главное меню
         document = FSInputFile("setting/password/Telegram_SMM_BOT/password.txt")
-        await bot.send_document(chat_id=callback_query.from_user.id, document=document, caption=caption)
+        await bot.send_document(chat_id=callback_query.from_user.id, document=document, caption=caption,
+                                reply_markup=inline_keyboard_markup)
 
         result = checking_for_presence_in_the_user_database(callback_query.from_user.id)
 
@@ -86,7 +84,7 @@ async def check_payment(callback_query: types.CallbackQuery, state: FSMContext):
                                                                f"Username: @{callback_query.from_user.username},\n"
                                                                f"Имя: {callback_query.from_user.first_name},\n"
                                                                f"Фамилия: {callback_query.from_user.last_name},\n\n"
-                                                               f"Приобрел TelegramMaster")  # ID пользователя нет в базе данных
+                                                               f"Приобрел TelegramMaster")
     else:
         await bot.send_message(callback_query.message.chat.id, "Payment failed.")
 
@@ -111,7 +109,8 @@ async def buy(callback_query: types.CallbackQuery, state: FSMContext):
         caption = (f"Вы можете скачать программу https://t.me/master_tg_d/292\n\n"
                    f"Для возврата в начальное меню нажмите /start")  # Отправка ссылки на программу
         # Отправка файла
-        await bot.send_document(chat_id=user_id, document=document, caption=caption)
+        inline_keyboard_markup = start_menu_keyboard()  # Отправляемся в главное меню
+        await bot.send_document(chat_id=user_id, document=document, caption=caption, reply_markup=inline_keyboard_markup)
     else:  # Пользователь не делал покупку
         current_date = datetime.datetime.now().strftime("%Y-%m-%d")
         url, payment = payment_yookassa()
@@ -128,4 +127,3 @@ def buy_handler():
     """Регистрируем handlers для бота"""
     dp.message.register(buy)
     dp.message.register(check_payment)
-
