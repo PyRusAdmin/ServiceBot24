@@ -9,9 +9,7 @@ from system.dispatcher import dp, bot  # Подключение к боту и �
 @dp.callback_query(F.data == "reference")
 async def faq_handler(callback_query: types.CallbackQuery):
     """Пояснение для пользователя FAG"""
-    # disable_web_page_preview=True - скрыть предпросмотр ссылок в Telegram
     inline_keyboard_markup = start_menu()  # Отправляемся в главное меню
-    # await bot.send_message(callback_query.from_user.id, message_text_faq, disable_web_page_preview=True)
     await bot.edit_message_text(chat_id=callback_query.message.chat.id,
                                 message_id=callback_query.message.message_id,
                                 text=message_text_faq,

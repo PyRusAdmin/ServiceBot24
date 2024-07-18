@@ -144,7 +144,7 @@ async def get_password(callback: types.CallbackQuery):
     """Обработчик команды /get_password для получения пароля для пользователя"""
     try:
         logger.info(f'Пользователь {callback.from_user.id} {callback.from_user.username} запросил / запросила пароль '
-                    f'от TelegramMaster')
+                    f'от TelegramMaster 2.0')
         logger.info(callback.from_user.id)  # Проверка ID пользователя
         user = await bot.get_chat_member(chat_id="@master_tg_d", user_id=callback.from_user.id)  # Проверка подписки
         logger.info(f"User Status: {user.status}")
@@ -159,16 +159,16 @@ async def get_password(callback: types.CallbackQuery):
                                                                    f"Username: @{callback.from_user.username},\n"
                                                                    f"Имя: {callback.from_user.first_name},\n"
                                                                    f"Фамилия: {callback.from_user.last_name},\n"
-                                                                   f"Запросил пароль от TelegramMaster")
+                                                                   f"Запросил пароль от TelegramMaster 2.0")
             else:
                 text = (
                     "Для того чтобы воспользоваться всеми возможностями бота 🤖, вам необходимо подписаться на канал "
-                    "🔗 @master_tg_d и купить TelegramMaster.\n\n"
+                    "🔗 @master_tg_d и купить TelegramMaster 2.0.\n\n"
 
-                    "Это позволит вам получить самую свежую версию TelegramMaster и воспользоваться всеми новыми "
+                    "Это позволит вам получить самую свежую версию TelegramMaster 2.0 и воспользоваться всеми новыми "
                     "функциями.\n\n"
 
-                    "Если вы ранее уже приобретали TelegramMaster, но бот 🤖 не выдаёт пароль, обратитесь к "
+                    "Если вы ранее уже приобретали TelegramMaster 2.0, но бот 🤖 не выдаёт пароль, обратитесь к "
                     "🔗 @h24service_bot.")
                 await bot.send_message(chat_id=callback.message.chat.id, text=text)  # ID пользователя нет в базе данных
                 await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
@@ -176,15 +176,15 @@ async def get_password(callback: types.CallbackQuery):
                                                                    f"Username: @{callback.from_user.username},\n"
                                                                    f"Имя: {callback.from_user.first_name},\n"
                                                                    f"Фамилия: {callback.from_user.last_name},\n"
-                                                                   f"Запросил пароль от TelegramMaster")
+                                                                   f"Запросил пароль от TelegramMaster 2.0")
         else:
             text = ("Для того чтобы воспользоваться всеми возможностями бота 🤖, вам необходимо подписаться на канал "
-                    "🔗 @master_tg_d и купить TelegramMaster.\n\n"
+                    "🔗 @master_tg_d и купить TelegramMaster 2.0.\n\n"
 
-                    "Это позволит вам получить самую свежую версию TelegramMaster и воспользоваться всеми новыми "
+                    "Это позволит вам получить самую свежую версию TelegramMaster 2.0 и воспользоваться всеми новыми "
                     "функциями.\n\n"
 
-                    "Если вы ранее уже приобретали TelegramMaster, но бот 🤖 не выдаёт пароль, обратитесь к "
+                    "Если вы ранее уже приобретали TelegramMaster 2.0, но бот 🤖 не выдаёт пароль, обратитесь к "
                     "🔗 @h24service_bot.")
             await bot.send_message(chat_id=callback.message.chat.id, text=text)  # ID пользователя нет в базе данных
             await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
@@ -192,7 +192,7 @@ async def get_password(callback: types.CallbackQuery):
                                                                f"Username: @{callback.from_user.username},\n"
                                                                f"Имя: {callback.from_user.first_name},\n"
                                                                f"Фамилия: {callback.from_user.last_name},\n"
-                                                               f"Запросил пароль от TelegramMaster")
+                                                               f"Запросил пароль от TelegramMaster 2.0")
     except Exception as e:
         logger.error(e)
 

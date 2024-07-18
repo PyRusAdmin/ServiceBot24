@@ -18,9 +18,9 @@ def greeting_keyboards() -> InlineKeyboardMarkup:
     """Клавиатуры поста приветствия 👋(Получения пароля от проектов, обратная связь, отправка логов)"""
 
     rows = [
-        [InlineKeyboardButton(text='📥 Пароль от TelegramMaster', callback_data='get_password')],
+        [InlineKeyboardButton(text='📥 Пароль от TelegramMaster 2.0', callback_data='get_password')],
         [InlineKeyboardButton(text='📤 Пароль от Telegram_Commentator_GPT', callback_data='get_password_tg_com')],
-        [InlineKeyboardButton(text='Купить TelegramMaster', callback_data='delivery')],
+        [InlineKeyboardButton(text='Купить TelegramMaster 2.0', callback_data='delivery')],
         [InlineKeyboardButton(text='Оплатить настройку ПО', callback_data='purchasing_a_program_setup_service')],
         [
             InlineKeyboardButton(text='📨 Отправить log файл', callback_data='sending_file'),
