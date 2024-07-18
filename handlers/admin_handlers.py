@@ -69,9 +69,3 @@ async def deleting_a_message_about_a_member_has_left_the_group(message: types.Me
     date_left = datetime.datetime.now()  # Дата выхода пользователя с группы
     logger.info(f"Участник покинул группу: {username}, {first_name}, {last_name}, {date_left}, {chat_title}, {chat_id}, {user_id}")
     await bot.delete_message(message.chat.id, message.message_id)  # Удаляем сообщение о покинувшем участнике группы
-
-
-# def buy_handler_program_admin_service():
-#     """Регистрируем handlers для бота"""
-#     dp.register_message_handler(deleting_message_about_adding_new_group_member)
-#     dp.register_message_handler(deleting_a_message_about_a_member_has_left_the_group)

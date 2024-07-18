@@ -10,7 +10,7 @@ from aiogram.types import FSInputFile
 from loguru import logger
 
 from keyboards.user_keyboards import greeting_keyboards  # Клавиатуры поста приветствия
-from messages.user_messages import greeting_post, message_text_faq  # Пояснение для пользователя FAG
+from messages.user_messages import greeting_post  # Пояснение для пользователя FAG
 from system.dispatcher import dp, bot, ADMIN_CHAT_ID  # Подключение к боту и диспетчеру пользователя
 
 
@@ -62,7 +62,7 @@ async def start_menu(callback_query: types.CallbackQuery, state: FSMContext):
                        callback_query.from_user.last_name,
                        callback_query.from_user.username, current_date))
     conn.commit()
-    print(f'Запустили бота: {callback_query.from_user.id, callback_query.from_user.username, current_date}')
+    logger.info(f'Запустили бота: {callback_query.from_user.id, callback_query.from_user.username, current_date}')
     keyboards_greeting = greeting_keyboards()
     # Клавиатура для Калькулятора цен или Контактов
     await bot.edit_message_text(
@@ -91,16 +91,8 @@ async def start_menu_no_edit(callback_query: types.CallbackQuery, state: FSMCont
                        callback_query.from_user.last_name,
                        callback_query.from_user.username, current_date))
     conn.commit()
-    print(f'Запустили бота: {callback_query.from_user.id, callback_query.from_user.username, current_date}')
+    logger.info(f'Запустили бота: {callback_query.from_user.id, callback_query.from_user.username, current_date}')
     keyboards_greeting = greeting_keyboards()
-    # Клавиатура для Калькулятора цен или Контактов
-    # await bot.edit_message_text(
-    #     chat_id=callback_query.from_user.id,
-    #     message_id=callback_query.message.message_id,
-    #     text=greeting_post,
-    #     reply_markup=keyboards_greeting,
-    #     disable_web_page_preview=True,
-    # )
     await bot.send_message(callback_query.message.chat.id, greeting_post, reply_markup=keyboards_greeting)
 
 
