@@ -42,6 +42,7 @@ async def greeting(message: types.Message, state: FSMContext):
         text=greeting_post,
         reply_markup=keyboards_greeting,
         disable_web_page_preview=True,
+        parse_mode="HTML"
     )
 
 
@@ -71,6 +72,7 @@ async def start_menu(callback_query: types.CallbackQuery, state: FSMContext):
         text=greeting_post,
         reply_markup=keyboards_greeting,
         disable_web_page_preview=True,
+        parse_mode="HTML",
     )
 
 
@@ -93,7 +95,8 @@ async def start_menu_no_edit(callback_query: types.CallbackQuery, state: FSMCont
     conn.commit()
     logger.info(f'Запустили бота: {callback_query.from_user.id, callback_query.from_user.username, current_date}')
     keyboards_greeting = greeting_keyboards()
-    await bot.send_message(callback_query.message.chat.id, greeting_post, reply_markup=keyboards_greeting)
+    await bot.send_message(callback_query.message.chat.id, greeting_post, reply_markup=keyboards_greeting,
+                           parse_mode="HTML", )
 
 
 def checking_for_presence_in_the_user_database(user_id):
@@ -131,64 +134,6 @@ async def process_id_command(message: types.Message):
         logger.exception(error)
 
 
-@dp.callback_query(F.data == "get_password")
-async def get_password(callback: types.CallbackQuery):
-    """Обработчик команды /get_password для получения пароля для пользователя"""
-    try:
-        logger.info(f'Пользователь {callback.from_user.id} {callback.from_user.username} запросил / запросила пароль '
-                    f'от TelegramMaster 2.0')
-        logger.info(callback.from_user.id)  # Проверка ID пользователя
-        user = await bot.get_chat_member(chat_id="@master_tg_d", user_id=callback.from_user.id)  # Проверка подписки
-        logger.info(f"User Status: {user.status}")
-        if user.status in ['member', 'administrator', 'creator']:
-            result = checking_for_presence_in_the_user_database(callback.from_user.id)
-            if result:
-                # Пользователь подписан и имеет ID в базе данных, отправляем файл с паролем
-                document = FSInputFile('setting/password/Telegram_SMM_BOT/password.txt')
-                await bot.send_document(chat_id=callback.message.chat.id, document=document)
-                await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
-                                                                   f"ID {callback.from_user.id},\n"
-                                                                   f"Username: @{callback.from_user.username},\n"
-                                                                   f"Имя: {callback.from_user.first_name},\n"
-                                                                   f"Фамилия: {callback.from_user.last_name},\n"
-                                                                   f"Запросил пароль от TelegramMaster 2.0")
-            else:
-                text = (
-                    "Для того чтобы воспользоваться всеми возможностями бота 🤖, вам необходимо подписаться на канал "
-                    "🔗 @master_tg_d и купить TelegramMaster 2.0.\n\n"
-
-                    "Это позволит вам получить самую свежую версию TelegramMaster 2.0 и воспользоваться всеми новыми "
-                    "функциями.\n\n"
-
-                    "Если вы ранее уже приобретали TelegramMaster 2.0, но бот 🤖 не выдаёт пароль, обратитесь к "
-                    "🔗 @h24service_bot.")
-                await bot.send_message(chat_id=callback.message.chat.id, text=text)  # ID пользователя нет в базе данных
-                await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
-                                                                   f"ID {callback.from_user.id},\n"
-                                                                   f"Username: @{callback.from_user.username},\n"
-                                                                   f"Имя: {callback.from_user.first_name},\n"
-                                                                   f"Фамилия: {callback.from_user.last_name},\n"
-                                                                   f"Запросил пароль от TelegramMaster 2.0")
-        else:
-            text = ("Для того чтобы воспользоваться всеми возможностями бота 🤖, вам необходимо подписаться на канал "
-                    "🔗 @master_tg_d и купить TelegramMaster 2.0.\n\n"
-
-                    "Это позволит вам получить самую свежую версию TelegramMaster 2.0 и воспользоваться всеми новыми "
-                    "функциями.\n\n"
-
-                    "Если вы ранее уже приобретали TelegramMaster 2.0, но бот 🤖 не выдаёт пароль, обратитесь к "
-                    "🔗 @h24service_bot.")
-            await bot.send_message(chat_id=callback.message.chat.id, text=text)  # ID пользователя нет в базе данных
-            await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
-                                                               f"ID {callback.from_user.id},\n"
-                                                               f"Username: @{callback.from_user.username},\n"
-                                                               f"Имя: {callback.from_user.first_name},\n"
-                                                               f"Фамилия: {callback.from_user.last_name},\n"
-                                                               f"Запросил пароль от TelegramMaster 2.0")
-    except Exception as e:
-        logger.error(e)
-
-
 @dp.callback_query(F.data == "get_password_tg_com")
 async def get_password_tg_com(callback: types.CallbackQuery):
     """Проверка подписки на канал, бот обязательно должен быть админом, ссылка в виде: @master_tg_d"""
@@ -219,6 +164,6 @@ async def get_password_tg_com(callback: types.CallbackQuery):
 
 def greeting_handler():
     dp.message.register(greeting)
-    dp.message.register(get_password)
+    # dp.message.register(get_password)
     dp.message.register(process_id_command)
     dp.message.register(start_menu)

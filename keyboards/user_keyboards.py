@@ -1,5 +1,16 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from aiogram.types import WebAppInfo
+
+
+def payment_keyboard_password(url, id_pay) -> InlineKeyboardMarkup:
+    """Клавиатура оплаты"""
+    rows = [
+        [InlineKeyboardButton(text="💳 Оплатить 150 руб.", url=url)],
+        [InlineKeyboardButton(text='Проверить оплату', callback_data=f"payment_pass_{id_pay}")],
+    ]
+
+    payment_keyboard_password_key = InlineKeyboardMarkup(inline_keyboard=rows)
+
+    return payment_keyboard_password_key
 
 
 def payment_keyboard(url, id_pay) -> InlineKeyboardMarkup:

@@ -28,7 +28,8 @@ async def fag_handler(callback_query: types.CallbackQuery):
     await bot.edit_message_text(chat_id=callback_query.message.chat.id,
                                 message_id=callback_query.message.message_id,
                                 text=fag_post,
-                                reply_markup=inline_keyboard_markup)
+                                reply_markup=inline_keyboard_markup,
+                                parse_mode="HTML")
 
 
 def fag_register_message_handler():
