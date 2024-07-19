@@ -35,8 +35,7 @@ async def deleting_message_about_adding_new_group_member(message: types.Message)
     last_name = Фамилия пользователя который вступил в группу
     """
     chat_id = message.chat.id  # Получаем ID чата
-    print(chat_id)
-    print(chat_id)
+    logger.info(chat_id)
     chat_title = message.chat.title  # Получаем название чата
     user_id = message.new_chat_members[0].id  # Получаем ID пользователя, который зашел в группу
     username = message.new_chat_members[0].username  # Получаем username пользователя, который вступил в группу

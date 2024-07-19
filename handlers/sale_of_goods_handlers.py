@@ -169,10 +169,6 @@ async def get_password(callback: types.CallbackQuery):
             result = checking_for_presence_in_the_user_database(callback.from_user.id)
             if result:
 
-                # Пользователь подписан и имеет ID в базе данных, отправляем файл с паролем
-                # document = FSInputFile('setting/password/TelegramMaster/password.txt')
-                # await bot.send_document(chat_id=callback.message.chat.id, document=document)
-
                 current_date = datetime.datetime.now().strftime("%Y-%m-%d")
                 url, payment = payment_yookassa_telegram_master()
                 payment_keyboard_key = payment_keyboard_password(url, payment)

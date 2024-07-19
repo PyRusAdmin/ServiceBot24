@@ -18,6 +18,24 @@ class SomeState(StatesGroup):
     some_state = State()  # Пример состояния, можно добавить дополнительные состояния
 
 
+@dp.message(Command("pass"))
+async def send_pass(message: types.Message, state: FSMContext):
+    """Обработчик команды /pass, для отправки пароля в бота"""
+    await message.answer(f'Введите пароль: {message.text}')
+    await state.set_state(SomeState.some_state)  # Обновляем состояние
+
+
+@dp.message(SomeState.some_state)
+async def greeting(message: types.Message, state: FSMContext):
+    """Обработчик состояния some_state, он же пост приветствия"""
+    text = message.text  # Получаем текст сообщения
+    logger.info(text)
+    # Используем with open для открытия файла с использованием кодека utf-8
+    with open("setting/password/TelegramMaster/password.txt", "w", encoding='utf-8') as file:
+        file.write(text)
+    await state.clear()
+
+
 @dp.message(Command('start'))
 async def greeting(message: types.Message, state: FSMContext):
     """Обработчик команды /start, он же пост приветствия"""
