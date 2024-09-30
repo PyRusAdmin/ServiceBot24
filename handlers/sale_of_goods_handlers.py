@@ -74,10 +74,10 @@ def payment_yookassa():
 async def check_payment(callback_query: types.CallbackQuery, state: FSMContext):
     split_data = callback_query.data.split("_")
     logger.info(split_data[2])
-    payment_info = Payment.find_one(split_data[2])  # Check the payment status using the YooKassa API
+    payment_info = Payment.find_one(split_data[2])  # Проверьте статус платежа с помощью API YooKassa
     logger.info(payment_info)
     product = "TelegramaMaster 2.0"
-    if payment_info.status == "succeeded":  # Process the payment status
+    if payment_info.status == "succeeded":  # Обработка статуса платежа
         payment_status = "succeeded"
         date = payment_info.captured_at
         logger.info(date)
@@ -225,10 +225,10 @@ async def get_password(callback: types.CallbackQuery):
 async def check_payments(callback_query: types.CallbackQuery, state: FSMContext):
     split_data = callback_query.data.split("_")
     logger.info(split_data[2])
-    payment_info = Payment.find_one(split_data[2])  # Check the payment status using the YooKassa API
+    payment_info = Payment.find_one(split_data[2])  # Проверьте статус платежа с помощью API YooKassa
     logger.info(payment_info)
     product = "Пароль обновления: ТelegramMaster 2.0"
-    if payment_info.status == "succeeded":  # Process the payment status
+    if payment_info.status == "succeeded":  # Обработка статуса платежа
         payment_status = "succeeded"
         date = payment_info.captured_at
         logger.info(date)

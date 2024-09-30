@@ -40,7 +40,6 @@ async def greeting(message: types.Message, state: FSMContext):
 async def greeting(message: types.Message, state: FSMContext):
     """Обработчик команды /start, он же пост приветствия"""
     await state.clear()
-    # await state.reset_state()
     # Получаем текущую дату и время
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # Записываем данные пользователя в базу данных

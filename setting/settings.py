@@ -1,8 +1,11 @@
 import environs
+from loguru import logger
 
-env = environs.Env()
-env.read_env('.env')
+try:
+    env = environs.Env()
+    env.read_env('.env')
 
-BOT_TOKEN = env('BOT_TOKEN')
-CRYPTOMUS_API_KEY = env('CRYPTOMUS_API_KEY')
-CRYPTOMUS_MERCHANT_ID = env('CRYPTOMUS_MERCHANT_ID')
+    CRYPTOMUS_API_KEY = env('CRYPTOMUS_API_KEY')
+    CRYPTOMUS_MERCHANT_ID = env('CRYPTOMUS_MERCHANT_ID')
+except Exception as e:
+    logger.exception(f"Error: {e}")

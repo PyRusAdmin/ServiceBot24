@@ -4,6 +4,7 @@ import sys
 
 from loguru import logger  # https://github.com/Delgan/loguru
 
+from handlers.cry_handlers import cry_register_message_handler
 from handlers.fag_handlers import fag_register_message_handler
 from handlers.program_service_handlers import buy_handler_program_setup_service
 from handlers.sale_of_goods_handlers import buy_handler
@@ -25,6 +26,9 @@ async def main() -> None:
     fag_register_message_handler()  # Помощь по боту
     sending_log_file_register_handler()
     register_faq_handler()  # Регистрация FAQ
+
+    # Оплата Криптой
+    cry_register_message_handler()
 
 
 if __name__ == '__main__':

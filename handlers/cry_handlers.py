@@ -7,7 +7,6 @@ import uuid
 
 import aiohttp
 from aiogram.filters import Command
-from aiogram.filters import CommandStart
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.types import Message
@@ -36,6 +35,7 @@ async def make_request(url: str, invoice_data: dict):
 
 
 async def check_invoice_paid(id: str, message):
+    """Проверка счета на оплаченность"""
     while True:
         invoice_data = await make_request(
             url="https://api.cryptomus.com/v1/payment/info",
@@ -51,8 +51,9 @@ async def check_invoice_paid(id: str, message):
         await asyncio.sleep(10)
 
 
-@dp.message(CommandStart())
+@form_router.message(Command("payment_crypta_pas"))
 async def buy_handler(message: Message):
+    """Оплата пароля TelegramMaster 2.0 криптой"""
 
     results = read_amount_db()
     logger.info(results)
@@ -82,7 +83,7 @@ class ServiceCreation(StatesGroup):
 
 @form_router.message(Command("service_creation"))
 async def service_creation_handler(message: Message, state: FSMContext):
-    """Обработчик команды для создания услуги (только для админа)"""
+    """Обработчик команды для создания услуги и написания цены (только для админа)"""
     logger.info(message.from_user.id)
 
     if message.from_user.id in ADMIN_USER_IDS:
@@ -92,30 +93,39 @@ async def service_creation_handler(message: Message, state: FSMContext):
         await message.reply("Вы не админ!")
         return
 
-# Функция для обновления суммы в базе данных
 def update_amount_db(amount):
-    conn = sqlite3.connect("data.db")
-    cursor = conn.cursor()
-    cursor.execute('''CREATE TABLE IF NOT EXISTS settings (amount)''')
-    cursor.execute('''INSERT INTO settings (amount) VALUES (?)''', (amount,))
-    conn.commit()
-    conn.close()
+    """Функция для обновления суммы в базе данных"""
+    try:
+        conn = sqlite3.connect("setting/user_data.db")
+        cursor = conn.cursor()
+        cursor.execute('''CREATE TABLE IF NOT EXISTS settings (amount)''')
+        cursor.execute('''INSERT INTO settings (amount) VALUES (?)''', (amount,))
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        logger.exception(f"Ошибка при обновлении базы данных: {e}")
 
 
 def read_amount_db():
-    conn = sqlite3.connect("data.db")
-    cursor = conn.cursor()
-    cursor.execute('''SELECT amount FROM settings''')
-    result = cursor.fetchone()
-    conn.close()
-    return result[0]
+    try:
+        conn = sqlite3.connect("setting/user_data.db")
+        cursor = conn.cursor()
+        cursor.execute('''SELECT amount FROM settings''')
+        result = cursor.fetchone()
+        conn.close()
+        return result[0]
+    except Exception as e:
+        logger.exception(f"Ошибка при чтении базы данных: {e}")
 
 def lcear_amount():
-    conn = sqlite3.connect("data.db")
-    cursor = conn.cursor()
-    cursor.execute('''DELETE FROM settings''')
-    conn.commit()
-    conn.close()
+    try:
+        conn = sqlite3.connect("setting/user_data.db")
+        cursor = conn.cursor()
+        cursor.execute('''DELETE FROM settings''')
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        logger.exception(f"Ошибка при очистке базы данных: {e}")
 
 
 @form_router.message(ServiceCreation.enter_amount)
@@ -126,3 +136,9 @@ async def update_info(message: Message, state: FSMContext):
     update_amount_db(amount)  # Сохранение суммы в базу данных
     await message.reply("Сумма успешно обновлена в базе данных.")
     await state.clear()
+
+
+def cry_register_message_handler():
+    """Регистрируем handlers для бота"""
+    dp.message.register(buy_handler)
+    dp.message.register(service_creation_handler)
