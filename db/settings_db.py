@@ -39,7 +39,13 @@ def clear_amount():
     except Exception as e:
         logger.exception(f"Ошибка при очистке базы данных: {e}")
 
-
+def database(user_id):
+    conn = connect_db()
+    cursor = conn.cursor()
+    # Проверка наличия записей для данного пользователя с определенным статусом заказа
+    cursor.execute("SELECT * FROM users_pay WHERE user_id=? AND payment_status=?", (user_id, "succeeded"))
+    result = cursor.fetchone()
+    return result
 
 def checking_for_presence_in_the_user_database(user_id):
     # Инициализация базы данных SQLite

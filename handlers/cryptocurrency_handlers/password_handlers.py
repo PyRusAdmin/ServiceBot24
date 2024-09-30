@@ -1,22 +1,26 @@
 import asyncio
 import base64
+import datetime  # Дата
 import hashlib
 import json
+import sqlite3
 import uuid
-import datetime  # Дата
+
 import aiohttp
 from aiogram import types, F
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
+from aiogram.types import FSInputFile
 from aiogram.types import Message
-from loguru import logger
-import sqlite3
+from loguru import logger  # Логирование с помощью loguru
+
+from db.settings_db import checking_for_presence_in_the_user_database
 from db.settings_db import clear_amount, update_amount_db, read_amount_db
-from keyboards.user_keyboards import start_menu
+from keyboards.user_keyboards import start_menu, start_menu_keyboard
 from setting import settings
-from system.dispatcher import bot, ADMIN_CHAT_ID
-from system.dispatcher import dp, form_router
+from system.dispatcher import bot, dp, ADMIN_CHAT_ID
+from system.dispatcher import form_router
 
 
 async def make_request(url: str, invoice_data: dict):
@@ -51,11 +55,16 @@ async def buy_handler(callback_query: types.CallbackQuery):
         },
     )
 
-    asyncio.create_task(check_invoice_paid(invoice_data['result']['uuid'], message=bot))
+    asyncio.create_task(check_invoice_paid(invoice_data['result']['uuid'], callback_query=callback_query))
 
     await bot.send_message(chat_id=callback_query.message.chat.id,
-                           text=f"Счет для оплаты: {invoice_data['result']['url']}",
-                           reply_markup=start_menu())
+                           text=f"💳 <b>Счет для оплаты криптовалютой</b> 💳\n\n"
+                                f"🌐 Вы собираетесь получить пароль от <b>TelegramMaster 2.0</b>. Пожалуйста, воспользуйтесь ссылкой ниже для оплаты:\n"
+                                f"🔗 <a href='{invoice_data['result']['url']}'>Перейти к оплате</a>\n\n"
+                                f"⚠️ <b>Важная информация:</b> после завершения платежа бот автоматически отправит вам все необходимые данные.\n"
+                                f"❗️ Обратите внимание, что возврат денежных средств после оплаты криптовалютой невозможен.\n\n"
+                                f"💡 Если у вас возникнут вопросы, не стесняйтесь обращаться к нам. Спасибо за доверие! 🙌",
+                           reply_markup=start_menu(), parse_mode="HTML")
 
 
 async def check_invoice_paid(id: str, callback_query):
@@ -80,7 +89,7 @@ async def check_invoice_paid(id: str, callback_query):
                            (callback_query.from_user.id,
                             callback_query.from_user.first_name,
                             callback_query.from_user.last_name,
-                            callback_query.from_user.username, payment_info.id, product, date, payment_status))
+                            callback_query.from_user.username, invoice_data, "Пароль обновления: ТelegramMaster 2.0", date, "succeeded"))
             conn.commit()
 
             # Создайте файл, который вы хотите отправить
@@ -105,12 +114,12 @@ async def check_invoice_paid(id: str, callback_query):
                                                                    f"Username: @{callback_query.from_user.username},\n"
                                                                    f"Имя: {callback_query.from_user.first_name},\n"
                                                                    f"Фамилия: {callback_query.from_user.last_name},\n\n"
-                                                                   f"Приобрел пароль от TelegramMaster 2.0")
+                                                                   f"Приобрел пароль от TelegramMaster 2.0 (криптой)")
 
 
             return
         else:
-            logger.info("Счет еще не оплачен")
+            logger.info(f"Счет {invoice_data['result']['url']} еще не оплачен")
 
         await asyncio.sleep(10)
 
