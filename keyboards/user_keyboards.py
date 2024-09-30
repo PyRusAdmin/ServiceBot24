@@ -4,11 +4,10 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 def payment_keyboard_password(url, id_pay) -> InlineKeyboardMarkup:
     """Клавиатура оплаты"""
     rows = [
-        [InlineKeyboardButton(text="💳 Оплатить 150 руб.", url=url)],
-        [InlineKeyboardButton(text='Проверить оплату', callback_data=f"payment_pass_{id_pay}")],
+        [InlineKeyboardButton(text="💳 Оплатить 150 руб. (Юкасса)", url=url)],
+        [InlineKeyboardButton(text='Проверить оплату (Юкасса)', callback_data=f"payment_pass_{id_pay}")],
 
         [InlineKeyboardButton(text="💳 Оплатить 150 руб. (Крипта)", callback_data=f"payment_crypta_pas")],
-        [InlineKeyboardButton(text='Проверить оплату (Крипта)', callback_data=f"payment_crypta")],
     ]
 
     payment_keyboard_password_key = InlineKeyboardMarkup(inline_keyboard=rows)

@@ -116,15 +116,7 @@ async def start_menu_no_edit(callback_query: types.CallbackQuery, state: FSMCont
                            parse_mode="HTML", )
 
 
-def checking_for_presence_in_the_user_database(user_id):
-    # Инициализация базы данных SQLite
-    conn = sqlite3.connect('setting/user_data.db')
-    cursor = conn.cursor()
-    cursor.execute('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY)')
-    # Проверка наличия ID в базе данных
-    cursor.execute('SELECT id FROM users WHERE id = ?', (user_id,))
-    result = cursor.fetchone()
-    return result
+
 
 
 # Инициализация базы данных SQLite

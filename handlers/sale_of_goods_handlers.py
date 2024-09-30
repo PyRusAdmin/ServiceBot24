@@ -8,7 +8,7 @@ from aiogram.types import FSInputFile
 from loguru import logger  # Логирование с помощью loguru
 from yookassa import Configuration, Payment
 
-from handlers.user_handlers.user_handlers import checking_for_presence_in_the_user_database
+from db.settings_db import checking_for_presence_in_the_user_database
 from keyboards.user_keyboards import payment_keyboard, start_menu, start_menu_keyboard, payment_keyboard_password
 from system.dispatcher import bot, dp, ACCOUNT_ID, SECRET_KEY, ADMIN_CHAT_ID
 
@@ -193,7 +193,7 @@ async def get_password(callback: types.CallbackQuery):
                     "функциями.\n\n"
 
                     "Если вы ранее уже приобретали TelegramMaster 2.0, но бот 🤖 не выдаёт пароль, обратитесь к "
-                    "🔗 @h24service_bot.")
+                    "🔗 @PyAdminRU.")
                 await bot.send_message(chat_id=callback.message.chat.id, text=text)  # ID пользователя нет в базе данных
                 await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
                                                                    f"ID {callback.from_user.id},\n"
@@ -209,7 +209,7 @@ async def get_password(callback: types.CallbackQuery):
                     "функциями.\n\n"
 
                     "Если вы ранее уже приобретали TelegramMaster 2.0, но бот 🤖 не выдаёт пароль, обратитесь к "
-                    "🔗 @h24service_bot.")
+                    "🔗 @PyAdminRU.")
             await bot.send_message(chat_id=callback.message.chat.id, text=text)  # ID пользователя нет в базе данных
             await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
                                                                f"ID {callback.from_user.id},\n"
