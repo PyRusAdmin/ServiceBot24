@@ -23,6 +23,7 @@ ID_MERCH = config.get('ID_MERCH', 'ID_MERCH')
 bot = Bot(
     token=bot_token,
 )
+
 storage = MemoryStorage()  # Хранилище
 dp = Dispatcher(storage=storage)
 logging.basicConfig(level=logging.INFO)  # Логирования

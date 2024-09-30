@@ -8,10 +8,8 @@ import uuid
 
 import aiohttp
 from aiogram import types, F
-from aiogram.types import FSInputFile
 from loguru import logger  # Логирование с помощью loguru
 
-from db.settings_db import checking_for_presence_in_the_user_database
 from keyboards.user_keyboards import start_menu
 from setting import settings
 from system.dispatcher import bot, dp, ADMIN_CHAT_ID
@@ -34,24 +32,24 @@ async def make_request(url: str, invoice_data: dict):
 
             return await response.json()
 
-@dp.callback_query(F.data == "payment_crypta_pas_program")
-async def payment_crypta_pas_program_handler(callback_query: types.CallbackQuery):
-    """Оплата TelegramMaster 2.0 криптой"""
+@dp.callback_query(F.data == "payment_crypta_pas_training_handler")
+async def payment_crypta_pas_training_handler(callback_query: types.CallbackQuery):
+    """Оплата установки и обучения криптой"""
 
     invoice_data = await make_request(
         url="https://api.cryptomus.com/v1/payment",
         invoice_data={
-            "amount": f"1000",
+            "amount": f"500",
             "currency": "RUB",
             "order_id": str(uuid.uuid4())
         },
     )
 
-    asyncio.create_task(check_invoice_paid_program(invoice_data['result']['uuid'], callback_query=callback_query))
+    asyncio.create_task(check_invoice_paid_training(invoice_data['result']['uuid'], callback_query=callback_query))
 
     await bot.send_message(chat_id=callback_query.message.chat.id,
                            text=f"💳 <b>Счет для оплаты криптовалютой</b> 💳\n\n"
-                                f"🌐 Вы собираетесь приобрести <b>TelegramMaster 2.0</b>. Пожалуйста, воспользуйтесь ссылкой ниже для оплаты:\n"
+                                f"🌐 Вы собираетесь приобрести <b>Помощь в настройке ПО (консультация)</b>. Пожалуйста, воспользуйтесь ссылкой ниже для оплаты:\n"
                                 f"🔗 <a href='{invoice_data['result']['url']}'>Перейти к оплате</a>\n\n"
                                 f"⚠️ <b>Важная информация:</b> после завершения платежа бот автоматически отправит вам все необходимые данные.\n"
                                 f"❗️ Обратите внимание, что возврат денежных средств после оплаты криптовалютой невозможен.\n\n"
@@ -59,7 +57,7 @@ async def payment_crypta_pas_program_handler(callback_query: types.CallbackQuery
                            reply_markup=start_menu(), parse_mode="HTML")
 
 
-async def check_invoice_paid_program(id: str, callback_query):
+async def check_invoice_paid_training(id: str, callback_query):
     """Проверка счета на оплаченность"""
     while True:
         invoice_data = await make_request(
@@ -81,32 +79,21 @@ async def check_invoice_paid_program(id: str, callback_query):
                            (callback_query.from_user.id,
                             callback_query.from_user.first_name,
                             callback_query.from_user.last_name,
-                            callback_query.from_user.username, invoice_data, "TelegramaMaster 2.0", date, "succeeded"))
+                            callback_query.from_user.username, invoice_data, "Помощь в настройке ПО (консультация)", date, "succeeded"))
             conn.commit()
 
-            # Создайте файл, который вы хотите отправить
-            caption = (f"Платеж на сумму 1000 руб прошел успешно‼️ \n\n"
-                       f"Вы можете скачать программу TelegramaMaster 2.0\n\n"
-                       f"Для возврата в начальное меню нажмите /start")
+            await bot.send_message(callback_query.from_user.id,
+                                   "Оплата прошла успешно‼️ \nДля согласования даты и времени , свяжитесь с администратором"
+                                   " через личные сообщения, используя указанный никнейм: @PyAdminRU. 🤖🔒\n\n"
+                                   "Для возврата в начальное меню, нажмите: /start")
 
-            inline_keyboard_markup = start_menu()  # Отправляемся в главное меню
-            document = FSInputFile("setting/password/TelegramMaster/TelegramMaster.zip")
 
-            await bot.send_document(chat_id=callback_query.from_user.id, document=document, caption=caption,
-                                    reply_markup=inline_keyboard_markup)
-
-            result = checking_for_presence_in_the_user_database(callback_query.from_user.id)
-
-            if result is None:
-                cursor.execute('INSERT INTO users (id) VALUES (?)', (callback_query.from_user.id,))
-                conn.commit()
-
-                await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
-                                                                   f"ID {callback_query.from_user.id},\n"
-                                                                   f"Username: @{callback_query.from_user.username},\n"
-                                                                   f"Имя: {callback_query.from_user.first_name},\n"
-                                                                   f"Фамилия: {callback_query.from_user.last_name},\n\n"
-                                                                   f"Приобрел TelegramMaster 2.0 (криптой)")
+            await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
+                                                               f"ID {callback_query.from_user.id},\n"
+                                                               f"Username: @{callback_query.from_user.username},\n"
+                                                               f"Имя: {callback_query.from_user.first_name},\n"
+                                                               f"Фамилия: {callback_query.from_user.last_name},\n\n"
+                                                               f"Приобрел 'Помощь в настройке ПО (консультация)' (криптой)")
 
 
             return
@@ -115,6 +102,6 @@ async def check_invoice_paid_program(id: str, callback_query):
 
         await asyncio.sleep(10)
 
-def program_cry_register_message_handler():
+def training_cry_register_message_handler():
     """Регистрируем handlers для бота"""
-    dp.message.register(payment_crypta_pas_program_handler)
+    dp.message.register(payment_crypta_pas_training_handler)

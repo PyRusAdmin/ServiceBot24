@@ -1,26 +1,10 @@
 import datetime
-import sqlite3
+
 from aiogram import types, F
 from loguru import logger
+
+from db.settings_db import writing_to_the_database_about_a_new_user
 from system.dispatcher import dp, bot
-
-
-def writing_to_the_database_about_a_new_user(chat_id, chat_title, user_id, username, first_name, last_name, date_now):
-    """Запись данных о новом пользователе"""
-    # Записываем данные в базу данных
-    conn = sqlite3.connect('setting/user_data.db')
-    cursor = conn.cursor()
-    cursor.execute(
-        f"CREATE TABLE IF NOT EXISTS group_members (chat_id, chat_title, user_id, username, first_name, last_name, "
-        "date_joined)"
-    )
-    cursor.execute(
-        f"INSERT INTO group_members (chat_id, chat_title, user_id, username, first_name, last_name, date_joined) "
-        "VALUES (?, ?, ?, ?, ?, ?, ?)",
-        (chat_id, chat_title, user_id, username, first_name, last_name, date_now)
-    )
-    conn.commit()
-    conn.close()
 
 
 @dp.message(F.new_chat_members)

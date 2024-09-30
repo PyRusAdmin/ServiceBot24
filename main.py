@@ -6,6 +6,7 @@ from loguru import logger  # https://github.com/Delgan/loguru
 
 from handlers.cryptocurrency_handlers.password_handlers import cry_register_message_handler
 from handlers.cryptocurrency_handlers.program_handlers import program_cry_register_message_handler
+from handlers.cryptocurrency_handlers.training_handlers import training_cry_register_message_handler
 from handlers.fag_handlers import fag_register_message_handler
 from handlers.program_service_handlers import buy_handler_program_setup_service
 from handlers.sale_of_goods_handlers import buy_handler
@@ -29,8 +30,9 @@ async def main() -> None:
     register_faq_handler()  # Регистрация FAQ
 
     # Оплата Криптой
-    cry_register_message_handler()
+    cry_register_message_handler() # Покупка пароля TelegramMaster 2.0
     program_cry_register_message_handler() # Покупка TelegramMaster 2.0
+    training_cry_register_message_handler() # Покупка 'Помощь в настройке ПО (консультация)'
 
 
 if __name__ == '__main__':
