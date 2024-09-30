@@ -2,3 +2,4 @@
 !/setting/password/TelegramMaster/password.txt
 !/setting/password/Telegram_Commentator_GPT/password.txt
 !/.venv/
+!/.env

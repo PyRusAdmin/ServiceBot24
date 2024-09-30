@@ -12,7 +12,6 @@ from handlers.user_handlers.user_handlers import checking_for_presence_in_the_us
 from keyboards.user_keyboards import payment_keyboard, start_menu, start_menu_keyboard, payment_keyboard_password
 from system.dispatcher import bot, dp, ACCOUNT_ID, SECRET_KEY, ADMIN_CHAT_ID
 
-
 def payment_yookassa_telegram_master():
     """Оплата Юкасса"""
 
@@ -219,7 +218,7 @@ async def get_password(callback: types.CallbackQuery):
                                                                f"Фамилия: {callback.from_user.last_name},\n"
                                                                f"Запросил пароль от TelegramMaster 2.0")
     except Exception as e:
-        logger.error(e)
+        logger.exception(e)
 
 
 @dp.callback_query(F.data.startswith("payment_pass"))
