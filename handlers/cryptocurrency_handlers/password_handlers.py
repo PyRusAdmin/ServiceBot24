@@ -40,6 +40,7 @@ async def make_request(url: str, invoice_data: dict):
 
             return await response.json()
 
+
 @dp.callback_query(F.data == "payment_crypta_pas")
 async def buy_handler(callback_query: types.CallbackQuery):
     """Оплата пароля TelegramMaster 2.0 криптой"""
@@ -89,7 +90,8 @@ async def check_invoice_paid(id: str, callback_query):
                            (callback_query.from_user.id,
                             callback_query.from_user.first_name,
                             callback_query.from_user.last_name,
-                            callback_query.from_user.username, invoice_data, "Пароль обновления: ТelegramMaster 2.0", date, "succeeded"))
+                            callback_query.from_user.username, invoice_data, "Пароль обновления: ТelegramMaster 2.0",
+                            date, "succeeded"))
             conn.commit()
 
             # Создайте файл, который вы хотите отправить
@@ -115,7 +117,6 @@ async def check_invoice_paid(id: str, callback_query):
                                                                    f"Имя: {callback_query.from_user.first_name},\n"
                                                                    f"Фамилия: {callback_query.from_user.last_name},\n\n"
                                                                    f"Приобрел пароль от TelegramMaster 2.0 (криптой)")
-
 
             return
         else:
@@ -148,7 +149,7 @@ async def service_creation_handler(message: Message, state: FSMContext):
 async def update_info(message: Message, state: FSMContext):
     """Обработчик текстовых сообщений для сохранения суммы в базу данных"""
     amount = message.text
-    clear_amount() # Очистка базы данных
+    clear_amount()  # Очистка базы данных
     update_amount_db(amount)  # Сохранение суммы в базу данных
     await message.reply("Сумма успешно обновлена в базе данных.")
     await state.clear()

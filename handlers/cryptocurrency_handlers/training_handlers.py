@@ -32,6 +32,7 @@ async def make_request(url: str, invoice_data: dict):
 
             return await response.json()
 
+
 @dp.callback_query(F.data == "payment_crypta_pas_training_handler")
 async def payment_crypta_pas_training_handler(callback_query: types.CallbackQuery):
     """Оплата установки и обучения криптой"""
@@ -79,14 +80,14 @@ async def check_invoice_paid_training(id: str, callback_query):
                            (callback_query.from_user.id,
                             callback_query.from_user.first_name,
                             callback_query.from_user.last_name,
-                            callback_query.from_user.username, invoice_data, "Помощь в настройке ПО (консультация)", date, "succeeded"))
+                            callback_query.from_user.username, invoice_data, "Помощь в настройке ПО (консультация)",
+                            date, "succeeded"))
             conn.commit()
 
             await bot.send_message(callback_query.from_user.id,
                                    "Оплата прошла успешно‼️ \nДля согласования даты и времени , свяжитесь с администратором"
                                    " через личные сообщения, используя указанный никнейм: @PyAdminRU. 🤖🔒\n\n"
                                    "Для возврата в начальное меню, нажмите: /start")
-
 
             await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
                                                                f"ID {callback_query.from_user.id},\n"
@@ -95,12 +96,12 @@ async def check_invoice_paid_training(id: str, callback_query):
                                                                f"Фамилия: {callback_query.from_user.last_name},\n\n"
                                                                f"Приобрел 'Помощь в настройке ПО (консультация)' (криптой)")
 
-
             return
         else:
             logger.info(f"Счет {invoice_data['result']['url']} еще не оплачен")
 
         await asyncio.sleep(10)
+
 
 def training_cry_register_message_handler():
     """Регистрируем handlers для бота"""

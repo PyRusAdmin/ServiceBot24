@@ -9,7 +9,8 @@ def purchasing_a_program_setup_service(url, id_pay) -> InlineKeyboardMarkup:
             InlineKeyboardButton(text='Проверить оплату', callback_data=f"check_service_{id_pay}"),
         ],
 
-        [InlineKeyboardButton(text="💳 Оплатить 500 руб. (Крипта)", callback_data=f"payment_crypta_pas_training_handler")],
+        [InlineKeyboardButton(text="💳 Оплатить 500 руб. (Крипта)",
+                              callback_data=f"payment_crypta_pas_training_handler")],
 
         [InlineKeyboardButton(text='В начальное меню', callback_data='start_menu')],
     ]

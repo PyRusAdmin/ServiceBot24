@@ -34,6 +34,7 @@ async def make_request(url: str, invoice_data: dict):
 
             return await response.json()
 
+
 @dp.callback_query(F.data == "payment_crypta_pas_program")
 async def payment_crypta_pas_program_handler(callback_query: types.CallbackQuery):
     """Оплата TelegramMaster 2.0 криптой"""
@@ -41,7 +42,7 @@ async def payment_crypta_pas_program_handler(callback_query: types.CallbackQuery
     invoice_data = await make_request(
         url="https://api.cryptomus.com/v1/payment",
         invoice_data={
-            "amount": f"1000",
+            "amount": f"1200",
             "currency": "RUB",
             "order_id": str(uuid.uuid4())
         },
@@ -108,12 +109,12 @@ async def check_invoice_paid_program(id: str, callback_query):
                                                                    f"Фамилия: {callback_query.from_user.last_name},\n\n"
                                                                    f"Приобрел TelegramMaster 2.0 (криптой)")
 
-
             return
         else:
             logger.info(f"Счет {invoice_data['result']['url']} еще не оплачен")
 
         await asyncio.sleep(10)
+
 
 def program_cry_register_message_handler():
     """Регистрируем handlers для бота"""

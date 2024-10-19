@@ -50,5 +50,6 @@ async def deleting_a_message_about_a_member_has_left_the_group(message: types.Me
     first_name = message.left_chat_member.first_name  # Получаем имя пользователя, того что вышел с группы
     last_name = message.left_chat_member.last_name  # Получаем фамилию пользователя, того что вышел с группы
     date_left = datetime.datetime.now()  # Дата выхода пользователя с группы
-    logger.info(f"Участник покинул группу: {username}, {first_name}, {last_name}, {date_left}, {chat_title}, {chat_id}, {user_id}")
+    logger.info(
+        f"Участник покинул группу: {username}, {first_name}, {last_name}, {date_left}, {chat_title}, {chat_id}, {user_id}")
     await bot.delete_message(message.chat.id, message.message_id)  # Удаляем сообщение о покинувшем участнике группы

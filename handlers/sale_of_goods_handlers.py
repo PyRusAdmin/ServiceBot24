@@ -12,6 +12,7 @@ from db.settings_db import checking_for_presence_in_the_user_database, database
 from keyboards.user_keyboards import payment_keyboard, start_menu, start_menu_keyboard, payment_keyboard_password
 from system.dispatcher import bot, dp, ACCOUNT_ID, SECRET_KEY, ADMIN_CHAT_ID
 
+
 def payment_yookassa_telegram_master():
     """Оплата Юкасса"""
 
@@ -48,7 +49,7 @@ def payment_yookassa():
     Configuration.secret_key = SECRET_KEY
 
     description_text = "Покупка программы: ТelegramMaster 2.0"  # Текст описания товара
-    price_goods = 1000.00  # Сумма товара
+    price_goods = 1200.00  # Сумма товара
 
     payment = Payment.create(
         {"amount": {"value": price_goods, "currency": "RUB"}, "capture": True,
