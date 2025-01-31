@@ -26,7 +26,7 @@ async def main() -> None:
     buy_handler()  # Купить Telegram_BOT_SMM
     buy_handler_program_setup_service()  # Оплата настройки ПО
     fag_register_message_handler()  # Помощь по боту
-    sending_log_file_register_handler()
+    sending_log_file_register_handler() # Отправка логов боту
     register_faq_handler()  # Регистрация FAQ
 
     # Оплата Криптой

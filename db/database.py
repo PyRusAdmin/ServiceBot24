@@ -1,6 +1,7 @@
 import sqlite3
 from loguru import logger
 
+
 def connect_db():
     """Подключение к базе данных"""
     try:

@@ -117,9 +117,6 @@ async def start_menu_no_edit(callback_query: types.CallbackQuery, state: FSMCont
                            parse_mode="HTML", )
 
 
-
-
-
 # Инициализация базы данных SQLite
 conn = sqlite3.connect('setting/user_data.db')
 cursor = conn.cursor()
