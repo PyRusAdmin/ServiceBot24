@@ -18,7 +18,7 @@ def payment_yookassa_program_setup_service():
     Configuration.secret_key = SECRET_KEY
 
     payment = Payment.create(
-        {"amount": {"value": payment_installation, # Сумма за установку ПО
+        {"amount": {"value": payment_installation,  # Сумма за установку ПО
                     "currency": "RUB"}, "capture": True,
          "confirmation": {"type": "redirect", "return_url": "https://t.me/h24service_bot"},
          "description": "Помощь в настройке ПО (консультация)",
@@ -93,7 +93,7 @@ async def buy_program_setup_service(callback_query: types.CallbackQuery):
                                 disable_web_page_preview=True)
 
 
-def buy_handler_program_setup_service():
+def register_yookassa_training():
     """Регистрируем handlers для бота"""
     dp.message.register(buy_program_setup_service)
     dp.message.register(check_payment_program_setup_service)
