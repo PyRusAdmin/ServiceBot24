@@ -11,6 +11,7 @@ from yookassa import Configuration, Payment
 from db.settings_db import checking_for_presence_in_the_user_database
 from handlers.payments.products_goods_services import password_TelegramMaster
 from keyboards.user_keyboards import start_menu_keyboard, payment_keyboard_password
+from messages.user_messages import generate_payment_message
 from system.dispatcher import bot, dp, ACCOUNT_ID, SECRET_KEY, ADMIN_CHAT_ID
 
 
@@ -60,11 +61,8 @@ async def get_password(callback: types.CallbackQuery):
                 current_date = datetime.datetime.now().strftime("%Y-%m-%d")
                 url, payment = payment_yookassa_telegram_master()
                 payment_keyboard_key = payment_keyboard_password(url, payment)
-                payment_mes = ("Получить пароль от ТelegramMaster 2.0. \n\n"
-                               f"Цена на {current_date} — {password_TelegramMaster} рублей.\n\n"
-                               "Если по какой-либо причине бот не выдал пароль или произошла ошибка платежа, писать: "
-                               "@PyAdminRU. 🤖🔒\n\n"
-                               "Для возврата в начальное меню, нажмите: /start")
+                # Сообщение пользователю
+                payment_mes = generate_payment_message(current_date, password_TelegramMaster)
                 await bot.send_message(callback.message.chat.id, payment_mes, reply_markup=payment_keyboard_key)
 
                 await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"

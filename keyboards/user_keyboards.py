@@ -9,7 +9,8 @@ def payment_keyboard_password(url, id_pay) -> InlineKeyboardMarkup:
         [InlineKeyboardButton(text=f"💳 Оплатить {password_TelegramMaster} руб. (Юкасса)", url=url)],
         [InlineKeyboardButton(text='Проверить оплату (Юкасса)', callback_data=f"payment_pass_{id_pay}")],
 
-        [InlineKeyboardButton(text=f"💳 Оплатить {password_TelegramMaster} руб. (Крипта)", callback_data=f"payment_crypta_pas")],
+        [InlineKeyboardButton(text=f"💳 Оплатить {password_TelegramMaster} руб. (Крипта)",
+                              callback_data=f"payment_crypta_pas")],
     ]
 
     payment_keyboard_password_key = InlineKeyboardMarkup(inline_keyboard=rows)
@@ -23,7 +24,8 @@ def payment_keyboard(url, id_pay) -> InlineKeyboardMarkup:
         [InlineKeyboardButton(text=f"💳 Оплатить {TelegramMaster} руб. (Юкасса)", url=url)],
         [InlineKeyboardButton(text='Проверить оплату (Юкасса)', callback_data=f"check_payment_{id_pay}")],
 
-        [InlineKeyboardButton(text=f"💳 Оплатить {TelegramMaster} руб. (Крипта)", callback_data=f"payment_crypta_pas_program")],
+        [InlineKeyboardButton(text=f"💳 Оплатить {TelegramMaster} руб. (Крипта)",
+                              callback_data=f"payment_crypta_pas_program")],
     ]
 
     payment_keyboard_key = InlineKeyboardMarkup(inline_keyboard=rows)
