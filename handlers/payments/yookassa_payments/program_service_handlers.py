@@ -4,14 +4,14 @@ import sqlite3
 from aiogram import types, F
 from aiogram.fsm.context import FSMContext
 from loguru import logger  # Логирование с помощью loguru
-from yookassa_payments import Configuration, Payment
+from yookassa import Configuration, Payment
 
 from keyboards.pay_keyboards import purchasing_a_program_setup_service
 from system.dispatcher import bot, dp, ACCOUNT_ID, SECRET_KEY, ADMIN_CHAT_ID
 
 
 def payment_yookassa_program_setup_service():
-    """Оплата Юкасса"""
+    """Оплата yookassa"""
     logger.info(f"ACCOUNT_ID: {ACCOUNT_ID}, SECRET_KEY {SECRET_KEY}")
     Configuration.account_id = ACCOUNT_ID
     Configuration.secret_key = SECRET_KEY

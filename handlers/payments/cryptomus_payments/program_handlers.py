@@ -1,4 +1,3 @@
-import asyncio
 import base64
 import datetime  # Дата
 import hashlib
@@ -9,9 +8,11 @@ import uuid
 import aiohttp
 from aiogram import types, F
 from aiogram.types import FSInputFile
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from loguru import logger  # Логирование с помощью loguru
 
 from db.settings_db import checking_for_presence_in_the_user_database
+from handlers.payments.products_goods_services import TelegramMaster
 from keyboards.user_keyboards import start_menu
 from setting import settings
 from system.dispatcher import bot, dp, ADMIN_CHAT_ID
@@ -42,13 +43,20 @@ async def payment_crypta_pas_program_handler(callback_query: types.CallbackQuery
     invoice_data = await make_request(
         url="https://api.cryptomus.com/v1/payment",
         invoice_data={
-            "amount": f"1200",
+            "amount": f"{TelegramMaster}",
             "currency": "RUB",
             "order_id": str(uuid.uuid4())
         },
     )
+    logger.info(f"Счет для оплаты криптовалютой: {invoice_data}")
 
-    asyncio.create_task(check_invoice_paid_program(invoice_data['result']['uuid'], callback_query=callback_query))
+    # Создаем кнопку "Проверить оплату"
+    check_payment_button = InlineKeyboardButton(
+        text="Проверить оплату",
+        callback_data=f"check_payment_{invoice_data['result']['uuid']}"
+    )
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[[check_payment_button]])
+
 
     await bot.send_message(chat_id=callback_query.message.chat.id,
                            text=f"💳 <b>Счет для оплаты криптовалютой</b> 💳\n\n"
@@ -57,19 +65,26 @@ async def payment_crypta_pas_program_handler(callback_query: types.CallbackQuery
                                 f"⚠️ <b>Важная информация:</b> после завершения платежа бот автоматически отправит вам все необходимые данные.\n"
                                 f"❗️ Обратите внимание, что возврат денежных средств после оплаты криптовалютой невозможен.\n\n"
                                 f"💡 Если у вас возникнут вопросы, не стесняйтесь обращаться к нам. Спасибо за доверие! 🙌",
-                           reply_markup=start_menu(), parse_mode="HTML")
+                           reply_markup=keyboard,
+                           parse_mode="HTML")
 
 
-async def check_invoice_paid_program(id: str, callback_query):
-    """Проверка счета на оплаченность"""
-    while True:
+# Обработчик для кнопки "Проверить оплату TelegramMaster 2.0"
+@dp.callback_query(F.data.startswith("check_payment_"))
+async def check_invoice_paid_program(callback_query: types.CallbackQuery):
+    """Ручная проверка статуса оплаты"""
+    invoice_uuid = callback_query.data.split("_")[2]  # Извлекаем UUID счета из callback_data
+    logger.info(f"Проверка статуса оплаты по UUID: {invoice_uuid}")
+    # Проверяем статус оплаты
+
+    try:
         invoice_data = await make_request(
             url="https://api.cryptomus.com/v1/payment/info",
-            invoice_data={"uuid": id},
+            invoice_data={"uuid": invoice_uuid},
         )
 
         if invoice_data['result']['payment_status'] in ('paid', 'paid_over'):
-
+            # Если оплата прошла успешно
             date = datetime.datetime.now().strftime("%Y-%m-%d")
             logger.info(date)
 
@@ -77,21 +92,22 @@ async def check_invoice_paid_program(id: str, callback_query):
             cursor = conn.cursor()
             cursor.execute('''CREATE TABLE IF NOT EXISTS users_pay (user_id, first_name, last_name, username, payment_info,
                                                                             product, date, payment_status)''')
+            invoice_json = json.dumps(invoice_data)  # Преобразуем словарь в строку JSON
             cursor.execute('''INSERT INTO users_pay (user_id, first_name, last_name, username, payment_info, 
                                                                   product, date, payment_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)''',
                            (callback_query.from_user.id,
                             callback_query.from_user.first_name,
                             callback_query.from_user.last_name,
-                            callback_query.from_user.username, invoice_data, "TelegramaMaster 2.0", date, "succeeded"))
+                            callback_query.from_user.username, invoice_json, "TelegramaMaster 2.0", date, "succeeded"))
             conn.commit()
 
             # Создайте файл, который вы хотите отправить
-            caption = (f"Платеж на сумму 1000 руб прошел успешно‼️ \n\n"
+            caption = (f"Платеж на сумму 1200 руб прошел успешно‼️ \n\n"
                        f"Вы можете скачать программу TelegramaMaster 2.0\n\n"
                        f"Для возврата в начальное меню нажмите /start")
 
             inline_keyboard_markup = start_menu()  # Отправляемся в главное меню
-            document = FSInputFile("setting/password/TelegramMaster/TelegramMaster.zip")
+            document = FSInputFile("setting/password/TelegramMaster/password.txt")
 
             await bot.send_document(chat_id=callback_query.from_user.id, document=document, caption=caption,
                                     reply_markup=inline_keyboard_markup)
@@ -109,11 +125,20 @@ async def check_invoice_paid_program(id: str, callback_query):
                                                                    f"Фамилия: {callback_query.from_user.last_name},\n\n"
                                                                    f"Приобрел TelegramMaster 2.0 (криптой)")
 
-            return
         else:
-            logger.info(f"Счет {invoice_data['result']['url']} еще не оплачен")
+            # Если оплата еще не прошла
+            await bot.send_message(
+                chat_id=callback_query.message.chat.id,
+                text="❌ Платеж еще не оплачен. Пожалуйста, завершите оплату и нажмите кнопку 'Проверить оплату' еще раз."
+            )
 
-        await asyncio.sleep(10)
+    except Exception as e:
+        # Обработка ошибок
+        logger.error(f"Ошибка при проверке оплаты: {e}")
+        await bot.send_message(
+            chat_id=callback_query.message.chat.id,
+            text="⚠️ Произошла ошибка при проверке оплаты. Пожалуйста, попробуйте позже."
+        )
 
 
 def program_cry_register_message_handler():

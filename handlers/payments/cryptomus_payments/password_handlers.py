@@ -17,6 +17,7 @@ from loguru import logger  # Логирование с помощью loguru
 
 from db.settings_db import checking_for_presence_in_the_user_database
 from db.settings_db import clear_amount, update_amount_db, read_amount_db
+from handlers.payments.products_goods_services import password_TelegramMaster
 from keyboards.user_keyboards import start_menu_keyboard
 from setting import settings
 from system.dispatcher import bot, dp, ADMIN_CHAT_ID
@@ -113,7 +114,7 @@ async def check_payment_handler(callback_query: types.CallbackQuery):
             conn.commit()
 
             # Отправляем файл и сообщение об успешной оплате
-            caption = (f"Платеж на сумму 150 руб прошел успешно‼️ \n\n"
+            caption = (f"Платеж на сумму {password_TelegramMaster} руб прошел успешно‼️ \n\n"
                        f"Вы можете скачать программу TelegramaMaster 2.0\n\n"
                        f"Для возврата в начальное меню нажмите /start")
 

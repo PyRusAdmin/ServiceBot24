@@ -9,21 +9,22 @@ from loguru import logger  # Логирование с помощью loguru
 from yookassa import Configuration, Payment
 
 from db.settings_db import checking_for_presence_in_the_user_database, database
+from handlers.payments.products_goods_services import password_TelegramMaster, TelegramMaster
 from keyboards.user_keyboards import payment_keyboard, start_menu, start_menu_keyboard, payment_keyboard_password
 from system.dispatcher import bot, dp, ACCOUNT_ID, SECRET_KEY, ADMIN_CHAT_ID
 
 
 def payment_yookassa_telegram_master():
-    """Оплата Юкасса"""
+    """Оплата yookassa"""
 
     Configuration.account_id = ACCOUNT_ID
     Configuration.secret_key = SECRET_KEY
 
     description_text = "Пароль обновления: ТelegramMaster 2.0"  # Текст описания товара
-    price_goods = 150.00  # Сумма товара
 
     payment = Payment.create(
-        {"amount": {"value": price_goods, "currency": "RUB"}, "capture": True,
+        {"amount": {"value": password_TelegramMaster, # Сумма товара
+                    "currency": "RUB"}, "capture": True,
          "confirmation": {"type": "redirect", "return_url": "https://t.me/h24service_bot"},
          "description": description_text,
          "metadata": {'order_number': '1'},
@@ -32,7 +33,8 @@ def payment_yookassa_telegram_master():
                          {
                              "description": description_text,  # Название товара
                              "quantity": "1",
-                             "amount": {"value": price_goods, "currency": "RUB"},  # Сумма и валюта
+                             "amount": {"value": password_TelegramMaster, # Сумма товара
+                                        "currency": "RUB"},  # Сумма и валюта
                              "vat_code": "1"}]}})
 
     payment_data = json.loads(payment.json())
@@ -96,12 +98,12 @@ async def check_payment(callback_query: types.CallbackQuery, state: FSMContext):
         conn.commit()
 
         # Создайте файл, который вы хотите отправить
-        caption = (f"Платеж на сумму 1000 руб прошел успешно‼️ \n\n"
+        caption = (f"Платеж на сумму 1200 руб прошел успешно‼️ \n\n"
                    f"Вы можете скачать программу TelegramaMaster 2.0\n\n"
                    f"Для возврата в начальное меню нажмите /start")
 
         inline_keyboard_markup = start_menu()  # Отправляемся в главное меню
-        document = FSInputFile("setting/password/TelegramMaster/TelegramMaster.zip")
+        document = FSInputFile("setting/password/TelegramMaster/password.txt")
 
         await bot.send_document(chat_id=callback_query.from_user.id, document=document, caption=caption,
                                 reply_markup=inline_keyboard_markup)
@@ -130,7 +132,7 @@ async def buy(callback_query: types.CallbackQuery, state: FSMContext):
     if result:
         # Пользователь уже делал покупку
         # Создайте файл, который вы хотите отправить
-        document = FSInputFile('setting/password/TelegramMaster/TelegramMaster.zip')
+        document = FSInputFile('setting/password/TelegramMaster/password.txt')
         caption = (f"Вы можете скачать программу TelegramMaster 2.0\n\n"
                    f"Для возврата в начальное меню нажмите /start")  # Отправка ссылки на программу
         # Отправка файла
@@ -142,7 +144,7 @@ async def buy(callback_query: types.CallbackQuery, state: FSMContext):
         url, payment = payment_yookassa()
         payment_keyboard_key = payment_keyboard(url, payment)
         payment_mes = ("Купить ТelegramMaster 2.0. \n\n"
-                       f"Цена на {current_date} — 1000 рублей.\n\n"
+                       f"Цена на {current_date} — {TelegramMaster} рублей.\n\n"
                        "Если по какой-либо причине бот не выдал пароль или произошла ошибка платежа, писать: "
                        "@PyAdminRU. 🤖🔒\n\n"
                        "Для возврата в начальное меню, нажмите: /start")
@@ -166,7 +168,7 @@ async def get_password(callback: types.CallbackQuery):
                 url, payment = payment_yookassa_telegram_master()
                 payment_keyboard_key = payment_keyboard_password(url, payment)
                 payment_mes = ("Получить пароль от ТelegramMaster 2.0. \n\n"
-                               f"Цена на {current_date} — 150 рублей.\n\n"
+                               f"Цена на {current_date} — {password_TelegramMaster} рублей.\n\n"
                                "Если по какой-либо причине бот не выдал пароль или произошла ошибка платежа, писать: "
                                "@PyAdminRU. 🤖🔒\n\n"
                                "Для возврата в начальное меню, нажмите: /start")
@@ -240,7 +242,7 @@ async def check_payments(callback_query: types.CallbackQuery, state: FSMContext)
         conn.commit()
 
         # Создайте файл, который вы хотите отправить
-        caption = (f"Платеж на сумму 150 руб прошел успешно‼️ \n\n"
+        caption = (f"Платеж на сумму {password_TelegramMaster} руб прошел успешно‼️ \n\n"
                    f"Вы можете скачать программу TelegramaMaster 2.0\n\n"
                    f"Для возврата в начальное меню нажмите /start")
 

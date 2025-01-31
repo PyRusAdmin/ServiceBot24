@@ -1,22 +1,21 @@
 import asyncio
 import logging
-import sys
 
 from loguru import logger  # https://github.com/Delgan/loguru
 
-from handlers.cryptomus.password_handlers import cry_register_message_handler
-from handlers.cryptomus.program_handlers import program_cry_register_message_handler
-from handlers.cryptomus.training_handlers import training_cry_register_message_handler
-from handlers.fag_handlers import fag_register_message_handler
-from handlers.program_service_handlers import buy_handler_program_setup_service
-from handlers.sale_of_goods_handlers import buy_handler
-from handlers.sending_log_file import sending_log_file_register_handler
-from handlers.user_handlers.reference_handlers import register_faq_handler
-from handlers.user_handlers.user_handlers import greeting_handler
+from handlers.payments.cryptomus_payments.password_handlers import cry_register_message_handler
+from handlers.payments.cryptomus_payments.program_handlers import program_cry_register_message_handler
+from handlers.payments.cryptomus_payments.training_handlers import training_cry_register_message_handler
+from handlers.user.fag_handlers import fag_register_message_handler
+from handlers.user.reference_handlers import register_faq_handler
+from handlers.user.sending_log_file import sending_log_file_register_handler
+from handlers.user.user_handlers import greeting_handler
+from handlers.payments.yookassa_payments.program_service_handlers import buy_handler_program_setup_service
+from handlers.payments.yookassa_payments.sale_of_goods_handlers import buy_handler
 from system.dispatcher import dp, bot
 
-logger.add("logs/log.log", retention="1 days", enqueue=True)  # Логирование бота
-
+logger.add("logs/log.log", rotation="1 MB", compression="zip", level="INFO")  # Логирование программы
+logger.add("logs/log_ERROR.log", rotation="1 MB", compression="zip", level="ERROR")  # Логирование программы
 
 async def main() -> None:
     """Запуск бота https://t.me/h24service_bot"""
@@ -37,7 +36,7 @@ async def main() -> None:
 
 if __name__ == '__main__':
     try:
-        logging.basicConfig(level=logging.INFO, stream=sys.stdout)
+        logging.basicConfig()
         asyncio.run(main())
     except Exception as e:
         logger.exception(e)
