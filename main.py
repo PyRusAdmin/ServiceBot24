@@ -22,12 +22,16 @@ async def main() -> None:
     """Запуск бота https://t.me/h24service_bot"""
     await dp.start_polling(bot)
     # buy_handler_program_admin_service()  # Удаление системных сообщений
+
+    # Рабата с пользователем бота
     greeting_handler()  # Пост приветствие пользователей бота
-    buy_handler()  # Купить TelegramMaster 2.0
-    buy_handler_program_setup_service()  # Оплата настройки ПО
     fag_register_message_handler()  # Помощь по боту
     sending_log_file_register_handler()  # Отправка логов боту
     register_faq_handler()  # Регистрация FAQ
+
+    # Оплата Юкасса
+    buy_handler()  # Купить TelegramMaster 2.0
+    buy_handler_program_setup_service()  # Оплата настройки ПО
 
     # Оплата Криптой
     cry_register_message_handler()  # Покупка пароля TelegramMaster 2.0
