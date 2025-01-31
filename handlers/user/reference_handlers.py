@@ -12,10 +12,10 @@ async def faq_handler(callback_query: types.CallbackQuery):
     inline_keyboard_markup = start_menu()  # Отправляемся в главное меню
     await bot.edit_message_text(
         chat_id=callback_query.message.chat.id,
-                                message_id=callback_query.message.message_id,
-                                text=message_text_faq,
-                                reply_markup=inline_keyboard_markup,
-                                disable_web_page_preview=True,
+        message_id=callback_query.message.message_id,
+        text=message_text_faq,
+        reply_markup=inline_keyboard_markup,
+        disable_web_page_preview=True,
         parse_mode='HTML'
     )
 

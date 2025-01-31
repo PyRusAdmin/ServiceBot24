@@ -23,7 +23,7 @@ def payment_yookassa_telegram_master():
     description_text = "Пароль обновления: ТelegramMaster 2.0"  # Текст описания товара
 
     payment = Payment.create(
-        {"amount": {"value": password_TelegramMaster, # Сумма товара
+        {"amount": {"value": password_TelegramMaster,  # Сумма товара
                     "currency": "RUB"}, "capture": True,
          "confirmation": {"type": "redirect", "return_url": "https://t.me/h24service_bot"},
          "description": description_text,
@@ -33,7 +33,7 @@ def payment_yookassa_telegram_master():
                          {
                              "description": description_text,  # Название товара
                              "quantity": "1",
-                             "amount": {"value": password_TelegramMaster, # Сумма товара
+                             "amount": {"value": password_TelegramMaster,  # Сумма товара
                                         "currency": "RUB"},  # Сумма и валюта
                              "vat_code": "1"}]}})
 
@@ -51,10 +51,10 @@ def payment_yookassa():
     Configuration.secret_key = SECRET_KEY
 
     description_text = "Покупка программы: ТelegramMaster 2.0"  # Текст описания товара
-    price_goods = 1200.00  # Сумма товара
 
     payment = Payment.create(
-        {"amount": {"value": price_goods, "currency": "RUB"}, "capture": True,
+        {"amount": {"value": TelegramMaster,  # Стоимость товара TelegramMaster 2.0
+                    "currency": "RUB"}, "capture": True,
          "confirmation": {"type": "redirect", "return_url": "https://t.me/h24service_bot"},
          "description": description_text,
          "metadata": {'order_number': '1'},
@@ -63,7 +63,8 @@ def payment_yookassa():
                          {
                              "description": description_text,  # Название товара
                              "quantity": "1",
-                             "amount": {"value": price_goods, "currency": "RUB"},  # Сумма и валюта
+                             "amount": {"value": TelegramMaster,  # Стоимость товара TelegramMaster 2.0
+                                        "currency": "RUB"},  # Сумма и валюта
                              "vat_code": "1"}]}})
 
     payment_data = json.loads(payment.json())
@@ -98,7 +99,7 @@ async def check_payment(callback_query: types.CallbackQuery, state: FSMContext):
         conn.commit()
 
         # Создайте файл, который вы хотите отправить
-        caption = (f"Платеж на сумму 1200 руб прошел успешно‼️ \n\n"
+        caption = (f"Платеж на сумму {TelegramMaster} руб прошел успешно‼️ \n\n"
                    f"Вы можете скачать программу TelegramaMaster 2.0\n\n"
                    f"Для возврата в начальное меню нажмите /start")
 
@@ -127,28 +128,16 @@ async def check_payment(callback_query: types.CallbackQuery, state: FSMContext):
 @dp.callback_query(F.data == "delivery")
 async def buy(callback_query: types.CallbackQuery, state: FSMContext):
     """Покупка TelegramMaster 2.0"""
-    user_id = callback_query.from_user.id
-    result = database(user_id)
-    if result:
-        # Пользователь уже делал покупку
-        # Создайте файл, который вы хотите отправить
-        document = FSInputFile('setting/password/TelegramMaster/password.txt')
-        caption = (f"Вы можете скачать программу TelegramMaster 2.0\n\n"
-                   f"Для возврата в начальное меню нажмите /start")  # Отправка ссылки на программу
-        # Отправка файла
-        inline_keyboard_markup = start_menu_keyboard()  # Отправляемся в главное меню
-        await bot.send_document(chat_id=user_id, document=document, caption=caption,
-                                reply_markup=inline_keyboard_markup)
-    else:  # Пользователь не делал покупку
-        current_date = datetime.datetime.now().strftime("%Y-%m-%d")
-        url, payment = payment_yookassa()
-        payment_keyboard_key = payment_keyboard(url, payment)
-        payment_mes = ("Купить ТelegramMaster 2.0. \n\n"
-                       f"Цена на {current_date} — {TelegramMaster} рублей.\n\n"
-                       "Если по какой-либо причине бот не выдал пароль или произошла ошибка платежа, писать: "
-                       "@PyAdminRU. 🤖🔒\n\n"
-                       "Для возврата в начальное меню, нажмите: /start")
-        await bot.send_message(callback_query.message.chat.id, payment_mes, reply_markup=payment_keyboard_key)
+
+    current_date = datetime.datetime.now().strftime("%Y-%m-%d")
+    url, payment = payment_yookassa()
+    payment_keyboard_key = payment_keyboard(url, payment)
+    payment_mes = ("Купить ТelegramMaster 2.0. \n\n"
+                   f"Цена на {current_date} — {TelegramMaster} рублей.\n\n"
+                   "Если по какой-либо причине бот не выдал пароль или произошла ошибка платежа, писать: "
+                   "@PyAdminRU. 🤖🔒\n\n"
+                   "Для возврата в начальное меню, нажмите: /start")
+    await bot.send_message(callback_query.message.chat.id, payment_mes, reply_markup=payment_keyboard_key)
 
 
 @dp.callback_query(F.data == "get_password")

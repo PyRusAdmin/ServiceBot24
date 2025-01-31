@@ -1,6 +1,6 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
-from handlers.payments.products_goods_services import password_TelegramMaster
+from handlers.payments.products_goods_services import password_TelegramMaster, TelegramMaster
 
 
 def payment_keyboard_password(url, id_pay) -> InlineKeyboardMarkup:
@@ -18,12 +18,12 @@ def payment_keyboard_password(url, id_pay) -> InlineKeyboardMarkup:
 
 
 def payment_keyboard(url, id_pay) -> InlineKeyboardMarkup:
-    """Клавиатура оплаты"""
+    """Клавиатура оплаты TelegramMaster"""
     rows = [
-        [InlineKeyboardButton(text="💳 Оплатить 1200 руб. (Юкасса)", url=url)],
+        [InlineKeyboardButton(text=f"💳 Оплатить {TelegramMaster} руб. (Юкасса)", url=url)],
         [InlineKeyboardButton(text='Проверить оплату (Юкасса)', callback_data=f"check_payment_{id_pay}")],
 
-        [InlineKeyboardButton(text="💳 Оплатить 1200 руб. (Крипта)", callback_data=f"payment_crypta_pas_program")],
+        [InlineKeyboardButton(text=f"💳 Оплатить {TelegramMaster} руб. (Крипта)", callback_data=f"payment_crypta_pas_program")],
     ]
 
     payment_keyboard_key = InlineKeyboardMarkup(inline_keyboard=rows)

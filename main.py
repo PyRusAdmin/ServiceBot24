@@ -17,6 +17,7 @@ from system.dispatcher import dp, bot
 logger.add("logs/log.log", rotation="1 MB", compression="zip", level="INFO")  # Логирование программы
 logger.add("logs/log_ERROR.log", rotation="1 MB", compression="zip", level="ERROR")  # Логирование программы
 
+
 async def main() -> None:
     """Запуск бота https://t.me/h24service_bot"""
     await dp.start_polling(bot)
@@ -25,13 +26,13 @@ async def main() -> None:
     buy_handler()  # Купить Telegram_BOT_SMM
     buy_handler_program_setup_service()  # Оплата настройки ПО
     fag_register_message_handler()  # Помощь по боту
-    sending_log_file_register_handler() # Отправка логов боту
+    sending_log_file_register_handler()  # Отправка логов боту
     register_faq_handler()  # Регистрация FAQ
 
     # Оплата Криптой
-    cry_register_message_handler() # Покупка пароля TelegramMaster 2.0
-    program_cry_register_message_handler() # Покупка TelegramMaster 2.0
-    training_cry_register_message_handler() # Покупка 'Помощь в настройке ПО (консультация)'
+    cry_register_message_handler()  # Покупка пароля TelegramMaster 2.0
+    program_cry_register_message_handler()  # Покупка TelegramMaster 2.0
+    training_cry_register_message_handler()  # Покупка 'Помощь в настройке ПО (консультация)'
 
 
 if __name__ == '__main__':

@@ -57,7 +57,6 @@ async def payment_crypta_pas_program_handler(callback_query: types.CallbackQuery
     )
     keyboard = InlineKeyboardMarkup(inline_keyboard=[[check_payment_button]])
 
-
     await bot.send_message(chat_id=callback_query.message.chat.id,
                            text=f"💳 <b>Счет для оплаты криптовалютой</b> 💳\n\n"
                                 f"🌐 Вы собираетесь приобрести <b>TelegramMaster 2.0</b>. Пожалуйста, воспользуйтесь ссылкой ниже для оплаты:\n"
@@ -102,7 +101,7 @@ async def check_invoice_paid_program(callback_query: types.CallbackQuery):
             conn.commit()
 
             # Создайте файл, который вы хотите отправить
-            caption = (f"Платеж на сумму 1200 руб прошел успешно‼️ \n\n"
+            caption = (f"Платеж на сумму {TelegramMaster} руб прошел успешно‼️ \n\n"
                        f"Вы можете скачать программу TelegramaMaster 2.0\n\n"
                        f"Для возврата в начальное меню нажмите /start")
 
