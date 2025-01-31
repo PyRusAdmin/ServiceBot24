@@ -4,9 +4,9 @@ import sys
 
 from loguru import logger  # https://github.com/Delgan/loguru
 
-from handlers.cryptocurrency_handlers.password_handlers import cry_register_message_handler
-from handlers.cryptocurrency_handlers.program_handlers import program_cry_register_message_handler
-from handlers.cryptocurrency_handlers.training_handlers import training_cry_register_message_handler
+from handlers.cryptomus.password_handlers import cry_register_message_handler
+from handlers.cryptomus.program_handlers import program_cry_register_message_handler
+from handlers.cryptomus.training_handlers import training_cry_register_message_handler
 from handlers.fag_handlers import fag_register_message_handler
 from handlers.program_service_handlers import buy_handler_program_setup_service
 from handlers.sale_of_goods_handlers import buy_handler

@@ -4,7 +4,7 @@ import sqlite3
 from aiogram import types, F
 from aiogram.fsm.context import FSMContext
 from loguru import logger  # Логирование с помощью loguru
-from yookassa import Configuration, Payment
+from yookassa_payments import Configuration, Payment
 
 from keyboards.pay_keyboards import purchasing_a_program_setup_service
 from system.dispatcher import bot, dp, ACCOUNT_ID, SECRET_KEY, ADMIN_CHAT_ID

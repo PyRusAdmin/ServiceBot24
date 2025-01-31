@@ -10,11 +10,14 @@ from system.dispatcher import dp, bot  # Подключение к боту и �
 async def faq_handler(callback_query: types.CallbackQuery):
     """Пояснение для пользователя FAG"""
     inline_keyboard_markup = start_menu()  # Отправляемся в главное меню
-    await bot.edit_message_text(chat_id=callback_query.message.chat.id,
+    await bot.edit_message_text(
+        chat_id=callback_query.message.chat.id,
                                 message_id=callback_query.message.message_id,
                                 text=message_text_faq,
                                 reply_markup=inline_keyboard_markup,
-                                disable_web_page_preview=True)
+                                disable_web_page_preview=True,
+        parse_mode='HTML'
+    )
 
 
 def register_faq_handler():
