@@ -7,21 +7,15 @@ import uuid
 
 import aiohttp
 from aiogram import types, F
-from aiogram.filters import Command
-from aiogram.fsm.context import FSMContext
-from aiogram.fsm.state import StatesGroup, State
 from aiogram.types import FSInputFile
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from aiogram.types import Message
 from loguru import logger  # Логирование с помощью loguru
 
 from db.settings_db import checking_for_presence_in_the_user_database
-from db.settings_db import clear_amount, update_amount_db, read_amount_db
 from handlers.payments.products_goods_services import password_TelegramMaster
 from keyboards.user_keyboards import start_menu_keyboard
 from setting import settings
 from system.dispatcher import bot, dp, ADMIN_CHAT_ID
-from system.dispatcher import form_router
 
 
 async def make_request(url: str, invoice_data: dict):
@@ -46,14 +40,12 @@ async def make_request(url: str, invoice_data: dict):
 @dp.callback_query(F.data == "payment_crypta_pas")
 async def buy_handler(callback_query: types.CallbackQuery):
     """Оплата пароля TelegramMaster 2.0 криптой"""
-    results = read_amount_db()
-    logger.info(results)
 
     # Создаем счет для оплаты
     invoice_data = await make_request(
         url="https://api.cryptomus.com/v1/payment",
         invoice_data={
-            "amount": f"{results}",
+            "amount": f"{password_TelegramMaster}",
             "currency": "RUB",
             "order_id": str(uuid.uuid4())
         },
@@ -154,37 +146,6 @@ async def check_payment_handler(callback_query: types.CallbackQuery):
         )
 
 
-ADMIN_USER_IDS = [535185511]  # Список администраторов
-
-
-class ServiceCreation(StatesGroup):
-    enter_amount = State()
-
-
-@form_router.message(Command("service_creation"))
-async def service_creation_handler(message: Message, state: FSMContext):
-    """Обработчик команды для создания услуги и написания цены (только для админа)"""
-    logger.info(message.from_user.id)
-
-    if message.from_user.id in ADMIN_USER_IDS:
-        await message.reply("Введите сумму без копеек")
-        await state.set_state(ServiceCreation.enter_amount)
-    else:
-        await message.reply("Вы не админ!")
-        return
-
-
-@form_router.message(ServiceCreation.enter_amount)
-async def update_info(message: Message, state: FSMContext):
-    """Обработчик текстовых сообщений для сохранения суммы в базу данных"""
-    amount = message.text
-    clear_amount()  # Очистка базы данных
-    update_amount_db(amount)  # Сохранение суммы в базу данных
-    await message.reply("Сумма успешно обновлена в базе данных.")
-    await state.clear()
-
-
 def cry_register_message_handler():
     """Регистрируем handlers для бота"""
     dp.message.register(buy_handler)
-    dp.message.register(service_creation_handler)

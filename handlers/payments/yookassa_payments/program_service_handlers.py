@@ -6,6 +6,7 @@ from aiogram.fsm.context import FSMContext
 from loguru import logger  # Логирование с помощью loguru
 from yookassa import Configuration, Payment
 
+from handlers.payments.products_goods_services import payment_installation
 from keyboards.pay_keyboards import purchasing_a_program_setup_service
 from system.dispatcher import bot, dp, ACCOUNT_ID, SECRET_KEY, ADMIN_CHAT_ID
 
@@ -17,7 +18,8 @@ def payment_yookassa_program_setup_service():
     Configuration.secret_key = SECRET_KEY
 
     payment = Payment.create(
-        {"amount": {"value": 500.00, "currency": "RUB"}, "capture": True,
+        {"amount": {"value": payment_installation, # Сумма за установку ПО
+                    "currency": "RUB"}, "capture": True,
          "confirmation": {"type": "redirect", "return_url": "https://t.me/h24service_bot"},
          "description": "Помощь в настройке ПО (консультация)",
          "metadata": {'order_number': '1'},
@@ -26,7 +28,8 @@ def payment_yookassa_program_setup_service():
                          {
                              "description": "Помощь в настройке ПО (консультация)",  # Название товара
                              "quantity": "1",
-                             "amount": {"value": 500.00, "currency": "RUB"},  # Сумма и валюта
+                             "amount": {"value": payment_installation,
+                                        "currency": "RUB"},  # Сумма и валюта
                              "vat_code": "1"}]}})
 
     payment_data = json.loads(payment.json())

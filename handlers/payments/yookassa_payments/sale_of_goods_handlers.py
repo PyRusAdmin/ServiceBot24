@@ -8,7 +8,7 @@ from aiogram.types import FSInputFile
 from loguru import logger  # Логирование с помощью loguru
 from yookassa import Configuration, Payment
 
-from db.settings_db import checking_for_presence_in_the_user_database, database
+from db.settings_db import checking_for_presence_in_the_user_database
 from handlers.payments.products_goods_services import password_TelegramMaster, TelegramMaster
 from keyboards.user_keyboards import payment_keyboard, start_menu, start_menu_keyboard, payment_keyboard_password
 from system.dispatcher import bot, dp, ACCOUNT_ID, SECRET_KEY, ADMIN_CHAT_ID

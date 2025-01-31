@@ -23,7 +23,7 @@ async def main() -> None:
     await dp.start_polling(bot)
     # buy_handler_program_admin_service()  # Удаление системных сообщений
     greeting_handler()  # Пост приветствие пользователей бота
-    buy_handler()  # Купить Telegram_BOT_SMM
+    buy_handler()  # Купить TelegramMaster 2.0
     buy_handler_program_setup_service()  # Оплата настройки ПО
     fag_register_message_handler()  # Помощь по боту
     sending_log_file_register_handler()  # Отправка логов боту

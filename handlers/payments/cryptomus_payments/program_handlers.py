@@ -43,7 +43,7 @@ async def payment_crypta_pas_program_handler(callback_query: types.CallbackQuery
     invoice_data = await make_request(
         url="https://api.cryptomus.com/v1/payment",
         invoice_data={
-            "amount": f"{TelegramMaster}",
+            "amount": f"{TelegramMaster}", # Сумма оплаты в криптовалюте за TelegramMaster
             "currency": "RUB",
             "order_id": str(uuid.uuid4())
         },
