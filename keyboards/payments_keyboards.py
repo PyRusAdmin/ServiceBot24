@@ -8,11 +8,6 @@ def payment_keyboard() -> InlineKeyboardMarkup:
          InlineKeyboardButton(text=f"💳 Оплатить (Крипта)", callback_data=f"payment_crypta_pas_program"),
          ],
         [InlineKeyboardButton(text='В начальное меню', callback_data='start_menu_keyboard')],
-
-        # [InlineKeyboardButton(text='Проверить оплату (Юкасса)', callback_data=f"check_payment_{id_pay}")],
-
-        # [InlineKeyboardButton(text=f"💳 Оплатить (Крипта)",
-        #                       callback_data=f"payment_crypta_pas_program")],
     ]
 
     payment_keyboard_key = InlineKeyboardMarkup(inline_keyboard=rows)

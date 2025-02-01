@@ -18,8 +18,6 @@ def payment_keyboard_password(url, id_pay) -> InlineKeyboardMarkup:
     return payment_keyboard_password_key
 
 
-
-
 def greeting_keyboards() -> InlineKeyboardMarkup:
     """Клавиатуры поста приветствия 👋(Получения пароля от проектов, обратная связь, отправка логов)"""
 
