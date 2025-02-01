@@ -21,7 +21,7 @@ def payment_yookassa_telegram_master():
     Configuration.account_id = ACCOUNT_ID
     Configuration.secret_key = SECRET_KEY
 
-    description_text = "Пароль обновления: ТelegramMaster 2.0"  # Текст описания товара
+    description_text = "Пароль обновления: TelegramMaster 2.0"  # Текст описания товара
 
     payment = Payment.create(
         {"amount": {"value": password_TelegramMaster,  # Сумма товара
@@ -74,7 +74,7 @@ async def get_password(callback: types.CallbackQuery):
             else:
                 text = (
                     "Для того чтобы воспользоваться всеми возможностями бота 🤖, вам необходимо подписаться на канал "
-                    "🔗 @master_tg_d и купить TelegramMaster 2.0.\n\n"
+                    "🔗 https://t.me/+uE6L_wey4c43YWEy и купить TelegramMaster 2.0.\n\n"
 
                     "Это позволит вам получить самую свежую версию TelegramMaster 2.0 и воспользоваться всеми новыми "
                     "функциями.\n\n"
@@ -90,7 +90,7 @@ async def get_password(callback: types.CallbackQuery):
                                                                    f"Запросил пароль от TelegramMaster 2.0")
         else:
             text = ("Для того чтобы воспользоваться всеми возможностями бота 🤖, вам необходимо подписаться на канал "
-                    "🔗 @master_tg_d и купить TelegramMaster 2.0.\n\n"
+                    "🔗 https://t.me/+uE6L_wey4c43YWEy и купить TelegramMaster 2.0.\n\n"
 
                     "Это позволит вам получить самую свежую версию TelegramMaster 2.0 и воспользоваться всеми новыми "
                     "функциями.\n\n"
@@ -110,12 +110,12 @@ async def get_password(callback: types.CallbackQuery):
 
 @dp.callback_query(F.data.startswith("payment_pass"))
 async def check_payments(callback_query: types.CallbackQuery, state: FSMContext):
-    """Проверка платежа 'Пароль обновления: ТelegramMaster 2.0'"""
+    """Проверка платежа 'Пароль обновления: TelegramMaster 2.0'"""
     split_data = callback_query.data.split("_")
     logger.info(split_data[2])
     payment_info = Payment.find_one(split_data[2])  # Проверьте статус платежа с помощью API YooKassa
     logger.info(payment_info)
-    product = "Пароль обновления: ТelegramMaster 2.0"
+    product = "Пароль обновления: TelegramMaster 2.0"
     if payment_info.status == "succeeded":  # Обработка статуса платежа
         payment_status = "succeeded"
         date = payment_info.captured_at

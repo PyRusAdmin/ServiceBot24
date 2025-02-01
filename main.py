@@ -6,6 +6,7 @@ from loguru import logger  # https://github.com/Delgan/loguru
 from handlers.payments.cryptomus_payments.cryptomus_password import register_cryptomus_password
 from handlers.payments.cryptomus_payments.cryptomus_program import register_cryptomus_program
 from handlers.payments.cryptomus_payments.cryptomus_training import register_cryptomus_training
+from handlers.payments.program_payments import register_program_payments
 from handlers.payments.yookassa_payments.yookassa_password import register_yookassa_password
 from handlers.payments.yookassa_payments.yookassa_program import register_yookassa_program
 from handlers.payments.yookassa_payments.yookassa_training import register_yookassa_training
@@ -29,6 +30,9 @@ async def main() -> None:
     fag_register_message_handler()  # Помощь по боту
     sending_log_file_register_handler()  # Отправка логов боту
     register_faq_handler()  # Регистрация FAQ
+
+    # Меню оплата
+    register_program_payments() # Купить TelegramMaster 2.0
 
     # Оплата Юкасса
     register_yookassa_password()  # Покупка пароля TelegramMaster 2.0
