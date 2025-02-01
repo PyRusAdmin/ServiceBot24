@@ -3,6 +3,7 @@ import logging
 
 from loguru import logger  # https://github.com/Delgan/loguru
 
+from handlers.admin.admin_handlers import register_admin_handlers
 from handlers.payments.cryptomus_payments.cryptomus_password import register_cryptomus_password
 from handlers.payments.cryptomus_payments.cryptomus_program import register_cryptomus_program
 from handlers.payments.cryptomus_payments.cryptomus_training import register_cryptomus_training
@@ -23,7 +24,9 @@ logger.add("logs/log_ERROR.log", rotation="1 MB", compression="zip", level="ERRO
 async def main() -> None:
     """Запуск бота https://t.me/h24service_bot"""
     await dp.start_polling(bot)
-    # buy_handler_program_admin_service()  # Удаление системных сообщений
+
+    # Администрирование
+    register_admin_handlers()()  # Удаление системных сообщений
 
     # Рабата с пользователем бота
     greeting_handler()  # Пост приветствие пользователей бота
@@ -34,7 +37,7 @@ async def main() -> None:
     # Меню оплата
     register_program_payments()  # Купить TelegramMaster 2.0, Помощь в настройке ПО, Пароль от TelegramMaster 2.0
 
-    # Оплата Юкасса
+    # Оплата yookassa
     register_yookassa_password()  # Покупка пароля TelegramMaster 2.0
     register_yookassa_program()  # Купить TelegramMaster 2.0
     register_yookassa_training()  # Оплата настройки ПО

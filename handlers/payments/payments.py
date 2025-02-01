@@ -6,7 +6,6 @@ from loguru import logger  # Логирование с помощью loguru
 from db.settings_db import checking_for_presence_in_the_user_database
 from handlers.payments.products_goods_services import TelegramMaster, payment_installation
 from handlers.payments.products_goods_services import password_TelegramMaster
-from handlers.payments.yookassa_payments.yookassa_password import payment_yookassa_telegram_master
 from keyboards.payments_keyboards import payment_keyboard, payment_keyboard_password
 from keyboards.payments_keyboards import purchasing_a_program_setup_service
 from messages.messages import generate_payment_message
