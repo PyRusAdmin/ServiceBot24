@@ -20,7 +20,7 @@ def payment_yookassa():
     Configuration.account_id = ACCOUNT_ID
     Configuration.secret_key = SECRET_KEY
 
-    description_text = "Покупка программы: ТelegramMaster 2.0"  # Текст описания товара
+    description_text = "Покупка программы: TelegramMaster 2.0"  # Текст описания товара
 
     payment = Payment.create(
         {"amount": {"value": TelegramMaster,  # Стоимость товара TelegramMaster 2.0
@@ -49,7 +49,7 @@ async def check_payment(callback_query: types.CallbackQuery, state: FSMContext):
     """"Проверка платежа TelegramMaster 2.0"""
     split_data = callback_query.data.split("_")
     logger.info(split_data[2])
-    payment_info = Payment.find_one(split_data[2])  # Проверьте статус платежа с помощью API YooKassa
+    payment_info = Payment.find_one(split_data[2])  # Проверьте статус платежа с помощью API yookassa
     logger.info(payment_info)
     product = "TelegramMaster 2.0"
     if payment_info.status == "succeeded":  # Обработка статуса платежа

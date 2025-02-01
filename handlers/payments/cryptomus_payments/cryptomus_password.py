@@ -101,13 +101,13 @@ async def check_payment_handler(callback_query: types.CallbackQuery):
                            (callback_query.from_user.id,
                             callback_query.from_user.first_name,
                             callback_query.from_user.last_name,
-                            callback_query.from_user.username, invoice_json, "Пароль обновления: ТelegramMaster 2.0",
+                            callback_query.from_user.username, invoice_json, "Пароль обновления: TelegramMaster 2.0",
                             date, "succeeded"))
             conn.commit()
 
             # Отправляем файл и сообщение об успешной оплате
             caption = (f"Платеж на сумму {password_TelegramMaster} руб прошел успешно‼️ \n\n"
-                       f"Вы можете скачать программу TelegramaMaster 2.0\n\n"
+                       f"Вы можете скачать программу TelegramMaster 2.0\n\n"
                        f"Для возврата в начальное меню нажмите /start")
 
             inline_keyboard_markup = start_menu_keyboard()  # Отправляемся в главное меню

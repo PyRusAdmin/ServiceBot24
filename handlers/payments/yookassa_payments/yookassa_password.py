@@ -134,7 +134,7 @@ async def check_payments(callback_query: types.CallbackQuery, state: FSMContext)
 
         # Создайте файл, который вы хотите отправить
         caption = (f"Платеж на сумму {password_TelegramMaster} руб прошел успешно‼️ \n\n"
-                   f"Вы можете скачать программу TelegramaMaster 2.0\n\n"
+                   f"Вы можете скачать программу TelegramMaster 2.0\n\n"
                    f"Для возврата в начальное меню нажмите /start")
 
         inline_keyboard_markup = start_menu_keyboard()  # Отправляемся в главное меню

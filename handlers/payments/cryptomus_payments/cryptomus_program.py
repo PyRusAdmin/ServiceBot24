@@ -97,12 +97,12 @@ async def check_invoice_paid_program(callback_query: types.CallbackQuery):
                            (callback_query.from_user.id,
                             callback_query.from_user.first_name,
                             callback_query.from_user.last_name,
-                            callback_query.from_user.username, invoice_json, "TelegramaMaster 2.0", date, "succeeded"))
+                            callback_query.from_user.username, invoice_json, "TelegramMaster 2.0", date, "succeeded"))
             conn.commit()
 
             # Создайте файл, который вы хотите отправить
             caption = (f"Платеж на сумму {TelegramMaster} руб прошел успешно‼️ \n\n"
-                       f"Вы можете скачать программу TelegramaMaster 2.0\n\n"
+                       f"Вы можете скачать программу TelegramMaster 2.0\n\n"
                        f"Для возврата в начальное меню нажмите /start")
 
             inline_keyboard_markup = start_menu()  # Отправляемся в главное меню

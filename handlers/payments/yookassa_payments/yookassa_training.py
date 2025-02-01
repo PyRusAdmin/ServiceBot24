@@ -43,7 +43,7 @@ def payment_yookassa_program_setup_service():
 async def check_payment_program_setup_service(callback_query: types.CallbackQuery, state: FSMContext):
     split_data = callback_query.data.split("_")
     logger.info(split_data[2])
-    # Проверьте статус платежа с помощью API YooKassa
+    # Проверьте статус платежа с помощью API yookassa
     payment_info = Payment.find_one(split_data[2])
     logger.info(payment_info)
     product = "Помощь в настройке ПО (консультация)"
