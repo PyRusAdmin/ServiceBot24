@@ -102,7 +102,7 @@ async def buy(callback_query: types.CallbackQuery, state: FSMContext):
     current_date = datetime.datetime.now().strftime("%Y-%m-%d")
     url, payment = payment_yookassa()
     payment_keyboard_key = payment_keyboard(url, payment)
-    payment_mes = ("Купить ТelegramMaster 2.0. \n\n"
+    payment_mes = ("Купить TelegramMaster 2.0. \n\n"
                    f"Цена на {current_date} — {TelegramMaster} рублей.\n\n"
                    "Если по какой-либо причине бот не выдал пароль или произошла ошибка платежа, писать: "
                    "@PyAdminRU. 🤖🔒\n\n"
