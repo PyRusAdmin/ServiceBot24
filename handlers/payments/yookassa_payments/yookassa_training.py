@@ -8,7 +8,6 @@ from loguru import logger  # Логирование с помощью loguru
 from yookassa import Configuration, Payment
 
 from handlers.payments.products_goods_services import payment_installation
-from keyboards.payments_keyboards import purchasing_a_program_setup_service
 from system.dispatcher import bot, dp, ACCOUNT_ID, SECRET_KEY, ADMIN_CHAT_ID
 
 
@@ -104,22 +103,7 @@ async def check_payment_program_setup_service(callback_query: types.CallbackQuer
         await bot.send_message(callback_query.message.chat.id, "Payment failed.")
 
 
-@dp.callback_query(F.data == "purchasing_a_program_setup_service")
-async def buy_program_setup_service(callback_query: types.CallbackQuery):
-    payment_keyboard_key = purchasing_a_program_setup_service()
-    payment_mes = ("Оплатите услуги по настройке и консультации. \n\n"
-                   "После завершения процесса оплаты, свяжитесь с администратором через личные сообщения, используя "
-                   "указанный никнейм: @PyAdminRU. 🤖🔒\n\n"
-                   "Для возврата в начальное меню, нажмите: /start")
-    await bot.edit_message_text(chat_id=callback_query.message.chat.id,
-                                message_id=callback_query.message.message_id,
-                                text=payment_mes,
-                                reply_markup=payment_keyboard_key,
-                                disable_web_page_preview=True)
-
-
 def register_yookassa_training():
     """Регистрируем handlers для бота"""
-    dp.message.register(buy_program_setup_service)
     dp.message.register(check_payment_program_setup_service)
     dp.message.register(payment_url_handler)
