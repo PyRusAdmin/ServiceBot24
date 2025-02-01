@@ -11,7 +11,7 @@ from loguru import logger
 
 from db.settings_db import checking_for_presence_in_the_user_database
 from keyboards.user_keyboards import greeting_keyboards  # Клавиатуры поста приветствия
-from messages.user_messages import greeting_post  # Пояснение для пользователя FAG
+from messages.messages import greeting_post  # Пояснение для пользователя FAG
 from system.dispatcher import dp, bot, ADMIN_CHAT_ID  # Подключение к боту и диспетчеру пользователя
 
 

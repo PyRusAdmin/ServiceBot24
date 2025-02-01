@@ -51,7 +51,7 @@ async def check_payment(callback_query: types.CallbackQuery, state: FSMContext):
     logger.info(split_data[2])
     payment_info = Payment.find_one(split_data[2])  # Проверьте статус платежа с помощью API YooKassa
     logger.info(payment_info)
-    product = "TelegramaMaster 2.0"
+    product = "TelegramMaster 2.0"
     if payment_info.status == "succeeded":  # Обработка статуса платежа
         payment_status = "succeeded"
         date = payment_info.captured_at
@@ -70,7 +70,7 @@ async def check_payment(callback_query: types.CallbackQuery, state: FSMContext):
 
         # Создайте файл, который вы хотите отправить
         caption = (f"Платеж на сумму {TelegramMaster} руб прошел успешно‼️ \n\n"
-                   f"Вы можете скачать программу TelegramaMaster 2.0\n\n"
+                   f"Вы можете скачать программу {product}\n\n"
                    f"Для возврата в начальное меню нажмите /start")
 
         inline_keyboard_markup = start_menu()  # Отправляемся в главное меню
