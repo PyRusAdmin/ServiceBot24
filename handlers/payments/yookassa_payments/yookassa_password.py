@@ -1,17 +1,16 @@
-import datetime  # Дата
 import json
 import sqlite3
 
 from aiogram import types, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import FSInputFile
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from loguru import logger  # Логирование с помощью loguru
 from yookassa import Configuration, Payment
 
 from db.settings_db import checking_for_presence_in_the_user_database
 from handlers.payments.products_goods_services import password_TelegramMaster
-from keyboards.user_keyboards import start_menu_keyboard, payment_keyboard_password
-from messages.messages import generate_payment_message
+from keyboards.user_keyboards import start_menu_keyboard
 from system.dispatcher import bot, dp, ACCOUNT_ID, SECRET_KEY, ADMIN_CHAT_ID
 
 
@@ -45,67 +44,29 @@ def payment_yookassa_telegram_master():
     return payment_url, payment_id
 
 
-@dp.callback_query(F.data == "get_password")
-async def get_password(callback: types.CallbackQuery):
-    """Обработчик команды /get_password для получения пароля для пользователя"""
-    try:
-        logger.info(f'Пользователь {callback.from_user.id} {callback.from_user.username} запросил / запросила пароль '
-                    f'от TelegramMaster 2.0')
-        logger.info(callback.from_user.id)  # Проверка ID пользователя
-        user = await bot.get_chat_member(chat_id="@master_tg_d", user_id=callback.from_user.id)  # Проверка подписки
-        logger.info(f"User Status: {user.status}")
-        if user.status in ['member', 'administrator', 'creator']:
-            result = checking_for_presence_in_the_user_database(callback.from_user.id)
-            if result:
+@dp.callback_query(F.data.startswith("payment_yookassa_password"))
+async def payment_url_handler(callback_query: types.CallbackQuery):
+    """Отправка ссылки для оплаты пароля от TelegramMaster 2.0"""
+    payment_url, payment_id = payment_yookassa_telegram_master()
 
-                current_date = datetime.datetime.now().strftime("%Y-%m-%d")
-                url, payment = payment_yookassa_telegram_master()
-                payment_keyboard_key = payment_keyboard_password(url, payment)
-                # Сообщение пользователю
-                payment_mes = generate_payment_message(current_date, password_TelegramMaster)
-                await bot.send_message(callback.message.chat.id, payment_mes, reply_markup=payment_keyboard_key)
+    messages = (
+        "💳 <b>Оплата пароля от TelegramMaster 2.0</b>\n\n"
+        f"Для оплаты перейдите по ссылке: {payment_url}\n\n"
+        "🔔 <b>Важно:</b>\n"
+        "1. Ссылка действительна <b>9 минут</b>. Если время истекло, зайдите в это меню заново.\n"
+        "2. Оплата осуществляется через безопасную платежную систему <b>Юкасса</b>.\n"
+        "3. После успешной оплаты вы получите пароль от архива с программой. Архив находится в закрепленном сообщении "
+        "на канале https://t.me/+uE6L_wey4c43YWEy.\n\n"
+        "🔄 После оплаты нажмите кнопку <b>«Проверить оплату»</b>, чтобы получить доступ к программе."
+    )
 
-                await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
-                                                                   f"ID {callback.from_user.id},\n"
-                                                                   f"Username: @{callback.from_user.username},\n"
-                                                                   f"Имя: {callback.from_user.first_name},\n"
-                                                                   f"Фамилия: {callback.from_user.last_name},\n"
-                                                                   f"Запросил пароль от TelegramMaster 2.0")
-            else:
-                text = (
-                    "Для того чтобы воспользоваться всеми возможностями бота 🤖, вам необходимо подписаться на канал "
-                    "🔗 https://t.me/+uE6L_wey4c43YWEy и купить TelegramMaster 2.0.\n\n"
+    # Создаем клавиатуру с кнопкой для проверки оплаты и возврата в меню
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text='✅ Проверить оплату (Юкасса)', callback_data=f"payment_pass_{payment_id}")],
+        [InlineKeyboardButton(text='🏠 В начальное меню', callback_data='start_menu_keyboard')],
+    ])
 
-                    "Это позволит вам получить самую свежую версию TelegramMaster 2.0 и воспользоваться всеми новыми "
-                    "функциями.\n\n"
-
-                    "Если вы ранее уже приобретали TelegramMaster 2.0, но бот 🤖 не выдаёт пароль, обратитесь к "
-                    "🔗 @PyAdminRU.")
-                await bot.send_message(chat_id=callback.message.chat.id, text=text)  # ID пользователя нет в базе данных
-                await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
-                                                                   f"ID {callback.from_user.id},\n"
-                                                                   f"Username: @{callback.from_user.username},\n"
-                                                                   f"Имя: {callback.from_user.first_name},\n"
-                                                                   f"Фамилия: {callback.from_user.last_name},\n"
-                                                                   f"Запросил пароль от TelegramMaster 2.0")
-        else:
-            text = ("Для того чтобы воспользоваться всеми возможностями бота 🤖, вам необходимо подписаться на канал "
-                    "🔗 https://t.me/+uE6L_wey4c43YWEy и купить TelegramMaster 2.0.\n\n"
-
-                    "Это позволит вам получить самую свежую версию TelegramMaster 2.0 и воспользоваться всеми новыми "
-                    "функциями.\n\n"
-
-                    "Если вы ранее уже приобретали TelegramMaster 2.0, но бот 🤖 не выдаёт пароль, обратитесь к "
-                    "🔗 @PyAdminRU.")
-            await bot.send_message(chat_id=callback.message.chat.id, text=text)  # ID пользователя нет в базе данных
-            await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
-                                                               f"ID {callback.from_user.id},\n"
-                                                               f"Username: @{callback.from_user.username},\n"
-                                                               f"Имя: {callback.from_user.first_name},\n"
-                                                               f"Фамилия: {callback.from_user.last_name},\n"
-                                                               f"Запросил пароль от TelegramMaster 2.0")
-    except Exception as e:
-        logger.exception(e)
+    await bot.send_message(chat_id=callback_query.from_user.id, text=messages, reply_markup=keyboard, parse_mode="HTML")
 
 
 @dp.callback_query(F.data.startswith("payment_pass"))
@@ -161,5 +122,5 @@ async def check_payments(callback_query: types.CallbackQuery, state: FSMContext)
 
 def register_yookassa_password():
     """Регистрируем handlers для бота"""
-    dp.message.register(get_password)
     dp.message.register(check_payments)
+    dp.message.register(payment_url_handler)

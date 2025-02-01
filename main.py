@@ -32,7 +32,7 @@ async def main() -> None:
     register_faq_handler()  # Регистрация FAQ
 
     # Меню оплата
-    register_program_payments() # Купить TelegramMaster 2.0
+    register_program_payments()  # Купить TelegramMaster 2.0, Помощь в настройке ПО, Пароль от TelegramMaster 2.0
 
     # Оплата Юкасса
     register_yookassa_password()  # Покупка пароля TelegramMaster 2.0
