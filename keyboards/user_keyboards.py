@@ -14,7 +14,7 @@ def greeting_keyboards() -> InlineKeyboardMarkup:
             InlineKeyboardButton(text='📱 Мои контакты', callback_data='reference')
         ],
         [InlineKeyboardButton(text='⁉️ FAG', callback_data='fag')],
-        [InlineKeyboardButton(text='Предложить функционал', callback_data='wish')],
+        [InlineKeyboardButton(text='💡 Предложить улучшение', callback_data='wish')],
     ]
     inline_keyboard_markup = InlineKeyboardMarkup(inline_keyboard=rows)
 
