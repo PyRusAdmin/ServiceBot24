@@ -3,11 +3,12 @@ import sqlite3
 
 from aiogram import types, F
 from aiogram.fsm.context import FSMContext
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from loguru import logger  # Логирование с помощью loguru
 from yookassa import Configuration, Payment
 
 from handlers.payments.products_goods_services import payment_installation
-from keyboards.pay_keyboards import purchasing_a_program_setup_service
+from keyboards.payments_keyboards import purchasing_a_program_setup_service
 from system.dispatcher import bot, dp, ACCOUNT_ID, SECRET_KEY, ADMIN_CHAT_ID
 
 
@@ -37,6 +38,31 @@ def payment_yookassa_program_setup_service():
     payment_url = (payment_data['confirmation'])['confirmation_url']
     logger.info(f"Ссылка для оплаты: {payment_url}, ID оплаты {payment_id}")
     return payment_url, payment_id
+
+
+@dp.callback_query(F.data.startswith("payment_yookassa_training"))
+async def payment_url_handler(callback_query: types.CallbackQuery):
+    """Отправка ссылки для оплаты TelegramMaster 2.0"""
+    payment_url, payment_id = payment_yookassa_program_setup_service()
+
+    messages = (
+        "💳 <b>Оплата установки и настройки ПО:</b>\n\n"
+        f"Для оплаты перейдите по ссылке: {payment_url}\n\n"
+        "🔔 <b>Важно:</b>\n"
+        "1. Ссылка действительна <b>9 минут</b>. Если время истекло, зайдите в это меню заново.\n"
+        "2. Оплата осуществляется через безопасную платежную систему <b>Юкасса</b>.\n"
+        "3. После завершения процесса оплаты, свяжитесь с администратором через личные сообщения, используя "
+        "указанный никнейм: @PyAdminRU. 🤖🔒\n\n"
+        "🔄 После оплаты нажмите кнопку <b>«Проверить оплату»</b>, чтобы убедится, что оплата прошла успешно."
+    )
+
+    # Создаем клавиатуру с кнопкой для проверки оплаты и возврата в меню
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text='✅ Проверить оплату (Юкасса)', callback_data=f"check_service_{payment_id}")],
+        [InlineKeyboardButton(text='🏠 В начальное меню', callback_data='start_menu_keyboard')],
+    ])
+
+    await bot.send_message(chat_id=callback_query.from_user.id, text=messages, reply_markup=keyboard, parse_mode="HTML")
 
 
 @dp.callback_query(F.data.startswith("check_service"))
@@ -80,8 +106,7 @@ async def check_payment_program_setup_service(callback_query: types.CallbackQuer
 
 @dp.callback_query(F.data == "purchasing_a_program_setup_service")
 async def buy_program_setup_service(callback_query: types.CallbackQuery):
-    url, payment = payment_yookassa_program_setup_service()
-    payment_keyboard_key = purchasing_a_program_setup_service(url, payment)
+    payment_keyboard_key = purchasing_a_program_setup_service()
     payment_mes = ("Оплатите услуги по настройке и консультации. \n\n"
                    "После завершения процесса оплаты, свяжитесь с администратором через личные сообщения, используя "
                    "указанный никнейм: @PyAdminRU. 🤖🔒\n\n"
@@ -97,3 +122,4 @@ def register_yookassa_training():
     """Регистрируем handlers для бота"""
     dp.message.register(buy_program_setup_service)
     dp.message.register(check_payment_program_setup_service)
+    dp.message.register(payment_url_handler)
