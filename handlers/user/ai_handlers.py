@@ -60,7 +60,8 @@ async def handle_wish(message: Message, state: FSMContext):
 
     # Формируем запрос к Groq API для обработки пожеланий
     chat_completion = await client.chat.completions.create(
-        messages=[{"role": "user", "content": f"""Сформулируй пожелание пользователя для разработчика. Пожелание: "{user_wish}"""}],
+        messages=[{"role": "user",
+                   "content": f"""Сформулируй пожелание пользователя для разработчика. Пожелание: "{user_wish}"""}],
         model="mixtral-8x7b-32768",
     )
 

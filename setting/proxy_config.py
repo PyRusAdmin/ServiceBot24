@@ -11,6 +11,7 @@ proxy_password = get_proxy_password()
 proxy_port = get_proxy_port()
 proxy_ip = get_proxy_ip()
 
+
 def setup_proxy():
     # Указываем прокси для HTTP и HTTPS
     os.environ['http_proxy'] = f"http://{proxy_user}:{proxy_password}@{proxy_ip}:{proxy_port}"
