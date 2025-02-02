@@ -19,7 +19,7 @@ from handlers.user.user_handlers import greeting_handler
 from setting.proxy_config import setup_proxy
 from system.dispatcher import dp, bot
 
-setup_proxy()  # Установка прокси
+
 
 logger.add("logs/log.log", rotation="1 MB", compression="zip", level="INFO")  # Логирование программы
 logger.add("logs/log_ERROR.log", rotation="1 MB", compression="zip", level="ERROR")  # Логирование программы
@@ -27,6 +27,8 @@ logger.add("logs/log_ERROR.log", rotation="1 MB", compression="zip", level="ERRO
 
 async def main() -> None:
     """Запуск бота https://t.me/h24service_bot"""
+
+
     await dp.start_polling(bot)
 
     #  ИИ

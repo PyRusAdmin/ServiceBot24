@@ -7,11 +7,11 @@ from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import Message, CallbackQuery
 from groq import AsyncGroq
 
+from setting.proxy_config import setup_proxy
 from setting.settings import get_groq_api_key
 from system.dispatcher import bot, dp, ADMIN_CHAT_ID
 
-# Инициализация Groq клиента
-client = AsyncGroq(api_key=get_groq_api_key())
+
 
 
 # Инициализация базы данных
@@ -52,6 +52,11 @@ async def cmd_wish(callback_query: CallbackQuery, state: FSMContext):
 @dp.message(WishState.waiting_for_wish)
 async def handle_wish(message: Message, state: FSMContext):
     """Обработчик текстовых сообщений с пожеланиями"""
+    setup_proxy()  # Установка прокси
+
+    # Инициализация Groq клиента
+    client = AsyncGroq(api_key=get_groq_api_key())
+
     user_id = message.from_user.id
     user_wish = message.text
 
