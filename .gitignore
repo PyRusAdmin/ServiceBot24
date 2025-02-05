@@ -1,5 +1,5 @@
 !/setting/config.ini
 !/setting/password/TelegramMaster/password.txt
-!/setting/password/Telegram_Commentator_GPT/password.txt
+!/setting/password/TelegramMaster_Commentator/password.txt
 !/.venv/
 !/.env

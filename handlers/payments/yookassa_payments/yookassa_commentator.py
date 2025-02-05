@@ -2,30 +2,30 @@ import json
 import sqlite3
 
 from aiogram import types, F
-from aiogram.fsm.context import FSMContext
 from aiogram.types import FSInputFile
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from loguru import logger  # Логирование с помощью loguru
 from yookassa import Configuration, Payment
 
 from db.settings_db import checking_for_presence_in_the_user_database
-from handlers.payments.products_goods_services import TelegramMaster
+from handlers.payments.products_goods_services import TelegramMaster_Commentator
 from keyboards.user_keyboards import start_menu
 from system.dispatcher import bot, dp, ACCOUNT_ID, SECRET_KEY, ADMIN_CHAT_ID
 
 
-# Оплата TelegramMaster 2.0
+# Оплата TelegramMaster_Commentator
 
-def payment_yookassa():
-    """Оплата yookassa"""
+
+def payment_yookassa_com():
+    """Оплата yookassa TelegramMaster_Commentator"""
 
     Configuration.account_id = ACCOUNT_ID
     Configuration.secret_key = SECRET_KEY
 
-    description_text = "Покупка программы: TelegramMaster 2.0"  # Текст описания товара
+    description_text = "Покупка программы: TelegramMaster_Commentator"  # Текст описания товара
 
     payment = Payment.create(
-        {"amount": {"value": TelegramMaster,  # Стоимость товара TelegramMaster 2.0
+        {"amount": {"value": TelegramMaster_Commentator,  # Стоимость товара TelegramMaster 2.0
                     "currency": "RUB"}, "capture": True,
          "confirmation": {"type": "redirect", "return_url": "https://t.me/h24service_bot"},
          "description": description_text,
@@ -35,7 +35,7 @@ def payment_yookassa():
                          {
                              "description": description_text,  # Название товара
                              "quantity": "1",
-                             "amount": {"value": TelegramMaster,  # Стоимость товара TelegramMaster 2.0
+                             "amount": {"value": TelegramMaster_Commentator,  # Стоимость товара TelegramMaster 2.0
                                         "currency": "RUB"},  # Сумма и валюта
                              "vat_code": "1"}]}})
 
@@ -46,14 +46,13 @@ def payment_yookassa():
     return payment_url, payment_id
 
 
-@dp.callback_query(F.data.startswith("payment_yookassa_program"))
-async def payment_url_handler(callback_query: types.CallbackQuery):
-    """Отправка ссылки для оплаты TelegramMaster 2.0"""
-    logger.info('Пользователь перешел покупать TelegramMaster 2.0')
-    payment_url, payment_id = payment_yookassa()
+@dp.callback_query(F.data == "payment_yookassa_commentator")
+async def payment_yookassa_program_com(callback_query: types.CallbackQuery):
+    """Отправка ссылки для оплаты TelegramMaster_Commentator"""
+    payment_url, payment_id = payment_yookassa_com()
 
     messages = (
-        "💳 <b>Оплата TelegramMaster 2.0</b>\n\n"
+        "💳 <b>Оплата TelegramMaster_Commentator</b>\n\n"
         f"Для оплаты перейдите по ссылке: {payment_url}\n\n"
         "🔔 <b>Важно:</b>\n"
         "1. Ссылка действительна <b>9 минут</b>. Если время истекло, зайдите в это меню заново.\n"
@@ -65,21 +64,21 @@ async def payment_url_handler(callback_query: types.CallbackQuery):
 
     # Создаем клавиатуру с кнопкой для проверки оплаты и возврата в меню
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text='✅ Проверить оплату (Юкасса)', callback_data=f"check_payment_{payment_id}")],
+        [InlineKeyboardButton(text='✅ Проверить оплату (Юкасса)', callback_data=f"check_pay_{payment_id}")],
         [InlineKeyboardButton(text='🏠 В начальное меню', callback_data='start_menu_keyboard')],
     ])
 
     await bot.send_message(chat_id=callback_query.from_user.id, text=messages, reply_markup=keyboard, parse_mode="HTML")
 
 
-@dp.callback_query(F.data.startswith("check_payment"))
-async def check_payment(callback_query: types.CallbackQuery, state: FSMContext):
-    """"Проверка платежа TelegramMaster 2.0"""
+@dp.callback_query(F.data.startswith("check_pay_"))
+async def check_payment_com(callback_query: types.CallbackQuery):
+    """"Проверка платежа TelegramMaster_Commentator"""
     split_data = callback_query.data.split("_")
     logger.info(split_data[2])
     payment_info = Payment.find_one(split_data[2])  # Проверьте статус платежа с помощью API yookassa
     logger.info(payment_info)
-    product = "TelegramMaster 2.0"
+    product = "TelegramMaster_Commentator"
     if payment_info.status == "succeeded":  # Обработка статуса платежа
         payment_status = "succeeded"
         date = payment_info.captured_at
@@ -97,12 +96,12 @@ async def check_payment(callback_query: types.CallbackQuery, state: FSMContext):
         conn.commit()
 
         # Создайте файл, который вы хотите отправить
-        caption = (f"Платеж на сумму {TelegramMaster} руб прошел успешно‼️ \n\n"
+        caption = (f"Платеж на сумму {TelegramMaster_Commentator} руб прошел успешно‼️ \n\n"
                    f"Вы можете скачать программу {product}\n\n"
                    f"Для возврата в начальное меню нажмите /start")
 
         inline_keyboard_markup = start_menu()  # Отправляемся в главное меню
-        document = FSInputFile("setting/password/TelegramMaster/password.txt")
+        document = FSInputFile("setting/password/TelegramMaster_Commentator/password.txt")
 
         await bot.send_document(chat_id=callback_query.from_user.id, document=document, caption=caption,
                                 reply_markup=inline_keyboard_markup)
@@ -118,13 +117,13 @@ async def check_payment(callback_query: types.CallbackQuery, state: FSMContext):
                                                                f"Username: @{callback_query.from_user.username},\n"
                                                                f"Имя: {callback_query.from_user.first_name},\n"
                                                                f"Фамилия: {callback_query.from_user.last_name},\n\n"
-                                                               f"Приобрел TelegramMaster 2.0")
+                                                               f"Приобрел TelegramMaster_Commentator")
     else:
         await bot.send_message(callback_query.message.chat.id, "Payment failed.")
 
 
-def register_yookassa_program():
+def register_yookassa_program_com():
     """Регистрируем handlers для бота"""
-    # Оплата TelegramMaster
-    dp.message.register(check_payment)
-    dp.callback_query.register(payment_url_handler)
+    # Оплата TelegramMaster_Commentator
+    dp.callback_query.register(check_payment_com)
+    dp.callback_query.register(payment_yookassa_program_com)

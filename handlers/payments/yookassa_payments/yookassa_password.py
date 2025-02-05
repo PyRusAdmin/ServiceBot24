@@ -10,7 +10,7 @@ from yookassa import Configuration, Payment
 
 from db.settings_db import checking_for_presence_in_the_user_database
 from handlers.payments.products_goods_services import password_TelegramMaster
-from keyboards.user_keyboards import start_menu_keyboard
+from keyboards.user_keyboards import start_menu
 from system.dispatcher import bot, dp, ACCOUNT_ID, SECRET_KEY, ADMIN_CHAT_ID
 
 
@@ -98,7 +98,7 @@ async def check_payments(callback_query: types.CallbackQuery, state: FSMContext)
                    f"Вы можете скачать программу TelegramMaster 2.0\n\n"
                    f"Для возврата в начальное меню нажмите /start")
 
-        inline_keyboard_markup = start_menu_keyboard()  # Отправляемся в главное меню
+        inline_keyboard_markup = start_menu()  # Отправляемся в главное меню
         document = FSInputFile("setting/password/TelegramMaster/password.txt")
 
         await bot.send_document(chat_id=callback_query.from_user.id, document=document, caption=caption,

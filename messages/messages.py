@@ -31,6 +31,12 @@ fag_post = ("<i>Основные функции бота 🤖</i>\n\n"
             "впечатлениями с 🤖 ботом.</code>\n\n"
             "Для возврата нажмите на /start")
 
+def generate_payment_message_commentator(current_date, password_TelegramMaster_Commentator):
+    return ("Получить пароль от TelegramMaster_Commentator. \n\n"
+            f"Цена на {current_date} — {password_TelegramMaster_Commentator} рублей.\n\n"
+            "Если по какой-либо причине бот не выдал пароль или произошла ошибка платежа, писать: "
+            "@PyAdminRU. 🤖🔒\n\n"
+            "Для возврата в начальное меню, нажмите: /start")
 
 def generate_payment_message(current_date, password_TelegramMaster):
     return ("Получить пароль от TelegramMaster 2.0. \n\n"

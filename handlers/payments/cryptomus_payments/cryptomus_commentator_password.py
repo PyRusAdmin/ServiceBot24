@@ -12,13 +12,13 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from loguru import logger  # Логирование с помощью loguru
 
 from db.settings_db import checking_for_presence_in_the_user_database
-from handlers.payments.products_goods_services import password_TelegramMaster
+from handlers.payments.products_goods_services import password_TelegramMaster_Commentator, password_TelegramMaster
 from keyboards.user_keyboards import start_menu
 from setting import settings
 from system.dispatcher import bot, dp, ADMIN_CHAT_ID
 
 
-async def make_request(url: str, invoice_data: dict):
+async def make_request_commentator(url: str, invoice_data: dict):
     encoded_data = base64.b64encode(
         json.dumps(invoice_data).encode("utf-8")
     ).decode("utf-8")
@@ -37,12 +37,12 @@ async def make_request(url: str, invoice_data: dict):
 
 
 # Обработчик для создания счета и отправки кнопки "Проверить оплату"
-@dp.callback_query(F.data == "payment_crypta_pas")
-async def buy_handler(callback_query: types.CallbackQuery):
-    """Оплата пароля TelegramMaster 2.0 криптой"""
+@dp.callback_query(F.data == "payment_crypta_commentator_pass")
+async def buy_handler_commentator(callback_query: types.CallbackQuery):
+    """Оплата пароля TelegramMaster_Commentator криптой"""
 
     # Создаем счет для оплаты
-    invoice_data = await make_request(
+    invoice_data = await make_request_commentator(
         url="https://api.cryptomus.com/v1/payment",
         invoice_data={
             "amount": f"{password_TelegramMaster}",
@@ -54,7 +54,7 @@ async def buy_handler(callback_query: types.CallbackQuery):
     # Создаем кнопку "Проверить оплату"
     check_payment_button = InlineKeyboardButton(
         text="Проверить оплату",
-        callback_data=f"check_paymentPAS_{invoice_data['result']['uuid']}"
+        callback_data=f"check_paymentPass_{invoice_data['result']['uuid']}"
     )
     keyboard = InlineKeyboardMarkup(inline_keyboard=[[check_payment_button]])
 
@@ -62,7 +62,7 @@ async def buy_handler(callback_query: types.CallbackQuery):
     await bot.send_message(
         chat_id=callback_query.message.chat.id,
         text=f"💳 <b>Счет для оплаты криптовалютой</b> 💳\n\n"
-             f"🌐 Вы собираетесь получить пароль от <b>TelegramMaster 2.0</b>. Пожалуйста, воспользуйтесь ссылкой ниже для оплаты:\n"
+             f"🌐 Вы собираетесь получить пароль от <b>TelegramMaster_Commentator</b>. Пожалуйста, воспользуйтесь ссылкой ниже для оплаты:\n"
              f"🔗 <a href='{invoice_data['result']['url']}'>Перейти к оплате</a>\n\n"
              f"⚠️ <b>Важная информация:</b> после завершения платежа нажмите кнопку 'Проверить оплату'.\n"
              f"❗️ Обратите внимание, что возврат денежных средств после оплаты криптовалютой невозможен.\n\n"
@@ -73,14 +73,14 @@ async def buy_handler(callback_query: types.CallbackQuery):
 
 
 # Обработчик для кнопки "Проверить оплату"
-@dp.callback_query(F.data.startswith("check_paymentPAS_"))
-async def check_payment_handler(callback_query: types.CallbackQuery):
+@dp.callback_query(F.data.startswith("check_paymentPass_"))
+async def check_payment_handler_commentator(callback_query: types.CallbackQuery):
     """Ручная проверка статуса оплаты"""
     invoice_uuid = callback_query.data.split("_")[2]  # Извлекаем UUID счета из callback_data
     logger.info(f"Проверка статуса оплаты по UUID: {invoice_uuid}")
     # Проверяем статус оплаты
     try:
-        invoice_data = await make_request(
+        invoice_data = await make_request_commentator(
             url="https://api.cryptomus.com/v1/payment/info",
             invoice_data={"uuid": invoice_uuid},
         )
@@ -101,13 +101,13 @@ async def check_payment_handler(callback_query: types.CallbackQuery):
                            (callback_query.from_user.id,
                             callback_query.from_user.first_name,
                             callback_query.from_user.last_name,
-                            callback_query.from_user.username, invoice_json, "Пароль обновления: TelegramMaster 2.0",
+                            callback_query.from_user.username, invoice_json, "Пароль обновления: TelegramMaster_Commentator",
                             date, "succeeded"))
             conn.commit()
 
             # Отправляем файл и сообщение об успешной оплате
-            caption = (f"Платеж на сумму {password_TelegramMaster} руб прошел успешно‼️ \n\n"
-                       f"Вы можете скачать программу TelegramMaster 2.0\n\n"
+            caption = (f"Платеж на сумму {password_TelegramMaster_Commentator} руб прошел успешно‼️ \n\n"
+                       f"Вы можете скачать программу  TelegramMaster_Commentator\n\n"
                        f"Для возврата в начальное меню нажмите /start")
 
             inline_keyboard_markup = start_menu()  # Отправляемся в главное меню
@@ -128,7 +128,7 @@ async def check_payment_handler(callback_query: types.CallbackQuery):
                                                                    f"Username: @{callback_query.from_user.username},\n"
                                                                    f"Имя: {callback_query.from_user.first_name},\n"
                                                                    f"Фамилия: {callback_query.from_user.last_name},\n\n"
-                                                                   f"Приобрел пароль от TelegramMaster 2.0 (криптой)")
+                                                                   f"Приобрел пароль от TelegramMaster_Commentator (криптой)")
 
         else:
             # Если оплата еще не прошла
@@ -146,6 +146,7 @@ async def check_payment_handler(callback_query: types.CallbackQuery):
         )
 
 
-def register_cryptomus_password():
+def register_cryptomus_password_commentator():
     """Регистрируем handlers для бота"""
-    dp.message.register(buy_handler)
+    dp.message.register(buy_handler_commentator)
+    dp.callback_query.register(check_payment_handler_commentator)

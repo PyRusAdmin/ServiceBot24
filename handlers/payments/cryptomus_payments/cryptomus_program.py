@@ -53,7 +53,7 @@ async def payment_crypta_pas_program_handler(callback_query: types.CallbackQuery
     # Создаем кнопку "Проверить оплату"
     check_payment_button = InlineKeyboardButton(
         text="Проверить оплату",
-        callback_data=f"check_payment_{invoice_data['result']['uuid']}"
+        callback_data=f"check_paymentP_{invoice_data['result']['uuid']}"
     )
     keyboard = InlineKeyboardMarkup(inline_keyboard=[[check_payment_button]])
 
@@ -69,7 +69,7 @@ async def payment_crypta_pas_program_handler(callback_query: types.CallbackQuery
 
 
 # Обработчик для кнопки "Проверить оплату TelegramMaster 2.0"
-@dp.callback_query(F.data.startswith("check_payment_"))
+@dp.callback_query(F.data.startswith("check_paymentP_"))
 async def check_invoice_paid_program(callback_query: types.CallbackQuery):
     """Ручная проверка статуса оплаты"""
     invoice_uuid = callback_query.data.split("_")[2]  # Извлекаем UUID счета из callback_data
