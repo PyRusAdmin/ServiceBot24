@@ -62,14 +62,14 @@ async def payment_url_handler_commentator_password(callback_query: types.Callbac
 
     # Создаем клавиатуру с кнопкой для проверки оплаты и возврата в меню
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text='✅ Проверить оплату (Юкасса)', callback_data=f"payment_passs_{payment_id}")],
+        [InlineKeyboardButton(text='✅ Проверить оплату (Юкасса)', callback_data=f"paymenst_passs_{payment_id}")],
         [InlineKeyboardButton(text='🏠 В начальное меню', callback_data='start_menu_keyboard')],
     ])
 
     await bot.send_message(chat_id=callback_query.from_user.id, text=messages, reply_markup=keyboard, parse_mode="HTML")
 
 
-@dp.callback_query(F.data.startswith("payment_passs"))
+@dp.callback_query(F.data.startswith("paymenst_passs"))
 async def check_payments_commentator_password(callback_query: types.CallbackQuery, state: FSMContext):
     """Проверка платежа 'Пароль обновления: TelegramMaster_Commentator'"""
     split_data = callback_query.data.split("_")

@@ -64,14 +64,14 @@ async def payment_yookassa_program_com(callback_query: types.CallbackQuery):
 
     # Создаем клавиатуру с кнопкой для проверки оплаты и возврата в меню
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text='✅ Проверить оплату (Юкасса)', callback_data=f"check_pay_{payment_id}")],
+        [InlineKeyboardButton(text='✅ Проверить оплату (Юкасса)', callback_data=f"cccheck_pay_{payment_id}")],
         [InlineKeyboardButton(text='🏠 В начальное меню', callback_data='start_menu_keyboard')],
     ])
 
     await bot.send_message(chat_id=callback_query.from_user.id, text=messages, reply_markup=keyboard, parse_mode="HTML")
 
 
-@dp.callback_query(F.data.startswith("check_pay_"))
+@dp.callback_query(F.data.startswith("cccheck_pay"))
 async def check_payment_com(callback_query: types.CallbackQuery):
     """"Проверка платежа TelegramMaster_Commentator"""
     split_data = callback_query.data.split("_")

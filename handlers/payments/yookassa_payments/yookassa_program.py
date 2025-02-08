@@ -65,14 +65,14 @@ async def payment_url_handler(callback_query: types.CallbackQuery):
 
     # Создаем клавиатуру с кнопкой для проверки оплаты и возврата в меню
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text='✅ Проверить оплату (Юкасса)', callback_data=f"check_payment_{payment_id}")],
+        [InlineKeyboardButton(text='✅ Проверить оплату (Юкасса)', callback_data=f"checsk_payment_{payment_id}")],
         [InlineKeyboardButton(text='🏠 В начальное меню', callback_data='start_menu_keyboard')],
     ])
 
     await bot.send_message(chat_id=callback_query.from_user.id, text=messages, reply_markup=keyboard, parse_mode="HTML")
 
 
-@dp.callback_query(F.data.startswith("check_payment"))
+@dp.callback_query(F.data.startswith("checsk_payment"))
 async def check_payment(callback_query: types.CallbackQuery, state: FSMContext):
     """"Проверка платежа TelegramMaster 2.0"""
     split_data = callback_query.data.split("_")
