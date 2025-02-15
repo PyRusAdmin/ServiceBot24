@@ -5,8 +5,8 @@
 
 В проекте используются платежные системы:
 
-- Юкасса (https://yookassa.ru/)
-- Сryptomus (https://cryptomus.com)
+- yookassa (https://yookassa.ru/)
+- cryptomus (https://cryptomus.com)
 
 Обновление от 30.09.2024
 
