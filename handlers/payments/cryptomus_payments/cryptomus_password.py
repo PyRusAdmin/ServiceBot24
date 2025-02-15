@@ -2,7 +2,6 @@ import base64
 import datetime  # Дата
 import hashlib
 import json
-import sqlite3
 import uuid
 
 import aiohttp
@@ -11,7 +10,7 @@ from aiogram.types import FSInputFile
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from loguru import logger  # Логирование с помощью loguru
 
-from db.settings_db import checking_for_presence_in_the_user_database
+from db.settings_db import checking_for_presence_in_the_user_database, save_payment_info, add_user_if_not_exists
 from handlers.payments.products_goods_services import password_TelegramMaster
 from keyboards.user_keyboards import start_menu
 from setting import settings
@@ -89,21 +88,12 @@ async def check_payment_handler(callback_query: types.CallbackQuery):
             # Если оплата прошла успешно
             date = datetime.datetime.now().strftime("%Y-%m-%d")
             logger.info(date)
-
-            # Сохраняем данные в базу данных
-            conn = sqlite3.connect('setting/user_data.db')
-            cursor = conn.cursor()
-            cursor.execute('''CREATE TABLE IF NOT EXISTS users_pay (user_id, first_name, last_name, username, payment_info,
-                                                                                product, date, payment_status)''')
             invoice_json = json.dumps(invoice_data)  # Преобразуем словарь в строку JSON
-            cursor.execute('''INSERT INTO users_pay (user_id, first_name, last_name, username, payment_info, 
-                                                     product, date, payment_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)''',
-                           (callback_query.from_user.id,
-                            callback_query.from_user.first_name,
-                            callback_query.from_user.last_name,
-                            callback_query.from_user.username, invoice_json, "Пароль обновления: TelegramMaster 2.0",
-                            date, "succeeded"))
-            conn.commit()
+
+            # Запись в базу данных пользователя, который оплатил счет в крипте
+            save_payment_info(callback_query.from_user.id, callback_query.from_user.first_name,
+                              callback_query.from_user.last_name, callback_query.from_user.username, invoice_json,
+                              "Пароль обновления: TelegramMaster 2.0", date, "succeeded")
 
             # Отправляем файл и сообщение об успешной оплате
             caption = (f"Платеж на сумму {password_TelegramMaster} руб прошел успешно‼️ \n\n"
@@ -120,8 +110,7 @@ async def check_payment_handler(callback_query: types.CallbackQuery):
             result = checking_for_presence_in_the_user_database(callback_query.from_user.id)
 
             if result is None:
-                cursor.execute('INSERT INTO users (id) VALUES (?)', (callback_query.from_user.id,))
-                conn.commit()
+                add_user_if_not_exists(callback_query.from_user.id)
 
                 await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
                                                                    f"ID {callback_query.from_user.id},\n"
@@ -129,7 +118,6 @@ async def check_payment_handler(callback_query: types.CallbackQuery):
                                                                    f"Имя: {callback_query.from_user.first_name},\n"
                                                                    f"Фамилия: {callback_query.from_user.last_name},\n\n"
                                                                    f"Приобрел пароль от TelegramMaster 2.0 (криптой)")
-
         else:
             # Если оплата еще не прошла
             await bot.send_message(
