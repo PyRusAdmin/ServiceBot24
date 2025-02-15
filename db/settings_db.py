@@ -1,5 +1,41 @@
-from .database import connect_db
+import sqlite3
+
 from loguru import logger
+
+from .database import connect_db
+
+
+def add_user_if_not_exists(user_id):
+    """
+    Добавляет пользователя в базу данных, если он там еще не зарегистрирован.
+    :param user_id: ID пользователя
+    """
+    with sqlite3.connect('setting/user_data.db') as conn:
+        cursor = conn.cursor()
+        cursor.execute('INSERT INTO users (id) VALUES (?)', (user_id,))
+        conn.commit()
+
+
+def save_payment_info(user_id, first_name, last_name, username, invoice_json, product, date, status):
+    """
+    Функция для сохранения информации о платеже
+    :param user_id: ID пользователя
+    :param first_name: Имя пользователя
+    :param last_name: Фамилия пользователя
+    :param username: Имя пользователя в Telegram
+    :param invoice_json: Информация о платеже
+    :param product: Название продукта
+    :param date: Дата платежа
+    :param status: Статус платежа
+    """
+    with sqlite3.connect('setting/user_data.db') as conn:
+        cursor = conn.cursor()
+        cursor.execute('''CREATE TABLE IF NOT EXISTS users_pay (user_id, first_name, last_name, username, payment_info,
+                                                                product, date, payment_status)''')
+        cursor.execute('''INSERT INTO users_pay (user_id, first_name, last_name, username, payment_info, 
+                            product, date, payment_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)''',
+                       (user_id, first_name, last_name, username, invoice_json, product, date, status))
+        conn.commit()
 
 
 def read_amount_db():
