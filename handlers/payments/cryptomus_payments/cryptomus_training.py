@@ -2,7 +2,6 @@ import base64
 import datetime  # Дата
 import hashlib
 import json
-import sqlite3
 import uuid
 
 import aiohttp
@@ -10,6 +9,7 @@ from aiogram import types, F
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from loguru import logger  # Логирование с помощью loguru
 
+from db.settings_db import save_payment_info
 from handlers.payments.products_goods_services import payment_installation
 from setting import settings
 from system.dispatcher import bot, dp, ADMIN_CHAT_ID
@@ -82,20 +82,12 @@ async def check_invoice_paid_training(callback_query: types.CallbackQuery):
 
             date = datetime.datetime.now().strftime("%Y-%m-%d")
             logger.info(date)
-
-            conn = sqlite3.connect('setting/user_data.db')
-            cursor = conn.cursor()
-            cursor.execute('''CREATE TABLE IF NOT EXISTS users_pay (user_id, first_name, last_name, username, payment_info,
-                                                                            product, date, payment_status)''')
             invoice_json = json.dumps(invoice_data)  # Преобразуем словарь в строку JSON
-            cursor.execute('''INSERT INTO users_pay (user_id, first_name, last_name, username, payment_info, 
-                                                                  product, date, payment_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)''',
-                           (callback_query.from_user.id,
-                            callback_query.from_user.first_name,
-                            callback_query.from_user.last_name,
-                            callback_query.from_user.username, invoice_json, "Помощь в настройке ПО (консультация)",
-                            date, "succeeded"))
-            conn.commit()
+
+            # Запись в базу данных пользователя, который оплатил счет в крипте
+            save_payment_info(callback_query.from_user.id, callback_query.from_user.first_name,
+                              callback_query.from_user.last_name, callback_query.from_user.username, invoice_json,
+                              "Помощь в настройке ПО (консультация)", date, "succeeded")
 
             await bot.send_message(callback_query.from_user.id,
                                    "Оплата прошла успешно‼️ \nДля согласования даты и времени , свяжитесь с администратором"
