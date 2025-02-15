@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import datetime
 
 from aiogram import types, F

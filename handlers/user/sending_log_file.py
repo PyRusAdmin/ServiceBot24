@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from aiogram import F
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State

@@ -1,7 +1,9 @@
-import environs
-from loguru import logger
+# -*- coding: utf-8 -*-
 import os
+
+import environs
 from dotenv import load_dotenv
+from loguru import logger
 
 try:
     env = environs.Env()

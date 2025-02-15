@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from aiogram import types, F
 
 from keyboards.user_keyboards import start_menu

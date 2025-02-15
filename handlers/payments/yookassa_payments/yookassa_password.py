@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import json
 
 from aiogram import types, F

@@ -1,4 +1,6 @@
+# -*- coding: utf-8 -*-
 import os
+
 from dotenv import load_dotenv
 
 from setting.settings import get_proxy_user, get_proxy_password, get_proxy_port, get_proxy_ip

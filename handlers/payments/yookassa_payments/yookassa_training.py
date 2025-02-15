@@ -1,5 +1,4 @@
 import json
-import sqlite3
 
 from aiogram import types, F
 from aiogram.fsm.context import FSMContext

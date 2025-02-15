@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import sqlite3
 
 from aiogram import F
@@ -10,8 +11,6 @@ from groq import AsyncGroq
 from setting.proxy_config import setup_proxy
 from setting.settings import get_groq_api_key
 from system.dispatcher import bot, dp, ADMIN_CHAT_ID
-
-
 
 
 # Инициализация базы данных

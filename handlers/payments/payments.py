@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import datetime  # Дата
 
 from aiogram import types, F
