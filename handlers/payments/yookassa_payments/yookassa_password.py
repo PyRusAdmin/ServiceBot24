@@ -8,7 +8,7 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from loguru import logger  # Логирование с помощью loguru
 from yookassa import Configuration, Payment
 
-from db.settings_db import checking_for_presence_in_the_user_database
+from db.settings_db import checking_for_presence_in_the_user_database, save_payment_info, add_user_if_not_exists
 from handlers.payments.products_goods_services import password_TelegramMaster
 from keyboards.user_keyboards import start_menu
 from system.dispatcher import bot, dp, ACCOUNT_ID, SECRET_KEY, ADMIN_CHAT_ID
@@ -81,17 +81,11 @@ async def check_payments(callback_query: types.CallbackQuery, state: FSMContext)
         payment_status = "succeeded"
         date = payment_info.captured_at
         logger.info(date)
-        conn = sqlite3.connect('setting/user_data.db')
-        cursor = conn.cursor()
-        cursor.execute('''CREATE TABLE IF NOT EXISTS users_pay (user_id, first_name, last_name, username, payment_info,
-                                                                product, date, payment_status)''')
-        cursor.execute('''INSERT INTO users_pay (user_id, first_name, last_name, username, payment_info, 
-                                                      product, date, payment_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)''',
-                       (callback_query.from_user.id,
-                        callback_query.from_user.first_name,
-                        callback_query.from_user.last_name,
-                        callback_query.from_user.username, payment_info.id, product, date, payment_status))
-        conn.commit()
+
+        # Запись в базу данных пользователя, который оплатил счет в рублях
+        save_payment_info(callback_query.from_user.id, callback_query.from_user.first_name,
+                          callback_query.from_user.last_name, callback_query.from_user.username, payment_info.id,
+                          product, date, payment_status)
 
         # Создайте файл, который вы хотите отправить
         caption = (f"Платеж на сумму {password_TelegramMaster} руб прошел успешно‼️ \n\n"
@@ -107,8 +101,7 @@ async def check_payments(callback_query: types.CallbackQuery, state: FSMContext)
         result = checking_for_presence_in_the_user_database(callback_query.from_user.id)
 
         if result is None:
-            cursor.execute('INSERT INTO users (id) VALUES (?)', (callback_query.from_user.id,))
-            conn.commit()
+            add_user_if_not_exists(callback_query.from_user.id)
 
             await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
                                                                f"ID {callback_query.from_user.id},\n"
