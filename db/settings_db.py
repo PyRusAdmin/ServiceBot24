@@ -3,7 +3,67 @@ import sqlite3
 
 from loguru import logger
 
-from .database import connect_db
+
+def check_user_payment(user_id, product_name):
+    # Подключение к базе данных
+    conn = connect_db()
+    cursor = conn.cursor()
+    cursor.execute('SELECT 1 FROM users_pay WHERE user_id = ? AND product = ?', (user_id, product_name))
+    result = cursor.fetchone()
+    return result
+
+
+def add_user_to_db(user_id):
+    # Инициализация базы данных SQLite
+    conn = sqlite3.connect('setting/user_data.db')
+    cursor = conn.cursor()
+    cursor.execute('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY)')
+    cursor.execute('INSERT INTO users (id) VALUES (?)', (user_id,))
+    conn.commit()
+
+
+def save_user_activity(user_id, first_name, last_name, username, date):
+    # Инициализация базы данных SQLite
+    conn = sqlite3.connect('setting/user_data.db')
+    cursor = conn.cursor()
+    cursor.execute('''CREATE TABLE IF NOT EXISTS users_run (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, 
+                                                        first_name TEXT, last_name TEXT, username TEXT, date TEXT)''')
+    cursor.execute('''INSERT INTO users_run (user_id, first_name, last_name, username, date) VALUES (?, ?, ?, ?, ?)''',
+                   (user_id, first_name, last_name, username, date))
+    conn.commit()
+
+
+def save_user_wish(user_id, clean_response):
+    # Сохраняем пожелание в базу данных
+    conn = sqlite3.connect('setting/user_data.db')
+    cursor = conn.cursor()
+    cursor.execute('INSERT INTO user_wishes (user_id, wish) VALUES (?, ?)', (user_id, clean_response))
+    conn.commit()
+    conn.close()
+
+
+# Инициализация базы данных
+def init_db():
+    conn = sqlite3.connect('setting/user_data.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS user_wishes (
+            user_id INTEGER,
+            wish TEXT
+        )
+    ''')
+    conn.commit()
+    conn.close()
+
+
+def connect_db():
+    """Подключение к базе данных"""
+    try:
+        conn = sqlite3.connect("setting/user_data.db")
+        return conn
+    except Exception as e:
+        logger.exception(f"Ошибка подключения к базе данных: {e}")
+        raise
 
 
 def add_user_if_not_exists(user_id):

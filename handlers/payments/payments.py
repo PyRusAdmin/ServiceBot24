@@ -4,13 +4,12 @@ import datetime  # Дата
 from aiogram import types, F
 from loguru import logger  # Логирование с помощью loguru
 
-from db.database import connect_db
-from db.settings_db import checking_for_presence_in_the_user_database
-from handlers.payments.products_goods_services import TelegramMaster, payment_installation, TelegramMaster_Commentator, \
-    password_TelegramMaster_Commentator
+from db.settings_db import checking_for_presence_in_the_user_database, check_user_payment
+from handlers.payments.products_goods_services import (TelegramMaster, payment_installation, TelegramMaster_Commentator,
+                                                       password_TelegramMaster_Commentator)
 from handlers.payments.products_goods_services import password_TelegramMaster
-from keyboards.payments_keyboards import payment_keyboard, payment_keyboard_password, payment_keyboard_com, \
-    payment_yookassa_password_commentator_password_keyboard
+from keyboards.payments_keyboards import (payment_keyboard, payment_keyboard_password, payment_keyboard_com,
+                                          payment_yookassa_password_commentator_password_keyboard)
 from keyboards.payments_keyboards import purchasing_a_program_setup_service
 from messages.messages import generate_payment_message, generate_payment_message_commentator
 from system.dispatcher import ADMIN_CHAT_ID
@@ -79,17 +78,11 @@ async def get_password_tg_com(callback: types.CallbackQuery):
             "Если вы ранее уже приобретали TelegramMaster_Commentator, но бот 🤖 не выдаёт пароль, обратитесь к "
             "🔗 @PyAdminRU.")
         if user.status in ['member', 'administrator', 'creator']:
-            # Подключение к базе данных
-            conn = connect_db()
-            cursor = conn.cursor()
 
             # Проверка наличия записи о покупке в базе данных
             product_name = "TelegramMaster_Commentator"
-            cursor.execute(
-                'SELECT 1 FROM users_pay WHERE user_id = ? AND product = ?',
-                (callback.from_user.id, product_name)
-            )
-            result = cursor.fetchone()
+
+            result = check_user_payment(callback.from_user.id, product_name)
 
             if result:
 
