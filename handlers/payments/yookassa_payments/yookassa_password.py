@@ -8,7 +8,7 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from loguru import logger  # Логирование с помощью loguru
 from yookassa import Configuration, Payment
 
-from db.settings_db import checking_for_presence_in_the_user_database, save_payment_info, add_user_if_not_exists
+from db.settings_db import save_payment_info, add_user_if_not_exists, is_user_in_db
 from handlers.payments.products_goods_services import password_TelegramMaster
 from keyboards.user_keyboards import start_menu
 from system.dispatcher import bot, dp, ACCOUNT_ID, SECRET_KEY, ADMIN_CHAT_ID
@@ -98,7 +98,7 @@ async def check_payments(callback_query: types.CallbackQuery, state: FSMContext)
         await bot.send_document(chat_id=callback_query.from_user.id, document=document, caption=caption,
                                 reply_markup=inline_keyboard_markup)
 
-        result = checking_for_presence_in_the_user_database(callback_query.from_user.id)
+        result = is_user_in_db(callback_query.from_user.id)
 
         if result is None:
             add_user_if_not_exists(callback_query.from_user.id)

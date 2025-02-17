@@ -4,7 +4,7 @@ import datetime  # Дата
 from aiogram import types, F
 from loguru import logger  # Логирование с помощью loguru
 
-from db.settings_db import checking_for_presence_in_the_user_database, check_user_payment
+from db.settings_db import check_user_payment, is_user_in_db
 from handlers.payments.products_goods_services import (TelegramMaster, payment_installation, TelegramMaster_Commentator,
                                                        password_TelegramMaster_Commentator)
 from handlers.payments.products_goods_services import password_TelegramMaster
@@ -129,7 +129,7 @@ async def get_password(callback: types.CallbackQuery):
         user = await bot.get_chat_member(chat_id="@master_tg_d", user_id=callback.from_user.id)  # Проверка подписки
         logger.info(f"User Status: {user.status}")
         if user.status in ['member', 'administrator', 'creator']:
-            result = checking_for_presence_in_the_user_database(callback.from_user.id)
+            result = is_user_in_db(callback.from_user.id)
             if result:
 
                 current_date = datetime.datetime.now().strftime("%Y-%m-%d")

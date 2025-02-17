@@ -8,7 +8,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
 from loguru import logger
 
-from db.settings_db import checking_for_presence_in_the_user_database, save_user_activity, add_user_to_db
+from db.settings_db import save_user_activity, add_user_to_db, is_user_in_db
 from keyboards.user_keyboards import greeting_keyboards  # Клавиатуры поста приветствия
 from messages.messages import greeting_post  # Пояснение для пользователя FAG
 from system.dispatcher import dp, bot  # Подключение к боту и диспетчеру пользователя
@@ -80,7 +80,7 @@ async def process_id_command(message: types.Message):
     """Обработчик команды /id"""
     try:
         user_id = int(message.text.split()[1])
-        result = checking_for_presence_in_the_user_database(user_id)  # Запись ID в базу данных
+        result = is_user_in_db(user_id)  # Запись ID в базу данных
         if result is None:
             add_user_to_db(user_id)
             await message.reply(f"ID {user_id} успешно записан в базу данных.")
