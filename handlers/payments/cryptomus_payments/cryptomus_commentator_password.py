@@ -88,7 +88,6 @@ async def check_payment_handler_commentator(callback_query: types.CallbackQuery)
         if invoice_data['result']['payment_status'] in ('paid', 'paid_over'):
             # Если оплата прошла успешно
             date = datetime.datetime.now().strftime("%Y-%m-%d")
-            logger.info(date)
             invoice_json = json.dumps(invoice_data)  # Преобразуем словарь в строку JSON
 
             # Запись в базу данных пользователя, который оплатил счет в крипте

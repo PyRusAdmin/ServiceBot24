@@ -82,7 +82,6 @@ async def check_invoice_paid_training(callback_query: types.CallbackQuery):
         if invoice_data['result']['payment_status'] in ('paid', 'paid_over'):
 
             date = datetime.datetime.now().strftime("%Y-%m-%d")
-            logger.info(date)
             invoice_json = json.dumps(invoice_data)  # Преобразуем словарь в строку JSON
 
             # Запись в базу данных пользователя, который оплатил счет в крипте

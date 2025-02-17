@@ -80,7 +80,6 @@ async def check_payments(callback_query: types.CallbackQuery, state: FSMContext)
     if payment_info.status == "succeeded":  # Обработка статуса платежа
         payment_status = "succeeded"
         date = payment_info.captured_at
-        logger.info(date)
 
         # Запись в базу данных пользователя, который оплатил счет в рублях
         save_payment_info(callback_query.from_user.id, callback_query.from_user.first_name,

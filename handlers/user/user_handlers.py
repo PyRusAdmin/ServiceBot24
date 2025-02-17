@@ -29,7 +29,6 @@ async def send_pass(message: types.Message, state: FSMContext):
 async def greeting(message: types.Message, state: FSMContext):
     """Обработчик состояния some_state, он же пост приветствия"""
     text = message.text  # Получаем текст сообщения
-    logger.info(text)
     # Используем with open для открытия файла с использованием кодека utf-8
     with open("setting/password/TelegramMaster/password.txt", "w", encoding='utf-8') as file:
         file.write(text)
