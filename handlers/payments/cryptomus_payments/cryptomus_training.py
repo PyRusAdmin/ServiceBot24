@@ -1,37 +1,16 @@
 # -*- coding: utf-8 -*-
-import base64
 import datetime  # Дата
-import hashlib
 import json
 import uuid
 
-import aiohttp
 from aiogram import types, F
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from loguru import logger  # Логирование с помощью loguru
 
 from db.settings_db import save_payment_info
+from handlers.payments.cryptomus_payments.cryptomus_commentator import make_request
 from handlers.payments.products_goods_services import payment_installation
-from setting import settings
 from system.dispatcher import bot, dp, ADMIN_CHAT_ID
-
-
-async def make_request(url: str, invoice_data: dict):
-    encoded_data = base64.b64encode(
-        json.dumps(invoice_data).encode("utf-8")
-    ).decode("utf-8")
-    signature = hashlib.md5(f"{encoded_data}{settings.CRYPTOMUS_API_KEY}".
-                            encode("utf-8")).hexdigest()
-
-    async with aiohttp.ClientSession(headers={
-        "merchant": settings.CRYPTOMUS_MERCHANT_ID,
-        "sign": signature,
-    }) as session:
-        async with session.post(url=url, json=invoice_data) as response:
-            if not response.ok:
-                raise ValueError(response.reason)
-
-            return await response.json()
 
 
 @dp.callback_query(F.data == "payment_crypta_pas_training_handler")

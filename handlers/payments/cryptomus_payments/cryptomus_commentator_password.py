@@ -1,39 +1,18 @@
 # -*- coding: utf-8 -*-
-import base64
 import datetime  # Дата
-import hashlib
 import json
 import uuid
 
-import aiohttp
 from aiogram import types, F
 from aiogram.types import FSInputFile
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from loguru import logger  # Логирование с помощью loguru
 
 from db.settings_db import save_payment_info, add_user_if_not_exists, is_user_in_db
+from handlers.payments.cryptomus_payments.cryptomus_commentator import make_request
 from handlers.payments.products_goods_services import password_TelegramMaster_Commentator, password_TelegramMaster
 from keyboards.user_keyboards import start_menu
-from setting import settings
 from system.dispatcher import bot, dp, ADMIN_CHAT_ID
-
-
-async def make_request_commentator(url: str, invoice_data: dict):
-    encoded_data = base64.b64encode(
-        json.dumps(invoice_data).encode("utf-8")
-    ).decode("utf-8")
-    signature = hashlib.md5(f"{encoded_data}{settings.CRYPTOMUS_API_KEY}".
-                            encode("utf-8")).hexdigest()
-
-    async with aiohttp.ClientSession(headers={
-        "merchant": settings.CRYPTOMUS_MERCHANT_ID,
-        "sign": signature,
-    }) as session:
-        async with session.post(url=url, json=invoice_data) as response:
-            if not response.ok:
-                raise ValueError(response.reason)
-
-            return await response.json()
 
 
 # Обработчик для создания счета и отправки кнопки "Проверить оплату"
@@ -42,7 +21,7 @@ async def buy_handler_commentator(callback_query: types.CallbackQuery):
     """Оплата пароля TelegramMaster_Commentator криптой"""
 
     # Создаем счет для оплаты
-    invoice_data = await make_request_commentator(
+    invoice_data = await make_request(
         url="https://api.cryptomus.com/v1/payment",
         invoice_data={
             "amount": f"{password_TelegramMaster}",
@@ -80,7 +59,7 @@ async def check_payment_handler_commentator(callback_query: types.CallbackQuery)
     logger.info(f"Проверка статуса оплаты по UUID: {invoice_uuid}")
     # Проверяем статус оплаты
     try:
-        invoice_data = await make_request_commentator(
+        invoice_data = await make_request(
             url="https://api.cryptomus.com/v1/payment/info",
             invoice_data={"uuid": invoice_uuid},
         )
@@ -101,7 +80,7 @@ async def check_payment_handler_commentator(callback_query: types.CallbackQuery)
                        f"Для возврата в начальное меню нажмите /start")
 
             inline_keyboard_markup = start_menu()  # Отправляемся в главное меню
-            document = FSInputFile("setting/password/TelegramMaster/password.txt")
+            document = FSInputFile("setting/password/TelegramMaster_Commentator/password.txt")
 
             await bot.send_document(chat_id=callback_query.from_user.id, document=document, caption=caption,
                                     reply_markup=inline_keyboard_markup)

@@ -1,39 +1,18 @@
 # -*- coding: utf-8 -*-
-import base64
 import datetime  # Дата
-import hashlib
 import json
 import uuid
 
-import aiohttp
 from aiogram import types, F
 from aiogram.types import FSInputFile
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from loguru import logger  # Логирование с помощью loguru
 
 from db.settings_db import save_payment_info, add_user_if_not_exists, is_user_in_db
+from handlers.payments.cryptomus_payments.cryptomus_commentator import make_request
 from handlers.payments.products_goods_services import password_TelegramMaster
 from keyboards.user_keyboards import start_menu
-from setting import settings
 from system.dispatcher import bot, dp, ADMIN_CHAT_ID
-
-
-async def make_request(url: str, invoice_data: dict):
-    encoded_data = base64.b64encode(
-        json.dumps(invoice_data).encode("utf-8")
-    ).decode("utf-8")
-    signature = hashlib.md5(f"{encoded_data}{settings.CRYPTOMUS_API_KEY}".
-                            encode("utf-8")).hexdigest()
-
-    async with aiohttp.ClientSession(headers={
-        "merchant": settings.CRYPTOMUS_MERCHANT_ID,
-        "sign": signature,
-    }) as session:
-        async with session.post(url=url, json=invoice_data) as response:
-            if not response.ok:
-                raise ValueError(response.reason)
-
-            return await response.json()
 
 
 # Обработчик для создания счета и отправки кнопки "Проверить оплату"
@@ -84,7 +63,6 @@ async def check_payment_handler(callback_query: types.CallbackQuery):
             url="https://api.cryptomus.com/v1/payment/info",
             invoice_data={"uuid": invoice_uuid},
         )
-
         if invoice_data['result']['payment_status'] in ('paid', 'paid_over'):
             # Если оплата прошла успешно
             date = datetime.datetime.now().strftime("%Y-%m-%d")
@@ -94,24 +72,18 @@ async def check_payment_handler(callback_query: types.CallbackQuery):
             save_payment_info(callback_query.from_user.id, callback_query.from_user.first_name,
                               callback_query.from_user.last_name, callback_query.from_user.username, invoice_json,
                               "Пароль обновления: TelegramMaster 2.0", date, "succeeded")
-
             # Отправляем файл и сообщение об успешной оплате
             caption = (f"Платеж на сумму {password_TelegramMaster} руб прошел успешно‼️ \n\n"
                        f"Вы можете скачать программу TelegramMaster 2.0\n\n"
                        f"Для возврата в начальное меню нажмите /start")
-
             inline_keyboard_markup = start_menu()  # Отправляемся в главное меню
             document = FSInputFile("setting/password/TelegramMaster/password.txt")
-
             await bot.send_document(chat_id=callback_query.from_user.id, document=document, caption=caption,
                                     reply_markup=inline_keyboard_markup)
-
             # Проверяем наличие пользователя в базе данных
             result = is_user_in_db(callback_query.from_user.id)
-
             if result is None:
                 add_user_if_not_exists(callback_query.from_user.id)
-
                 await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
                                                                    f"ID {callback_query.from_user.id},\n"
                                                                    f"Username: @{callback_query.from_user.username},\n"
