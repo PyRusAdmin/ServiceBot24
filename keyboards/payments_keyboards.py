@@ -2,6 +2,7 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 
+
 def payment_yookassa_password_commentator_password_keyboard() -> InlineKeyboardMarkup:
     """Клавиатура оплаты пароля TelegramMaster_Commentator"""
     rows = [
@@ -48,6 +49,19 @@ def payment_keyboard_com() -> InlineKeyboardMarkup:
         [
             InlineKeyboardButton(text="💳 Оплатить Yookassa", callback_data='payment_yookassa_commentator'),
             InlineKeyboardButton(text="💳 Оплатить (Крипта)", callback_data="payment_crypta_commentator"),
+        ],
+        [InlineKeyboardButton(text='🏠 В начальное меню', callback_data='start_menu_keyboard')],
+    ]
+    payment_keyboard_key = InlineKeyboardMarkup(inline_keyboard=rows)
+    return payment_keyboard_key
+
+
+def payment_keyboard_telegram_master_search_gpt() -> InlineKeyboardMarkup:
+    """Клавиатура оплаты TelegramMaster_Search_GPT"""
+    rows = [
+        [
+            InlineKeyboardButton(text="💳 Оплатить Yookassa", callback_data='payment_yookassa_Search_GPT'),
+            InlineKeyboardButton(text="💳 Оплатить (Крипта)", callback_data="payment_crypta_Search_GPT"),
         ],
         [InlineKeyboardButton(text='🏠 В начальное меню', callback_data='start_menu_keyboard')],
     ]

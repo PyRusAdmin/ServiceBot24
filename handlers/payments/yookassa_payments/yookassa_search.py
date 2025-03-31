@@ -46,13 +46,13 @@ def payment_yookassa_com():
     return payment_url, payment_id
 
 
-@dp.callback_query(F.data == "payment_yookassa_commentator")
-async def payment_yookassa_program_com(callback_query: types.CallbackQuery):
+@dp.callback_query(F.data == "payment_yookassa_Search_GPT")
+async def payment_yookassa_TelegramMaster_Search_GPT(callback_query: types.CallbackQuery):
     """Отправка ссылки для оплаты TelegramMaster_Commentator"""
     payment_url, payment_id = payment_yookassa_com()
 
     messages = (
-        "💳 <b>Оплата TelegramMaster_Commentator</b>\n\n"
+        "💳 <b>Оплата TelegramMaster_Search_GPT</b>\n\n"
         f"Для оплаты перейдите по ссылке: {payment_url}\n\n"
         "🔔 <b>Важно:</b>\n"
         "1. Ссылка действительна <b>9 минут</b>. Если время истекло, зайдите в это меню заново.\n"
@@ -114,8 +114,8 @@ async def check_payment_com(callback_query: types.CallbackQuery):
         await bot.send_message(callback_query.message.chat.id, "Payment failed.")
 
 
-def register_yookassa_program_com():
+def register_yookassa_TelegramMaster_Search_GPT():
     """Регистрируем handlers для бота"""
-    # Оплата TelegramMaster_Commentator
+    # Оплата TelegramMaster_Search_GPT
     dp.callback_query.register(check_payment_com)
-    dp.callback_query.register(payment_yookassa_program_com)
+    dp.callback_query.register(payment_yookassa_TelegramMaster_Search_GPT)
