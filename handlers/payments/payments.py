@@ -28,6 +28,7 @@ async def buy(callback_query: types.CallbackQuery):
                    "Для возврата в начальное меню, нажмите: /start")
     await bot.send_message(callback_query.message.chat.id, payment_mes, reply_markup=payment_keyboard_key)
 
+
 @dp.callback_query(F.data == "delivery_telegrammaster_search_gpt")
 async def buy_com(callback_query: types.CallbackQuery):
     """Покупка TelegramMaster_Search_GPT"""
@@ -36,7 +37,9 @@ async def buy_com(callback_query: types.CallbackQuery):
                    "Если по какой-либо причине бот не выдал пароль или произошла ошибка платежа, писать: "
                    "@PyAdminRU. 🤖🔒\n\n"
                    "Для возврата в начальное меню, нажмите: /start")
-    await bot.send_message(callback_query.message.chat.id, payment_mes, reply_markup=payment_keyboard_telegram_master_search_gpt())
+    await bot.send_message(callback_query.message.chat.id, payment_mes,
+                           reply_markup=payment_keyboard_telegram_master_search_gpt())
+
 
 @dp.callback_query(F.data == "delivery_com")
 async def buy_com(callback_query: types.CallbackQuery):

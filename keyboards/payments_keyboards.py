@@ -2,7 +2,6 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 
-
 def payment_yookassa_password_commentator_password_keyboard() -> InlineKeyboardMarkup:
     """Клавиатура оплаты пароля TelegramMaster_Commentator"""
     rows = [
