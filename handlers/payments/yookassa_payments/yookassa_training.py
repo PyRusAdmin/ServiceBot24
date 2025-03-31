@@ -38,12 +38,10 @@ async def check_payment_program_setup_service(callback_query: types.CallbackQuer
     payment_info = Payment.find_one(split_data[2])
     logger.info(payment_info)
     if payment_info.status == "succeeded":  # Обработка статуса платежа
-        payment_status = "succeeded"
-        date = payment_info.captured_at
         # Запись в базу данных пользователя, который оплатил счет в рублях
         save_payment_info(callback_query.from_user.id, callback_query.from_user.first_name,
                           callback_query.from_user.last_name, callback_query.from_user.username, payment_info.id,
-                          product, date, payment_status)
+                          product, payment_info.captured_at, "succeeded")
         await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
                                                            f"ID {callback_query.from_user.id},\n"
                                                            f"Username: @{callback_query.from_user.username},\n"

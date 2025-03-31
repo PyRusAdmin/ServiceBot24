@@ -42,12 +42,10 @@ async def check_payments(callback_query: types.CallbackQuery, state: FSMContext)
     payment_info = Payment.find_one(split_data[2])  # Проверьте статус платежа с помощью API YooKassa
     logger.info(payment_info)
     if payment_info.status == "succeeded":  # Обработка статуса платежа
-        payment_status = "succeeded"
-        date = payment_info.captured_at
         # Запись в базу данных пользователя, который оплатил счет в рублях
         save_payment_info(callback_query.from_user.id, callback_query.from_user.first_name,
                           callback_query.from_user.last_name, callback_query.from_user.username, payment_info.id,
-                          product, date, payment_status)
+                          product, payment_info.captured_at, "succeeded")
         # Создайте файл, который вы хотите отправить
         caption = (f"Платеж на сумму {password_TelegramMaster} руб прошел успешно‼️ \n\n"
                    f"Вы можете скачать программу TelegramMaster 2.0\n\n"

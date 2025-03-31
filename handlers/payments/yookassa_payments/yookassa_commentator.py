@@ -34,6 +34,13 @@ async def payment_yookassa_program_com(callback_query: types.CallbackQuery):
                            reply_markup=keyboard, parse_mode="HTML")
 
 
+def message_check_payment():
+    caption = (f"Платеж на сумму {TelegramMaster_Commentator} руб прошел успешно‼️ \n\n"
+               f"Вы можете скачать программу {product}\n\n"
+               f"Для возврата в начальное меню нажмите /start")
+    return caption
+
+
 @dp.callback_query(F.data.startswith("cccheck_pay"))
 async def check_payment_com(callback_query: types.CallbackQuery):
     """"Проверка платежа TelegramMaster_Commentator"""
@@ -42,12 +49,10 @@ async def check_payment_com(callback_query: types.CallbackQuery):
     payment_info = Payment.find_one(split_data[2])  # Проверьте статус платежа с помощью API yookassa
     logger.info(payment_info)
     if payment_info.status == "succeeded":  # Обработка статуса платежа
-        payment_status = "succeeded"
-        date = payment_info.captured_at
         # Запись в базу данных пользователя, который оплатил счет в рублях
         save_payment_info(callback_query.from_user.id, callback_query.from_user.first_name,
                           callback_query.from_user.last_name, callback_query.from_user.username, payment_info.id,
-                          product, date, payment_status)
+                          product, payment_info.captured_at, "succeeded")
         # Создайте файл, который вы хотите отправить
         caption = (f"Платеж на сумму {TelegramMaster_Commentator} руб прошел успешно‼️ \n\n"
                    f"Вы можете скачать программу {product}\n\n"
