@@ -24,14 +24,14 @@ async def payment_url_handler(callback_query: types.CallbackQuery):
         description_text=f"{product}",  # Текст описания товара
         product_price=password_TelegramMaster  # Цена товара в рублях
     )
-    messages = message_payment(product, payment_url)
     # Создаем клавиатуру с кнопкой для проверки оплаты и возврата в меню
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text='✅ Проверить оплату (Юкасса)', callback_data=f"payment_pass_{payment_id}")],
         [InlineKeyboardButton(text='🏠 В начальное меню', callback_data='start_menu_keyboard')],
     ])
-
-    await bot.send_message(chat_id=callback_query.from_user.id, text=messages, reply_markup=keyboard, parse_mode="HTML")
+    await bot.send_message(chat_id=callback_query.from_user.id,
+                           text=message_payment(product, payment_url),
+                           reply_markup=keyboard, parse_mode="HTML")
 
 
 @dp.callback_query(F.data.startswith("payment_pass"))
@@ -41,32 +41,24 @@ async def check_payments(callback_query: types.CallbackQuery, state: FSMContext)
     logger.info(split_data[2])
     payment_info = Payment.find_one(split_data[2])  # Проверьте статус платежа с помощью API YooKassa
     logger.info(payment_info)
-
     if payment_info.status == "succeeded":  # Обработка статуса платежа
         payment_status = "succeeded"
         date = payment_info.captured_at
-
         # Запись в базу данных пользователя, который оплатил счет в рублях
         save_payment_info(callback_query.from_user.id, callback_query.from_user.first_name,
                           callback_query.from_user.last_name, callback_query.from_user.username, payment_info.id,
                           product, date, payment_status)
-
         # Создайте файл, который вы хотите отправить
         caption = (f"Платеж на сумму {password_TelegramMaster} руб прошел успешно‼️ \n\n"
                    f"Вы можете скачать программу TelegramMaster 2.0\n\n"
                    f"Для возврата в начальное меню нажмите /start")
-
         inline_keyboard_markup = start_menu()  # Отправляемся в главное меню
         document = FSInputFile("setting/password/TelegramMaster/password.txt")
-
         await bot.send_document(chat_id=callback_query.from_user.id, document=document, caption=caption,
                                 reply_markup=inline_keyboard_markup)
-
         result = is_user_in_db(callback_query.from_user.id)
-
         if result is None:
             add_user_if_not_exists(callback_query.from_user.id)
-
             await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
                                                                f"ID {callback_query.from_user.id},\n"
                                                                f"Username: @{callback_query.from_user.username},\n"

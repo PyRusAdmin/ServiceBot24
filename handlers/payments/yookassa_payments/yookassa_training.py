@@ -20,15 +20,14 @@ async def payment_url_handler(callback_query: types.CallbackQuery):
         description_text=f"{product}",  # Текст описания товара
         product_price=payment_installation  # Цена товара в рублях
     )
-    messages = message_payment(product, payment_url)
-
     # Создаем клавиатуру с кнопкой для проверки оплаты и возврата в меню
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text='✅ Проверить оплату (Юкасса)', callback_data=f"csheck_service_{payment_id}")],
         [InlineKeyboardButton(text='🏠 В начальное меню', callback_data='start_menu_keyboard')],
     ])
-
-    await bot.send_message(chat_id=callback_query.from_user.id, text=messages, reply_markup=keyboard, parse_mode="HTML")
+    await bot.send_message(chat_id=callback_query.from_user.id,
+                           text=message_payment(product, payment_url),
+                           reply_markup=keyboard, parse_mode="HTML")
 
 
 @dp.callback_query(F.data.startswith("csheck_service"))
@@ -38,23 +37,19 @@ async def check_payment_program_setup_service(callback_query: types.CallbackQuer
     # Проверьте статус платежа с помощью API yookassa
     payment_info = Payment.find_one(split_data[2])
     logger.info(payment_info)
-
     if payment_info.status == "succeeded":  # Обработка статуса платежа
         payment_status = "succeeded"
         date = payment_info.captured_at
-
         # Запись в базу данных пользователя, который оплатил счет в рублях
         save_payment_info(callback_query.from_user.id, callback_query.from_user.first_name,
                           callback_query.from_user.last_name, callback_query.from_user.username, payment_info.id,
                           product, date, payment_status)
-
         await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
                                                            f"ID {callback_query.from_user.id},\n"
                                                            f"Username: @{callback_query.from_user.username},\n"
                                                            f"Имя: {callback_query.from_user.first_name},\n"
                                                            f"Фамилия: {callback_query.from_user.last_name},\n\n"
                                                            f"Приобрел 'Помощь в настройке ПО (консультация)'")
-
         await bot.send_message(callback_query.from_user.id,
                                "Оплата прошла успешно‼️ \nДля согласования даты и времени , свяжитесь с администратором"
                                " через личные сообщения, используя указанный никнейм: @PyAdminRU. 🤖🔒\n\n"
