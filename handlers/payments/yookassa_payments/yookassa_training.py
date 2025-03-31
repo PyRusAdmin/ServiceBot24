@@ -1,59 +1,26 @@
-import json
-
 from aiogram import types, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from loguru import logger  # Логирование с помощью loguru
-from yookassa import Configuration, Payment
+from yookassa import Payment
 
 from db.settings_db import save_payment_info
+from handlers.payment_yookassa import payment_yookassa_com
 from handlers.payments.products_goods_services import payment_installation
-from system.dispatcher import bot, dp, ACCOUNT_ID, SECRET_KEY, ADMIN_CHAT_ID
+from messages.messages import message_payment
+from system.dispatcher import bot, dp, ADMIN_CHAT_ID
 
-
-def payment_yookassa_program_setup_service():
-    """Оплата yookassa"""
-    logger.info(f"ACCOUNT_ID: {ACCOUNT_ID}, SECRET_KEY {SECRET_KEY}")
-    Configuration.account_id = ACCOUNT_ID
-    Configuration.secret_key = SECRET_KEY
-
-    payment = Payment.create(
-        {"amount": {"value": payment_installation,  # Сумма за установку ПО
-                    "currency": "RUB"}, "capture": True,
-         "confirmation": {"type": "redirect", "return_url": "https://t.me/h24service_bot"},
-         "description": "Помощь в настройке ПО (консультация)",
-         "metadata": {'order_number': '1'},
-         "receipt": {"customer": {"email": "zh.vitaliy92@yandex.ru"},
-                     "items": [
-                         {
-                             "description": "Помощь в настройке ПО (консультация)",  # Название товара
-                             "quantity": "1",
-                             "amount": {"value": payment_installation,
-                                        "currency": "RUB"},  # Сумма и валюта
-                             "vat_code": "1"}]}})
-
-    payment_data = json.loads(payment.json())
-    payment_id = payment_data['id']
-    payment_url = (payment_data['confirmation'])['confirmation_url']
-    logger.info(f"Ссылка для оплаты: {payment_url}, ID оплаты {payment_id}")
-    return payment_url, payment_id
+product = "Помощь в настройке ПО (консультация)"
 
 
 @dp.callback_query(F.data.startswith("payment_yookassa_training"))
 async def payment_url_handler(callback_query: types.CallbackQuery):
     """Отправка ссылки для оплаты TelegramMaster 2.0"""
-    payment_url, payment_id = payment_yookassa_program_setup_service()
-
-    messages = (
-        "💳 <b>Оплата установки и настройки ПО:</b>\n\n"
-        f"Для оплаты перейдите по ссылке: {payment_url}\n\n"
-        "🔔 <b>Важно:</b>\n"
-        "1. Ссылка действительна <b>9 минут</b>. Если время истекло, зайдите в это меню заново.\n"
-        "2. Оплата осуществляется через безопасную платежную систему <b>Юкасса</b>.\n"
-        "3. После завершения процесса оплаты, свяжитесь с администратором через личные сообщения, используя "
-        "указанный никнейм: @PyAdminRU. 🤖🔒\n\n"
-        "🔄 После оплаты нажмите кнопку <b>«Проверить оплату»</b>, чтобы убедится, что оплата прошла успешно."
+    payment_url, payment_id = payment_yookassa_com(
+        description_text=f"{product}",  # Текст описания товара
+        product_price=payment_installation  # Цена товара в рублях
     )
+    messages = message_payment(product, payment_url)
 
     # Создаем клавиатуру с кнопкой для проверки оплаты и возврата в меню
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
@@ -71,7 +38,7 @@ async def check_payment_program_setup_service(callback_query: types.CallbackQuer
     # Проверьте статус платежа с помощью API yookassa
     payment_info = Payment.find_one(split_data[2])
     logger.info(payment_info)
-    product = "Помощь в настройке ПО (консультация)"
+
     if payment_info.status == "succeeded":  # Обработка статуса платежа
         payment_status = "succeeded"
         date = payment_info.captured_at
