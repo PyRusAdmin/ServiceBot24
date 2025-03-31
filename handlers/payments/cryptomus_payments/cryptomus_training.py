@@ -57,36 +57,29 @@ async def check_invoice_paid_training(callback_query: types.CallbackQuery):
             url="https://api.cryptomus.com/v1/payment/info",
             invoice_data={"uuid": id},
         )
-
         if invoice_data['result']['payment_status'] in ('paid', 'paid_over'):
-
             date = datetime.datetime.now().strftime("%Y-%m-%d")
             invoice_json = json.dumps(invoice_data)  # Преобразуем словарь в строку JSON
-
             # Запись в базу данных пользователя, который оплатил счет в крипте
             save_payment_info(callback_query.from_user.id, callback_query.from_user.first_name,
                               callback_query.from_user.last_name, callback_query.from_user.username, invoice_json,
                               "Помощь в настройке ПО (консультация)", date, "succeeded")
-
             await bot.send_message(callback_query.from_user.id,
                                    "Оплата прошла успешно‼️ \nДля согласования даты и времени , свяжитесь с администратором"
                                    " через личные сообщения, используя указанный никнейм: @PyAdminRU. 🤖🔒\n\n"
                                    "Для возврата в начальное меню, нажмите: /start")
-
             await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
                                                                f"ID {callback_query.from_user.id},\n"
                                                                f"Username: @{callback_query.from_user.username},\n"
                                                                f"Имя: {callback_query.from_user.first_name},\n"
                                                                f"Фамилия: {callback_query.from_user.last_name},\n\n"
                                                                f"Приобрел 'Помощь в настройке ПО (консультация)' (криптой)")
-
         else:
             # Если оплата еще не прошла
             await bot.send_message(
                 chat_id=callback_query.message.chat.id,
                 text="❌ Платеж еще не оплачен. Пожалуйста, завершите оплату и нажмите кнопку 'Проверить оплату' еще раз."
             )
-
     except Exception as e:
         # Обработка ошибок
         logger.error(f"Ошибка при проверке оплаты: {e}")

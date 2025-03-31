@@ -11,7 +11,7 @@ from db.settings_db import save_payment_info, add_user_if_not_exists, is_user_in
 from handlers.payment_yookassa import payment_yookassa_com
 from handlers.payments.products_goods_services import password_TelegramMaster_Commentator
 from keyboards.user_keyboards import start_menu
-from messages.messages import message_payment
+from messages.messages import message_payment, message_check_payment
 from system.dispatcher import bot, dp, ADMIN_CHAT_ID
 
 product = "Пароль обновления: TelegramMaster_Commentator"
@@ -46,14 +46,12 @@ async def check_payments_commentator_password(callback_query: types.CallbackQuer
         save_payment_info(callback_query.from_user.id, callback_query.from_user.first_name,
                           callback_query.from_user.last_name, callback_query.from_user.username, payment_info.id,
                           product, payment_info.captured_at, "succeeded")
-        # Создайте файл, который вы хотите отправить
-        caption = (f"Платеж на сумму {password_TelegramMaster_Commentator} руб прошел успешно‼️ \n\n"
-                   f"Вы можете скачать программу TelegramMaster_Commentator\n\n"
-                   f"Для возврата в начальное меню нажмите /start")
-        inline_keyboard_markup = start_menu()  # Отправляемся в главное меню
-        document = FSInputFile("setting/password/TelegramMaster_Commentator/password.txt")
-        await bot.send_document(chat_id=callback_query.from_user.id, document=document, caption=caption,
-                                reply_markup=inline_keyboard_markup)
+        await bot.send_document(chat_id=callback_query.from_user.id,
+                                document=FSInputFile("setting/password/TelegramMaster_Commentator/password.txt"),
+                                caption=message_check_payment(product_price=password_TelegramMaster_Commentator,
+                                                              product=product),
+                                reply_markup=start_menu()  # Отправляемся в главное меню
+                                )
         result = is_user_in_db(callback_query.from_user.id)
         if result is None:
             add_user_if_not_exists(callback_query.from_user.id)

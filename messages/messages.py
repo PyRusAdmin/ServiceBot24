@@ -49,6 +49,13 @@ def generate_payment_message(current_date, password_TelegramMaster):
             "Для возврата в начальное меню, нажмите: /start")
 
 
+def message_check_payment(product_price, product):
+    caption = (f"Платеж на сумму {product_price} руб прошел успешно‼️ \n\n"
+               f"Вы можете скачать программу {product}\n\n"
+               f"Для возврата в начальное меню нажмите /start")
+    return caption
+
+
 def message_payment(product, payment_url):
     messages = (
         f"💳 <b>Оплата: {product}</b>\n\n"

@@ -73,38 +73,31 @@ async def check_payment_handler_commentator(callback_query: types.CallbackQuery)
             save_payment_info(callback_query.from_user.id, callback_query.from_user.first_name,
                               callback_query.from_user.last_name, callback_query.from_user.username, invoice_json,
                               "Пароль обновления: TelegramMaster_Commentator", date, "succeeded")
-
             # Отправляем файл и сообщение об успешной оплате
             caption = (f"Платеж на сумму {password_TelegramMaster_Commentator} руб прошел успешно‼️ \n\n"
                        f"Вы можете скачать программу  TelegramMaster_Commentator\n\n"
                        f"Для возврата в начальное меню нажмите /start")
-
-            inline_keyboard_markup = start_menu()  # Отправляемся в главное меню
-            document = FSInputFile("setting/password/TelegramMaster_Commentator/password.txt")
-
-            await bot.send_document(chat_id=callback_query.from_user.id, document=document, caption=caption,
-                                    reply_markup=inline_keyboard_markup)
-
+            await bot.send_document(chat_id=callback_query.from_user.id,
+                                    document=FSInputFile("setting/password/TelegramMaster_Commentator/password.txt"),
+                                    caption=caption,
+                                    reply_markup=start_menu()  # Отправляемся в главное меню
+                                    )
             # Проверяем наличие пользователя в базе данных
             result = is_user_in_db(callback_query.from_user.id)
-
             if result is None:
                 add_user_if_not_exists(callback_query.from_user.id)
-
                 await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
                                                                    f"ID {callback_query.from_user.id},\n"
                                                                    f"Username: @{callback_query.from_user.username},\n"
                                                                    f"Имя: {callback_query.from_user.first_name},\n"
                                                                    f"Фамилия: {callback_query.from_user.last_name},\n\n"
                                                                    f"Приобрел пароль от TelegramMaster_Commentator (криптой)")
-
         else:
             # Если оплата еще не прошла
             await bot.send_message(
                 chat_id=callback_query.message.chat.id,
                 text="❌ Платеж еще не оплачен. Пожалуйста, завершите оплату и нажмите кнопку 'Проверить оплату' еще раз."
             )
-
     except Exception as e:
         # Обработка ошибок
         logger.error(f"Ошибка при проверке оплаты: {e}")

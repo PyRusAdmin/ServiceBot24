@@ -12,7 +12,10 @@ from db.settings_db import save_payment_info, add_user_if_not_exists, is_user_in
 from handlers.payments.cryptomus_payments.cryptomus_commentator import make_request
 from handlers.payments.products_goods_services import password_TelegramMaster
 from keyboards.user_keyboards import start_menu
+from messages.messages import message_check_payment
 from system.dispatcher import bot, dp, ADMIN_CHAT_ID
+
+product = "Пароль обновления: TelegramMaster 2.0"
 
 
 # Обработчик для создания счета и отправки кнопки "Проверить оплату"
@@ -73,13 +76,12 @@ async def check_payment_handler(callback_query: types.CallbackQuery):
                               callback_query.from_user.last_name, callback_query.from_user.username, invoice_json,
                               "Пароль обновления: TelegramMaster 2.0", date, "succeeded")
             # Отправляем файл и сообщение об успешной оплате
-            caption = (f"Платеж на сумму {password_TelegramMaster} руб прошел успешно‼️ \n\n"
-                       f"Вы можете скачать программу TelegramMaster 2.0\n\n"
-                       f"Для возврата в начальное меню нажмите /start")
-            inline_keyboard_markup = start_menu()  # Отправляемся в главное меню
-            document = FSInputFile("setting/password/TelegramMaster/password.txt")
-            await bot.send_document(chat_id=callback_query.from_user.id, document=document, caption=caption,
-                                    reply_markup=inline_keyboard_markup)
+            await bot.send_document(chat_id=callback_query.from_user.id,
+                                    document=FSInputFile("setting/password/TelegramMaster/password.txt"),
+                                    caption=message_check_payment(product_price=password_TelegramMaster,
+                                                                  product=product),
+                                    reply_markup=start_menu()  # Отправляемся в главное меню
+                                    )
             # Проверяем наличие пользователя в базе данных
             result = is_user_in_db(callback_query.from_user.id)
             if result is None:
