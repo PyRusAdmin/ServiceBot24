@@ -8,4 +8,4 @@ TelegramMaster_Commentator = 1000.00  # Сумма товара "TelegramMaster_
 
 payment_installation = 500.00  # Сумма товара "Установка ПО"
 
-TelegramMaster_Search_GPT = 1.00  # Стоимость товара "TelegramMaster_Search_GPT"
+TelegramMaster_Search_GPT = 100.00  # Стоимость товара "TelegramMaster_Search_GPT"

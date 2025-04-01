@@ -9,6 +9,7 @@ from handlers.payments.cryptomus_payments.cryptomus_commentator import register_
 from handlers.payments.cryptomus_payments.cryptomus_commentator_password import register_cryptomus_password_commentator
 from handlers.payments.cryptomus_payments.cryptomus_password import register_cryptomus_password
 from handlers.payments.cryptomus_payments.cryptomus_program import register_cryptomus_program
+from handlers.payments.cryptomus_payments.cryptomus_search import register_cryptomus_search_gpt
 from handlers.payments.cryptomus_payments.cryptomus_training import register_cryptomus_training
 from handlers.payments.payments import register_program_payments
 from handlers.payments.yookassa_payments.yookassa_commentator import register_yookassa_program_com
@@ -66,6 +67,7 @@ async def main() -> None:
 
     # Покупка TelegramMaster_Search_GPT
     register_yookassa_telegram_master_search_gpt()
+    register_cryptomus_search_gpt()
 
 
 if __name__ == '__main__':

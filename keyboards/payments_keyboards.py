@@ -19,6 +19,15 @@ def payment_yookassa_password_commentator_password_keyboard() -> InlineKeyboardM
     ])
 
 
+def payment_keyboard_telegram_master_search_gpt_1() -> InlineKeyboardMarkup:
+    """Клавиатура оплаты TelegramMaster_Search_GPT"""
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="💳 Оплатить Yookassa", callback_data='payment_yookassa_Search_GPT'),
+         InlineKeyboardButton(text="💳 Оплатить (Крипта)", callback_data='payment_crypta_Search_GPT'), ],
+        [InlineKeyboardButton(text='🏠 В начальное меню', callback_data='start_menu_keyboard')],
+    ])
+
+
 def payment_keyboard_password() -> InlineKeyboardMarkup:
     """Клавиатура оплаты пароля TelegramMaster"""
     rows = [
@@ -51,19 +60,6 @@ def payment_keyboard_com() -> InlineKeyboardMarkup:
         [
             InlineKeyboardButton(text="💳 Оплатить Yookassa", callback_data='payment_yookassa_commentator'),
             InlineKeyboardButton(text="💳 Оплатить (Крипта)", callback_data="payment_crypta_commentator"),
-        ],
-        [InlineKeyboardButton(text='🏠 В начальное меню', callback_data='start_menu_keyboard')],
-    ]
-    payment_keyboard_key = InlineKeyboardMarkup(inline_keyboard=rows)
-    return payment_keyboard_key
-
-
-def payment_keyboard_telegram_master_search_gpt_1() -> InlineKeyboardMarkup:
-    """Клавиатура оплаты TelegramMaster_Search_GPT"""
-    rows = [
-        [
-            InlineKeyboardButton(text="💳 Оплатить Yookassa", callback_data='payment_yookassa_Search_GPT'),
-            InlineKeyboardButton(text="💳 Оплатить (Крипта)", callback_data="payment_crypta_Search_GPT"),
         ],
         [InlineKeyboardButton(text='🏠 В начальное меню', callback_data='start_menu_keyboard')],
     ]
