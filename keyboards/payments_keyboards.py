@@ -12,16 +12,11 @@ def payment_keyboard_telegram_master_search_gpt(payment_id) -> InlineKeyboardMar
 
 def payment_yookassa_password_commentator_password_keyboard() -> InlineKeyboardMarkup:
     """Клавиатура оплаты пароля TelegramMaster_Commentator"""
-    rows = [
-        [
-            InlineKeyboardButton(text=f"💳 Оплатить Yookassa",
-                                 callback_data='payment_yookassa_password_commentator_password'),
-            InlineKeyboardButton(text=f"💳 Оплатить (Крипта)", callback_data=f"payment_crypta_commentator_pass")
-        ],
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text=f"💳 Оплатить Yookassa", callback_data='payment_yookassa_password_commentator_password'),
+         InlineKeyboardButton(text=f"💳 Оплатить (Крипта)", callback_data=f"payment_crypta_commentator_pass")],
         [InlineKeyboardButton(text='🏠 В начальное меню', callback_data='start_menu_keyboard')],
-    ]
-    payment_keyboard_password_key = InlineKeyboardMarkup(inline_keyboard=rows)
-    return payment_keyboard_password_key
+    ])
 
 
 def payment_keyboard_password() -> InlineKeyboardMarkup:

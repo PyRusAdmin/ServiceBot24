@@ -88,20 +88,17 @@ async def get_password_tg_com(callback: types.CallbackQuery):
             "Если вы ранее уже приобретали TelegramMaster_Commentator, но бот 🤖 не выдаёт пароль, обратитесь к "
             "🔗 @PyAdminRU.")
         if user.status in ['member', 'administrator', 'creator']:
-
             # Проверка наличия записи о покупке в базе данных
             product_name = "TelegramMaster_Commentator"
-
             result = check_user_payment(callback.from_user.id, product_name)
-
             if result:
-
-                current_date = datetime.datetime.now().strftime("%Y-%m-%d")
-                payment_keyboard_key = payment_yookassa_password_commentator_password_keyboard()
                 # Сообщение пользователю
-                payment_mes = generate_payment_message_commentator(current_date, password_TelegramMaster_Commentator)
-                await bot.send_message(callback.message.chat.id, payment_mes, reply_markup=payment_keyboard_key)
-
+                await bot.send_message(
+                    callback.message.chat.id,
+                    generate_payment_message_commentator(datetime.datetime.now().strftime("%Y-%m-%d"),
+                                                         password_TelegramMaster_Commentator),
+                    reply_markup=payment_yookassa_password_commentator_password_keyboard()
+                )
                 await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
                                                                    f"ID {callback.from_user.id},\n"
                                                                    f"Username: @{callback.from_user.username},\n"
@@ -109,7 +106,6 @@ async def get_password_tg_com(callback: types.CallbackQuery):
                                                                    f"Фамилия: {callback.from_user.last_name},\n"
                                                                    f"Запросил пароль от TelegramMaster_Commentator")
             else:
-
                 await bot.send_message(chat_id=callback.message.chat.id, text=text)  # ID пользователя нет в базе данных
                 await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
                                                                    f"ID {callback.from_user.id},\n"
@@ -141,13 +137,11 @@ async def get_password(callback: types.CallbackQuery):
         if user.status in ['member', 'administrator', 'creator']:
             result = is_user_in_db(callback.from_user.id)
             if result:
-
                 current_date = datetime.datetime.now().strftime("%Y-%m-%d")
                 payment_keyboard_key = payment_keyboard_password()
                 # Сообщение пользователю
                 payment_mes = generate_payment_message(current_date, password_TelegramMaster)
                 await bot.send_message(callback.message.chat.id, payment_mes, reply_markup=payment_keyboard_key)
-
                 await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
                                                                    f"ID {callback.from_user.id},\n"
                                                                    f"Username: @{callback.from_user.username},\n"
