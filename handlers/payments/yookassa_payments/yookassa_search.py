@@ -19,7 +19,7 @@ product = "TelegramMaster-Search-GPT"
 
 @dp.callback_query(F.data == "payment_yookassa_Search_GPT")
 async def payment_yookassa_telegram_master_search_gpt(callback_query: types.CallbackQuery):
-    """Отправка ссылки для оплаты TelegramMaster_Commentator"""
+    """Отправка ссылки для оплаты TelegramMaster-Search-GPT"""
     try:
         payment_url, payment_id = payment_yookassa_com(
             description_text=f"Оплата: {product}",  # Текст описания товара
@@ -35,7 +35,7 @@ async def payment_yookassa_telegram_master_search_gpt(callback_query: types.Call
 
 @dp.callback_query(F.data.startswith("CheckPayTMSearchGPT"))
 async def check_pay_telegram_master_search_gpt(callback_query: types.CallbackQuery):
-    """"Проверка платежа TelegramMaster_Commentator"""
+    """"Проверка платежа TelegramMaster-Search-GPT"""
     try:
         split_data = callback_query.data.split("_")
         payment_info = Payment.find_one(split_data[1])  # Проверьте статус платежа с помощью API yookassa
