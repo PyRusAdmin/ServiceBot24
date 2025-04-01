@@ -2,13 +2,13 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 
-
 def payment_keyboard_telegram_master_search_gpt(payment_id) -> InlineKeyboardMarkup:
     """Создает клавиатуру для оплаты TelegramMaster-Search-GPT и возврата в главное меню"""
     return InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text='✅ Проверить оплату (Yookassa)', callback_data=f"CheckPayTMSearchGPT_{payment_id}")],
         [InlineKeyboardButton(text='🏠 В начальное меню', callback_data='start_menu_keyboard')],
     ])
+
 
 def payment_yookassa_password_commentator_password_keyboard() -> InlineKeyboardMarkup:
     """Клавиатура оплаты пароля TelegramMaster_Commentator"""

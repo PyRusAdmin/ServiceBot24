@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 from aiogram import types, F
 from aiogram.types import FSInputFile
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
