@@ -12,11 +12,10 @@ from handlers.payments.cryptomus_payments.cryptomus_program import register_cryp
 from handlers.payments.cryptomus_payments.cryptomus_training import register_cryptomus_training
 from handlers.payments.payments import register_program_payments
 from handlers.payments.yookassa_payments.yookassa_commentator import register_yookassa_program_com
-from handlers.payments.yookassa_payments.yookassa_commentator_password import \
-    register_yookassa_password_commentator_password
+from handlers.payments.yookassa_payments.yookassa_commentator_password import register_yookassa_password_commentator_password
 from handlers.payments.yookassa_payments.yookassa_password import register_yookassa_password
 from handlers.payments.yookassa_payments.yookassa_program import register_yookassa_program
-from handlers.payments.yookassa_payments.yookassa_search import register_yookassa_TelegramMaster_Search_GPT
+from handlers.payments.yookassa_payments.yookassa_search import register_yookassa_telegram_master_search_gpt
 from handlers.payments.yookassa_payments.yookassa_training import register_yookassa_training
 from handlers.user.ai_handlers import register_ai_handlers
 from handlers.user.fag_handlers import fag_register_message_handler
@@ -66,7 +65,7 @@ async def main() -> None:
     register_cryptomus_training()  # Покупка 'Помощь в настройке ПО (консультация)'
 
     # Покупка TelegramMaster_Search_GPT
-    register_yookassa_TelegramMaster_Search_GPT()
+    register_yookassa_telegram_master_search_gpt()
 
 
 if __name__ == '__main__':

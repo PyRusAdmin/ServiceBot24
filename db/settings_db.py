@@ -13,20 +13,39 @@ def connect_db():
         logger.exception(f"Ошибка подключения к базе данных: {e}")
         raise
 
+def save_payment_info_user(table_name, user_id, first_name, last_name, username, invoice_json, product, date, status, price):
+    """
+    Сохраняет информацию о платеже
+
+    :param table_name: имя таблицы
+    :param user_id: id пользователя
+    :param first_name: имя пользователя
+    :param last_name: фамилия пользователя
+    :param username: ник пользователя
+    :param invoice_json: json с информацией о платеже
+    :param product: название продукта
+    :param date: дата платежа
+    :param status: статус платежа
+    :param price: цена продукта
+    """
+    with connect_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute(f'''CREATE TABLE IF NOT EXISTS {table_name} (user_id INTEGER, first_name TEXT, last_name TEXT,
+                                                                username TEXT, payment_info TEXT, product TEXT,
+                                                                date TEXT, payment_status TEXT, price TEXT)''')
+        cursor.execute(f'''INSERT INTO {table_name} (user_id, first_name, last_name, username, payment_info, 
+                        product, date, payment_status, price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+                       (user_id, first_name, last_name, username, invoice_json, product, date, status, price))
+        conn.commit()
+
 
 def save_payment_info(user_id, first_name, last_name, username, invoice_json, product, date, status):
     """Сохраняет информацию о платеже"""
     with connect_db() as conn:
         cursor = conn.cursor()
-        cursor.execute('''CREATE TABLE IF NOT EXISTS users_pay (
-                            user_id INTEGER,
-                            first_name TEXT,
-                            last_name TEXT,
-                            username TEXT,
-                            payment_info TEXT,
-                            product TEXT,
-                            date TEXT,
-                            payment_status TEXT)''')
+        cursor.execute('''CREATE TABLE IF NOT EXISTS users_pay (user_id INTEGER, first_name TEXT, last_name TEXT,
+                                                                username TEXT, payment_info TEXT, product TEXT,
+                                                                date TEXT, payment_status TEXT)''')
         cursor.execute('''INSERT INTO users_pay (user_id, first_name, last_name, username, payment_info, 
                         product, date, payment_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)''',
                        (user_id, first_name, last_name, username, invoice_json, product, date, status))
@@ -54,13 +73,9 @@ def save_user_activity(user_id, first_name, last_name, username, date):
     """Сохраняет активность пользователя"""
     with connect_db() as conn:
         cursor = conn.cursor()
-        cursor.execute('''CREATE TABLE IF NOT EXISTS users_run (
-                            id INTEGER PRIMARY KEY AUTOINCREMENT,
-                            user_id INTEGER, 
-                            first_name TEXT, 
-                            last_name TEXT, 
-                            username TEXT, 
-                            date TEXT)''')
+        cursor.execute('''CREATE TABLE IF NOT EXISTS users_run (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, 
+                                                                first_name TEXT, last_name TEXT, username TEXT, 
+                                                                date TEXT)''')
         cursor.execute(
             '''INSERT INTO users_run (user_id, first_name, last_name, username, date) VALUES (?, ?, ?, ?, ?)''',
             (user_id, first_name, last_name, username, date))
@@ -105,14 +120,9 @@ def add_new_group_member(chat_id, chat_title, user_id, username, first_name, las
     """
     with connect_db() as conn:
         cursor = conn.cursor()
-        cursor.execute('''CREATE TABLE IF NOT EXISTS group_members (
-                            chat_id INTEGER,
-                            chat_title TEXT,
-                            user_id INTEGER,
-                            username TEXT,
-                            first_name TEXT,
-                            last_name TEXT,
-                            date_joined TEXT)''')
+        cursor.execute('''CREATE TABLE IF NOT EXISTS group_members (chat_id INTEGER, chat_title TEXT, user_id INTEGER,
+                                                                    username TEXT, first_name TEXT, last_name TEXT,
+                                                                    date_joined TEXT)''')
         cursor.execute('''INSERT INTO group_members (chat_id, chat_title, user_id, username, first_name, last_name, date_joined)
                           VALUES (?, ?, ?, ?, ?, ?, ?)''',
                        (chat_id, chat_title, user_id, username, first_name, last_name, date_now))
