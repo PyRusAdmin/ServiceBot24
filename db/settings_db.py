@@ -13,7 +13,9 @@ def connect_db():
         logger.exception(f"Ошибка подключения к базе данных: {e}")
         raise
 
-def save_payment_info_user(table_name, user_id, first_name, last_name, username, invoice_json, product, date, status, price):
+
+def save_payment_info_user(table_name, user_id, first_name, last_name, username, invoice_json, product, date, status,
+                           price):
     """
     Сохраняет информацию о платеже
 

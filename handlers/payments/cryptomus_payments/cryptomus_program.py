@@ -17,6 +17,7 @@ from system.dispatcher import bot, dp, ADMIN_CHAT_ID
 
 product = "TelegramMaster 2.0"
 
+
 @dp.callback_query(F.data == "payment_crypta_pas_program")
 async def payment_crypta_pas_program_handler(callback_query: types.CallbackQuery):
     """Оплата TelegramMaster 2.0 криптой"""
