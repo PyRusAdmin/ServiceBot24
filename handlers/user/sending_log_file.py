@@ -1,14 +1,10 @@
 # -*- coding: utf-8 -*-
 from aiogram import F
 from aiogram.fsm.context import FSMContext
-from aiogram.fsm.state import StatesGroup, State
 from aiogram.types import Message, CallbackQuery
 
+from states.states import Form
 from system.dispatcher import dp, form_router, bot, ADMIN_CHAT_ID  # Подключение к боту и диспетчеру пользователя
-
-
-class Form(StatesGroup):
-    file = State()
 
 
 @form_router.callback_query(F.data == "sending_file")

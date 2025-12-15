@@ -5,17 +5,13 @@ from aiogram import F
 from aiogram import types
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
-from aiogram.fsm.state import StatesGroup, State
 from loguru import logger
 
 from db.settings_db import save_user_activity, add_user_to_db, is_user_in_db
 from keyboards.user_keyboards import greeting_keyboards  # Клавиатуры поста приветствия
 from messages.messages import greeting_post  # Пояснение для пользователя FAG
+from states.states import SomeState
 from system.dispatcher import dp, bot  # Подключение к боту и диспетчеру пользователя
-
-
-class SomeState(StatesGroup):
-    some_state = State()  # Пример состояния, можно добавить дополнительные состояния
 
 
 @dp.message(Command("pass"))

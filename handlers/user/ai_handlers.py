@@ -44,7 +44,7 @@ async def handle_wish(message: Message, state: FSMContext):
     chat_completion = await client.chat.completions.create(
         messages=[{"role": "user",
                    "content": f"""Сформулируй пожелание пользователя для разработчика. Пожелание: "{user_wish}"""}],
-        model="mixtral-8x7b-32768",
+        model="meta-llama/llama-4-maverick-17b-128e-instruct",
     )
     # Получаем ответ от ИИ
     ai_response = chat_completion.choices[0].message.content
