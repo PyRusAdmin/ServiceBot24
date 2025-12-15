@@ -49,10 +49,13 @@ async def check_payments(callback_query: types.CallbackQuery, state: FSMContext)
         caption = (f"Платеж на сумму {password_TelegramMaster} руб прошел успешно‼️ \n\n"
                    f"Вы можете скачать программу TelegramMaster-PRO\n\n"
                    f"Для возврата в начальное меню нажмите /start")
-        inline_keyboard_markup = start_menu()  # Отправляемся в главное меню
         document = FSInputFile("setting/password/TelegramMaster/password.txt")
-        await bot.send_document(chat_id=callback_query.from_user.id, document=document, caption=caption,
-                                reply_markup=inline_keyboard_markup)
+        await bot.send_document(
+            chat_id=callback_query.from_user.id,
+            document=document,
+            caption=caption,
+            reply_markup=start_menu()  # Отправляемся в главное меню
+        )
         result = is_user_in_db(callback_query.from_user.id)
         if result is None:
             add_user_if_not_exists(callback_query.from_user.id)
