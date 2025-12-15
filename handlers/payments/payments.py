@@ -19,9 +19,9 @@ from system.dispatcher import bot, dp
 
 @dp.callback_query(F.data == "delivery")
 async def buy(callback_query: types.CallbackQuery):
-    """Покупка TelegramMaster 2.0"""
+    """Покупка TelegramMaster-PRO"""
     payment_keyboard_key = payment_keyboard()
-    payment_mes = ("Купить TelegramMaster 2.0.\n\n"
+    payment_mes = ("Купить TelegramMaster-PRO.\n\n"
                    f"Цена на — {TelegramMaster} рублей.\n\n"
                    "Если по какой-либо причине бот не выдал пароль или произошла ошибка платежа, писать: "
                    "@PyAdminRU. 🤖🔒\n\n"
@@ -130,7 +130,7 @@ async def get_password(callback: types.CallbackQuery):
     """Обработчик команды /get_password для получения пароля для пользователя"""
     try:
         logger.info(f'Пользователь {callback.from_user.id} {callback.from_user.username} запросил / запросила пароль '
-                    f'от TelegramMaster 2.0')
+                    f'от TelegramMaster-PRO')
         logger.info(callback.from_user.id)  # Проверка ID пользователя
         user = await bot.get_chat_member(chat_id="@master_tg_d", user_id=callback.from_user.id)  # Проверка подписки
         logger.info(f"User Status: {user.status}")
@@ -147,16 +147,16 @@ async def get_password(callback: types.CallbackQuery):
                                                                    f"Username: @{callback.from_user.username},\n"
                                                                    f"Имя: {callback.from_user.first_name},\n"
                                                                    f"Фамилия: {callback.from_user.last_name},\n"
-                                                                   f"Запросил пароль от TelegramMaster 2.0")
+                                                                   f"Запросил пароль от TelegramMaster-PRO")
             else:
                 text = (
                     "Для того чтобы воспользоваться всеми возможностями бота 🤖, вам необходимо подписаться на канал "
-                    "🔗 https://t.me/+uE6L_wey4c43YWEy и купить TelegramMaster 2.0.\n\n"
+                    "🔗 https://t.me/+uE6L_wey4c43YWEy и купить TelegramMaster-PRO.\n\n"
 
-                    "Это позволит вам получить самую свежую версию TelegramMaster 2.0 и воспользоваться всеми новыми "
+                    "Это позволит вам получить самую свежую версию TelegramMaster-PRO и воспользоваться всеми новыми "
                     "функциями.\n\n"
 
-                    "Если вы ранее уже приобретали TelegramMaster 2.0, но бот 🤖 не выдаёт пароль, обратитесь к "
+                    "Если вы ранее уже приобретали TelegramMaster-PRO, но бот 🤖 не выдаёт пароль, обратитесь к "
                     "🔗 @PyAdminRU.")
                 await bot.send_message(chat_id=callback.message.chat.id, text=text)  # ID пользователя нет в базе данных
                 await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
@@ -164,15 +164,15 @@ async def get_password(callback: types.CallbackQuery):
                                                                    f"Username: @{callback.from_user.username},\n"
                                                                    f"Имя: {callback.from_user.first_name},\n"
                                                                    f"Фамилия: {callback.from_user.last_name},\n"
-                                                                   f"Запросил пароль от TelegramMaster 2.0")
+                                                                   f"Запросил пароль от TelegramMaster-PRO")
         else:
             text = ("Для того чтобы воспользоваться всеми возможностями бота 🤖, вам необходимо подписаться на канал "
-                    "🔗 https://t.me/+uE6L_wey4c43YWEy и купить TelegramMaster 2.0.\n\n"
+                    "🔗 https://t.me/+uE6L_wey4c43YWEy и купить TelegramMaster-PRO.\n\n"
 
-                    "Это позволит вам получить самую свежую версию TelegramMaster 2.0 и воспользоваться всеми новыми "
+                    "Это позволит вам получить самую свежую версию TelegramMaster-PRO и воспользоваться всеми новыми "
                     "функциями.\n\n"
 
-                    "Если вы ранее уже приобретали TelegramMaster 2.0, но бот 🤖 не выдаёт пароль, обратитесь к "
+                    "Если вы ранее уже приобретали TelegramMaster-PRO, но бот 🤖 не выдаёт пароль, обратитесь к "
                     "🔗 @PyAdminRU.")
             await bot.send_message(chat_id=callback.message.chat.id, text=text)  # ID пользователя нет в базе данных
             await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
@@ -180,14 +180,14 @@ async def get_password(callback: types.CallbackQuery):
                                                                f"Username: @{callback.from_user.username},\n"
                                                                f"Имя: {callback.from_user.first_name},\n"
                                                                f"Фамилия: {callback.from_user.last_name},\n"
-                                                               f"Запросил пароль от TelegramMaster 2.0")
+                                                               f"Запросил пароль от TelegramMaster-PRO")
     except Exception as e:
         logger.exception(e)
 
 
 def register_program_payments():
     """Регистрируем handlers для бота"""
-    dp.message.register(buy)  # Покупка TelegramMaster 2.0
+    dp.message.register(buy)  # Покупка TelegramMaster-PRO
     dp.message.register(buy_com)  # Покупка TelegramMaster_Commentator
     dp.message.register(buy_program_setup_service)  # Оплата настройки и установки ПО
     dp.message.register(get_password)  # Получение пароля

@@ -15,13 +15,13 @@ from keyboards.user_keyboards import start_menu
 from messages.messages import message_check_payment
 from system.dispatcher import bot, dp, ADMIN_CHAT_ID
 
-product = "Пароль обновления: TelegramMaster 2.0"
+product = "Пароль обновления: TelegramMaster-PRO"
 
 
 # Обработчик для создания счета и отправки кнопки "Проверить оплату"
 @dp.callback_query(F.data == "payment_crypta_pas")
 async def buy_handler(callback_query: types.CallbackQuery):
-    """Оплата пароля TelegramMaster 2.0 криптой"""
+    """Оплата пароля TelegramMaster-PRO криптой"""
 
     # Создаем счет для оплаты
     invoice_data = await make_request(
@@ -44,7 +44,7 @@ async def buy_handler(callback_query: types.CallbackQuery):
     await bot.send_message(
         chat_id=callback_query.message.chat.id,
         text=f"💳 <b>Счет для оплаты криптовалютой</b> 💳\n\n"
-             f"🌐 Вы собираетесь получить пароль от <b>TelegramMaster 2.0</b>. Пожалуйста, воспользуйтесь ссылкой ниже для оплаты:\n"
+             f"🌐 Вы собираетесь получить пароль от <b>TelegramMaster-PRO</b>. Пожалуйста, воспользуйтесь ссылкой ниже для оплаты:\n"
              f"🔗 <a href='{invoice_data['result']['url']}'>Перейти к оплате</a>\n\n"
              f"⚠️ <b>Важная информация:</b> после завершения платежа нажмите кнопку 'Проверить оплату'.\n"
              f"❗️ Обратите внимание, что возврат денежных средств после оплаты криптовалютой невозможен.\n\n"
@@ -74,7 +74,7 @@ async def check_payment_handler(callback_query: types.CallbackQuery):
             # Запись в базу данных пользователя, который оплатил счет в крипте
             save_payment_info(callback_query.from_user.id, callback_query.from_user.first_name,
                               callback_query.from_user.last_name, callback_query.from_user.username, invoice_json,
-                              "Пароль обновления: TelegramMaster 2.0", date, "succeeded")
+                              "Пароль обновления: TelegramMaster-PRO", date, "succeeded")
             # Отправляем файл и сообщение об успешной оплате
             await bot.send_document(chat_id=callback_query.from_user.id,
                                     document=FSInputFile("setting/password/TelegramMaster/password.txt"),
@@ -91,7 +91,7 @@ async def check_payment_handler(callback_query: types.CallbackQuery):
                                                                    f"Username: @{callback_query.from_user.username},\n"
                                                                    f"Имя: {callback_query.from_user.first_name},\n"
                                                                    f"Фамилия: {callback_query.from_user.last_name},\n\n"
-                                                                   f"Приобрел пароль от TelegramMaster 2.0 (криптой)")
+                                                                   f"Приобрел пароль от TelegramMaster-PRO (криптой)")
         else:
             # Если оплата еще не прошла
             await bot.send_message(

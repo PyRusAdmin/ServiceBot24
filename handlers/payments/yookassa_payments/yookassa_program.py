@@ -13,14 +13,14 @@ from keyboards.user_keyboards import start_menu
 from messages.messages import message_payment, message_check_payment
 from system.dispatcher import bot, dp, ADMIN_CHAT_ID
 
-# Оплата TelegramMaster 2.0
+# Оплата TelegramMaster-PRO
 
-product = "TelegramMaster 2.0"
+product = "TelegramMaster-PRO"
 
 
 @dp.callback_query(F.data.startswith("payment_yookassa_program"))
 async def payment_url_handler(callback_query: types.CallbackQuery):
-    """Отправка ссылки для оплаты TelegramMaster 2.0"""
+    """Отправка ссылки для оплаты TelegramMaster-PRO"""
     payment_url, payment_id = payment_yookassa_com(
         description_text=f"Оплата: {product}",  # Текст описания товара
         product_price=TelegramMaster  # Цена товара в рублях
@@ -37,7 +37,7 @@ async def payment_url_handler(callback_query: types.CallbackQuery):
 
 @dp.callback_query(F.data.startswith("checsk_payment"))
 async def check_payment(callback_query: types.CallbackQuery, state: FSMContext):
-    """"Проверка платежа TelegramMaster 2.0"""
+    """"Проверка платежа TelegramMaster-PRO"""
     split_data = callback_query.data.split("_")
     logger.info(split_data[2])
     payment_info = Payment.find_one(split_data[2])  # Проверьте статус платежа с помощью API yookassa
@@ -62,7 +62,7 @@ async def check_payment(callback_query: types.CallbackQuery, state: FSMContext):
                                                                f"Username: @{callback_query.from_user.username},\n"
                                                                f"Имя: {callback_query.from_user.first_name},\n"
                                                                f"Фамилия: {callback_query.from_user.last_name},\n\n"
-                                                               f"Приобрел TelegramMaster 2.0")
+                                                               f"Приобрел TelegramMaster-PRO")
     else:
         await bot.send_message(callback_query.message.chat.id, "Payment failed.")
 

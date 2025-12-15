@@ -18,7 +18,7 @@ product = "Пароль обновления: TelegramMaster_Commentator"
 
 @dp.callback_query(F.data.startswith("payment_yookassa_password_commentator_password"))
 async def payment_url_handler_commentator_password(callback_query: types.CallbackQuery):
-    """Отправка ссылки для оплаты пароля от TelegramMaster 2.0"""
+    """Отправка ссылки для оплаты пароля от TelegramMaster-PRO"""
     payment_url, payment_id = payment_yookassa_com(
         description_text=f"{product}",  # Текст описания товара
         product_price=password_TelegramMaster_Commentator  # Цена товара в рублях

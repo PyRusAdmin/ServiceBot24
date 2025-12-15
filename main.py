@@ -48,21 +48,21 @@ async def main() -> None:
     register_faq_handler()  # Регистрация FAQ
 
     # Меню оплата
-    register_program_payments()  # Купить TelegramMaster 2.0, Помощь в настройке ПО, Пароль от TelegramMaster 2.0
+    register_program_payments()  # Купить TelegramMaster-PRO, Помощь в настройке ПО, Пароль от TelegramMaster-PRO
 
     # Оплата yookassa
-    register_yookassa_password()  # Покупка пароля TelegramMaster 2.0
+    register_yookassa_password()  # Покупка пароля TelegramMaster-PRO
     register_yookassa_password_commentator_password()  # Покупка пароля TelegramMaster_Commentator
 
     register_yookassa_program_com()  # Купить TelegramMaster_Commentator
-    register_yookassa_program()  # Купить TelegramMaster 2.0
+    register_yookassa_program()  # Купить TelegramMaster-PRO
     register_yookassa_training()  # Оплата настройки ПО
 
     # Оплата Криптой
-    register_cryptomus_password()  # Покупка пароля TelegramMaster 2.0
+    register_cryptomus_password()  # Покупка пароля TelegramMaster-PRO
     register_cryptomus_password_commentator()  # Покупка пароля TelegramMaster_Commentator
 
-    register_cryptomus_program()  # Покупка TelegramMaster 2.0
+    register_cryptomus_program()  # Покупка TelegramMaster-PRO
     register_cryptomus_program_com()  # Купить TelegramMaster_Commentator
     register_cryptomus_training()  # Покупка 'Помощь в настройке ПО (консультация)'
 

@@ -13,12 +13,12 @@ from keyboards.user_keyboards import start_menu
 from messages.messages import message_payment
 from system.dispatcher import bot, dp, ADMIN_CHAT_ID
 
-product = "Пароль обновления: TelegramMaster 2.0"
+product = "Пароль обновления: TelegramMaster-PRO"
 
 
 @dp.callback_query(F.data.startswith("payment_yookassa_password"))
 async def payment_url_handler(callback_query: types.CallbackQuery):
-    """Отправка ссылки для оплаты пароля от TelegramMaster 2.0"""
+    """Отправка ссылки для оплаты пароля от TelegramMaster-PRO"""
     payment_url, payment_id = payment_yookassa_com(
         description_text=f"{product}",  # Текст описания товара
         product_price=password_TelegramMaster  # Цена товара в рублях
@@ -35,7 +35,7 @@ async def payment_url_handler(callback_query: types.CallbackQuery):
 
 @dp.callback_query(F.data.startswith("payment_pass"))
 async def check_payments(callback_query: types.CallbackQuery, state: FSMContext):
-    """Проверка платежа 'Пароль обновления: TelegramMaster 2.0'"""
+    """Проверка платежа 'Пароль обновления: TelegramMaster-PRO'"""
     split_data = callback_query.data.split("_")
     logger.info(split_data[2])
     payment_info = Payment.find_one(split_data[2])  # Проверьте статус платежа с помощью API YooKassa
@@ -47,7 +47,7 @@ async def check_payments(callback_query: types.CallbackQuery, state: FSMContext)
                           product, payment_info.captured_at, "succeeded")
         # Создайте файл, который вы хотите отправить
         caption = (f"Платеж на сумму {password_TelegramMaster} руб прошел успешно‼️ \n\n"
-                   f"Вы можете скачать программу TelegramMaster 2.0\n\n"
+                   f"Вы можете скачать программу TelegramMaster-PRO\n\n"
                    f"Для возврата в начальное меню нажмите /start")
         inline_keyboard_markup = start_menu()  # Отправляемся в главное меню
         document = FSInputFile("setting/password/TelegramMaster/password.txt")
@@ -61,7 +61,7 @@ async def check_payments(callback_query: types.CallbackQuery, state: FSMContext)
                                                                f"Username: @{callback_query.from_user.username},\n"
                                                                f"Имя: {callback_query.from_user.first_name},\n"
                                                                f"Фамилия: {callback_query.from_user.last_name},\n\n"
-                                                               f"Приобрел пароль от TelegramMaster 2.0")
+                                                               f"Приобрел пароль от TelegramMaster-PRO")
     else:
         await bot.send_message(callback_query.message.chat.id, "Payment failed.")
 

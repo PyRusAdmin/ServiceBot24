@@ -41,7 +41,7 @@ def generate_payment_message_commentator(current_date, password_TelegramMaster_C
 
 
 def generate_payment_message(current_date, password_TelegramMaster):
-    return ("Получить пароль от TelegramMaster 2.0. \n\n"
+    return ("Получить пароль от TelegramMaster-PRO. \n\n"
             f"Цена на {current_date} — {password_TelegramMaster} рублей.\n\n"
             "Если по какой-либо причине бот не выдал пароль или произошла ошибка платежа, писать: "
             "@PyAdminRU. 🤖🔒\n\n"
