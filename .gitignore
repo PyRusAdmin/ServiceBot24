@@ -4,3 +4,5 @@
 /.venv/
 /.env
 /setting/user_data.db
+/.idea/
+/.gigaide/
