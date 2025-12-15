@@ -77,7 +77,7 @@ async def check_payment_handler(callback_query: types.CallbackQuery):
                               "Пароль обновления: TelegramMaster-PRO", date, "succeeded")
             # Отправляем файл и сообщение об успешной оплате
             await bot.send_document(chat_id=callback_query.from_user.id,
-                                    document=FSInputFile("setting/password/TelegramMaster/password.txt"),
+                                    document=FSInputFile("setting/password/TelegramMaster-PRO/password.txt"),
                                     caption=message_check_payment(product_price=password_TelegramMaster,
                                                                   product=product),
                                     reply_markup=start_menu()  # Отправляемся в главное меню

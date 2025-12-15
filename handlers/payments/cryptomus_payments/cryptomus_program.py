@@ -71,7 +71,7 @@ async def check_invoice_paid_program(callback_query: types.CallbackQuery):
                               callback_query.from_user.last_name, callback_query.from_user.username, invoice_json,
                               "TelegramMaster-PRO", date, "succeeded")
             await bot.send_document(chat_id=callback_query.from_user.id,
-                                    document=FSInputFile("setting/password/TelegramMaster/password.txt"),
+                                    document=FSInputFile("setting/password/TelegramMaster-PRO/password.txt"),
                                     caption=message_check_payment(product_price=TelegramMaster, product=product),
                                     reply_markup=start_menu()  # Отправляемся в главное меню
                                     )

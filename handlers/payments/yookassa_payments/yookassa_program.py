@@ -50,7 +50,7 @@ async def check_payment(callback_query: types.CallbackQuery, state: FSMContext):
         # Создайте файл, который вы хотите отправить
         await bot.send_document(
             chat_id=callback_query.from_user.id,
-            document=FSInputFile("setting/password/TelegramMaster/password.txt"),
+            document=FSInputFile("setting/password/TelegramMaster-PRO/password.txt"),
             caption=message_check_payment(product_price=TelegramMaster, product=product),
             reply_markup=start_menu()  # Отправляемся в главное меню
         )
