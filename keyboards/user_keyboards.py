@@ -63,22 +63,6 @@ def greeting_keyboards() -> InlineKeyboardMarkup:
                     callback_data='payment_goods_and_services'
                 )
             ],
-            # [
-            #     InlineKeyboardButton(text='🛒 Купить TelegramMaster-PRO', callback_data='delivery')
-            # ],
-            # [
-            #     InlineKeyboardButton(text='🛒 Купить TelegramMaster_Commentator', callback_data='delivery_com')
-            # ],
-            # [
-            #     InlineKeyboardButton(text='🛒 Купить TelegramMaster-Search-GPT ',
-            #                          callback_data='delivery_telegrammaster_search_gpt')
-            # ],
-            # [
-            #     InlineKeyboardButton(
-            #         text='⚙️ Оплатить настройку ПО',
-            #         callback_data='purchasing_a_program_setup_service'
-            #     )
-            # ],
             [
                 InlineKeyboardButton(
                     text='📨 Отправить log файл', callback_data='sending_file'
@@ -97,6 +81,12 @@ def greeting_keyboards() -> InlineKeyboardMarkup:
                 InlineKeyboardButton(
                     text='💡 Предложить улучшение',
                     callback_data='wish'
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    text='Личный кабинет',
+                    callback_data='user_account'
                 )
             ],
         ]
