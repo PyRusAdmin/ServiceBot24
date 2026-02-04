@@ -8,7 +8,7 @@ from aiogram.fsm.context import FSMContext
 from loguru import logger
 
 from db.settings_db import save_user_activity, add_user_to_db, is_user_in_db
-from keyboards.user_keyboards import greeting_keyboards  # Клавиатуры поста приветствия
+from keyboards.user_keyboards import greeting_keyboards, payment_keyboards  # Клавиатуры поста приветствия
 from messages.messages import greeting_post, payment_goods_and_services_post  # Пояснение для пользователя FAG
 from states.states import SomeState
 from system.dispatcher import dp, bot  # Подключение к боту и диспетчеру пользователя
@@ -87,7 +87,7 @@ async def payment_goods_and_services_handler(callback_query: types.CallbackQuery
     await bot.send_message(
         callback_query.message.chat.id,
         payment_goods_and_services_post,
-        reply_markup=greeting_keyboards(),
+        reply_markup=payment_keyboards(),
         parse_mode="HTML",
     )
 
