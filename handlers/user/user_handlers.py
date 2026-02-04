@@ -33,21 +33,26 @@ async def greeting(message: types.Message, state: FSMContext):
 
 @dp.message(Command('start'))
 async def greeting(message: types.Message, state: FSMContext):
-    """Обработчик команды /start, он же пост приветствия"""
-    await state.clear()
-    # Получаем текущую дату и время
-    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    """
+    Обработчик команды /start, он же пост приветствия
+    :param message: объект класса Message
+    :param state: Функция clear очищает все сохраненные ранее значения
+    """
+    await state.clear()  # Стираем предыдущее сообщение
     # Записываем данные пользователя в базу данных
-
-    save_user_activity(message.from_user.id, message.from_user.first_name, message.from_user.last_name,
-                       message.from_user.username, current_date)
-
-    print(f'Запустили бота: {message.from_user.id, message.from_user.username, current_date}')
-    keyboards_greeting = greeting_keyboards()
+    save_user_activity(
+        user_id=message.from_user.id,
+        first_name=message.from_user.first_name,
+        last_name=message.from_user.last_name,
+        username=message.from_user.username,
+        date=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    )
+    logger.info(
+        f'Запустили бота: {message.from_user.id, message.from_user.username, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}')
     # Клавиатура для Калькулятора цен или Контактов
     await message.answer(
         text=greeting_post,
-        reply_markup=keyboards_greeting,
+        reply_markup=greeting_keyboards(),
         disable_web_page_preview=True,
         parse_mode="HTML"
     )
