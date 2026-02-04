@@ -5,12 +5,15 @@ from aiogram import types, F
 from loguru import logger  # Логирование с помощью loguru
 
 from db.settings_db import check_user_payment, is_user_in_db
-from handlers.payments.products_goods_services import (TelegramMaster, payment_installation, TelegramMaster_Commentator,
-                                                       password_TelegramMaster_Commentator, TelegramMaster_Search_GPT)
+from handlers.payments.products_goods_services import (
+    TelegramMaster, payment_installation, TelegramMaster_Commentator, password_TelegramMaster_Commentator,
+    TelegramMaster_Search_GPT
+)
 from handlers.payments.products_goods_services import password_TelegramMaster
-from keyboards.payments_keyboards import (payment_keyboard, payment_keyboard_password, payment_keyboard_com,
-                                          payment_yookassa_password_commentator_password_keyboard,
-                                          payment_keyboard_telegram_master_search_gpt_1)
+from keyboards.payments_keyboards import (
+    payment_keyboard, payment_keyboard_password, payment_keyboard_com,
+    payment_yookassa_password_commentator_password_keyboard, payment_keyboard_telegram_master_search_gpt_1
+)
 from keyboards.payments_keyboards import purchasing_a_program_setup_service
 from messages.messages import generate_payment_message, generate_payment_message_commentator
 from system.dispatcher import ADMIN_CHAT_ID
