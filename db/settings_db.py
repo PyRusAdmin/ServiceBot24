@@ -2,6 +2,15 @@
 import sqlite3
 
 from loguru import logger
+from peewee import *
+
+# Подключаемся к той же базе
+db = SqliteDatabase("setting/user_data.db")
+
+
+class BaseModel(Model):
+    class Meta:
+        database = db
 
 
 def connect_db():
@@ -12,6 +21,27 @@ def connect_db():
     except Exception as e:
         logger.exception(f"Ошибка подключения к базе данных: {e}")
         raise
+
+
+class UserPayment(BaseModel):
+    id = AutoField()
+    user_id = IntegerField()
+    first_name = TextField(null=True)
+    last_name = TextField(null=True)
+    username = TextField(null=True)
+    payment_info = TextField()  # ← указываем реальное имя колонки
+    product = TextField()
+    date = TextField()
+    payment_status = TextField()  # ← и здесь тоже
+
+    # price = TextField(null=True)
+
+    class Meta:
+        table_name = 'users_pay'
+        # если хочешь индекс по пользователю + продукту (ускоряет поиск "купил ли он это")
+        indexes = (
+            (('user_id', 'product'), False),
+        )
 
 
 def save_payment_info_user(table_name, user_id, first_name, last_name, username, invoice_json, product, date, status,

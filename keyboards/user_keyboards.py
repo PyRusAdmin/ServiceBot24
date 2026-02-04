@@ -93,6 +93,20 @@ def greeting_keyboards() -> InlineKeyboardMarkup:
     )
 
 
+def user_account_keyboard():
+    """
+     Личные данные пользователя
+
+    :return: клавиатуру с личными данными юзера.
+    """
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(text='Мои заказы', callback_data='my_orders')],
+            [InlineKeyboardButton(text='🏠 В начальное меню', callback_data='start_menu_keyboard')],
+        ]
+    )
+
+
 def start_menu() -> InlineKeyboardMarkup:
     """Клавиатура начального меню"""
     rows = [
