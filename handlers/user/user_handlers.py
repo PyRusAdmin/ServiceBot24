@@ -9,7 +9,7 @@ from loguru import logger
 
 from db.settings_db import save_user_activity, add_user_to_db, is_user_in_db
 from keyboards.user_keyboards import greeting_keyboards  # Клавиатуры поста приветствия
-from messages.messages import greeting_post  # Пояснение для пользователя FAG
+from messages.messages import greeting_post, payment_goods_and_services_post  # Пояснение для пользователя FAG
 from states.states import SomeState
 from system.dispatcher import dp, bot  # Подключение к боту и диспетчеру пользователя
 
@@ -62,17 +62,34 @@ async def greeting(message: types.Message, state: FSMContext):
 async def start_menu_no_edit(callback_query: types.CallbackQuery, state: FSMContext):
     """Обработчик команды /start, он же пост приветствия"""
     await state.clear()
-    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # Получаем текущую дату и время
     # Записываем данные пользователя в базу данных
+    save_user_activity(
+        callback_query.from_user.id,
+        callback_query.from_user.first_name,
+        callback_query.from_user.last_name,
+        callback_query.from_user.username,
+        datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    )
+    logger.info(
+        f'Запустили бота: {callback_query.from_user.id, callback_query.from_user.username, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}')
+    await bot.send_message(
+        callback_query.message.chat.id,
+        greeting_post,
+        reply_markup=greeting_keyboards(),
+        parse_mode="HTML",
+    )
 
-    save_user_activity(callback_query.from_user.id, callback_query.from_user.first_name,
-                       callback_query.from_user.last_name,
-                       callback_query.from_user.username, current_date)
 
-    logger.info(f'Запустили бота: {callback_query.from_user.id, callback_query.from_user.username, current_date}')
-    keyboards_greeting = greeting_keyboards()
-    await bot.send_message(callback_query.message.chat.id, greeting_post, reply_markup=keyboards_greeting,
-                           parse_mode="HTML", )
+@dp.callback_query(F.data == 'payment_goods_and_services')
+async def payment_goods_and_services_handler(callback_query: types.CallbackQuery, state: FSMContext):
+    """Обработчик кнопки оплаты товаров"""
+    await state.clear()
+    await bot.send_message(
+        callback_query.message.chat.id,
+        payment_goods_and_services_post,
+        reply_markup=greeting_keyboards(),
+        parse_mode="HTML",
+    )
 
 
 @dp.message(Command('id'))
@@ -95,3 +112,4 @@ async def process_id_command(message: types.Message):
 def greeting_handler():
     dp.message.register(greeting)
     dp.message.register(process_id_command)
+    dp.message.register(payment_goods_and_services_handler)

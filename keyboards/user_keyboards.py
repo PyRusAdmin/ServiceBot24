@@ -26,6 +26,12 @@ def payment_keyboards() -> InlineKeyboardMarkup:
             ],
             [
                 InlineKeyboardButton(
+                    text='⚙️ Оплатить настройку ПО',
+                    callback_data='purchasing_a_program_setup_service'
+                )
+            ],
+            [
+                InlineKeyboardButton(
                     text='🏠 В начальное меню',
                     callback_data='start_menu_keyboard'
                 )
@@ -67,12 +73,12 @@ def greeting_keyboards() -> InlineKeyboardMarkup:
             #     InlineKeyboardButton(text='🛒 Купить TelegramMaster-Search-GPT ',
             #                          callback_data='delivery_telegrammaster_search_gpt')
             # ],
-            [
-                InlineKeyboardButton(
-                    text='⚙️ Оплатить настройку ПО',
-                    callback_data='purchasing_a_program_setup_service'
-                )
-            ],
+            # [
+            #     InlineKeyboardButton(
+            #         text='⚙️ Оплатить настройку ПО',
+            #         callback_data='purchasing_a_program_setup_service'
+            #     )
+            # ],
             [
                 InlineKeyboardButton(
                     text='📨 Отправить log файл', callback_data='sending_file'
