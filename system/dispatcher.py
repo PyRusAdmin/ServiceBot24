@@ -17,10 +17,10 @@ CRYPTOMUS_API_KEY = env('CRYPTOMUS_API_KEY')
 CRYPTOMUS_MERCHANT_ID = env('CRYPTOMUS_MERCHANT_ID')
 
 # Установка прокси
-PROXY_USER = get_proxy_user()
-PROXY_PASSWORD = get_proxy_password()
-PROXY_PORT = get_proxy_port()
-PROXY_IP = get_proxy_ip()
+PROXY_USER = os.getenv("PROXY_USER")
+PROXY_PASSWORD = os.getenv("PROXY_PASSWORD")
+PROXY_PORT = os.getenv("PROXY_PORT")
+PROXY_IP = os.getenv("PROXY_IP")
 
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 

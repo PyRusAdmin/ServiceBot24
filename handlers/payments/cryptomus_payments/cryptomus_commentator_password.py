@@ -12,7 +12,7 @@ from db.settings_db import save_payment_info, add_user_if_not_exists, is_user_in
 from handlers.payments.cryptomus_payments.cryptomus_commentator import make_request
 from handlers.payments.products_goods_services import password_TelegramMaster_Commentator, password_TelegramMaster
 from keyboards.user_keyboards import start_menu
-from system.dispatcher import bot, dp, ADMIN_CHAT_ID
+from system.dispatcher import bot, dp
 
 
 # Обработчик для создания счета и отправки кнопки "Проверить оплату"
