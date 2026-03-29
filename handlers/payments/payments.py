@@ -6,10 +6,10 @@ from loguru import logger  # Логирование с помощью loguru
 
 from db.settings_db import check_user_payment, is_user_in_db
 from handlers.payments.products_goods_services import (
-    TelegramMaster, payment_installation, TelegramMaster_Commentator, password_TelegramMaster_Commentator,
+    TelegramMaster_PRO, payment_installation, TelegramMaster_Commentator, password_TelegramMaster_Commentator,
     TelegramMaster_Search_GPT, MaxMaster, SERVER_RENT_PRICE
 )
-from handlers.payments.products_goods_services import password_TelegramMaster
+from handlers.payments.products_goods_services import password_TelegramMaster_PRO
 from keyboards.payments_keyboards import (
     payment_keyboard, payment_keyboard_password, payment_keyboard_com,
     payment_yookassa_password_commentator_password_keyboard, payment_keyboard_telegram_master_search_gpt_1,
@@ -27,7 +27,7 @@ async def buy(callback_query: types.CallbackQuery):
     """Покупка TelegramMaster-PRO"""
     payment_keyboard_key = payment_keyboard()
     payment_mes = ("Купить TelegramMaster-PRO.\n\n"
-                   f"Цена на — {TelegramMaster} рублей.\n\n"
+                   f"Цена на — {TelegramMaster_PRO} рублей.\n\n"
                    "Если по какой-либо причине бот не выдал пароль или произошла ошибка платежа, писать: "
                    "@PyAdminRU. 🤖🔒\n\n"
                    "Для возврата в начальное меню, нажмите: /start")
@@ -174,7 +174,7 @@ async def get_password(callback: types.CallbackQuery):
                 current_date = datetime.datetime.now().strftime("%Y-%m-%d")
                 payment_keyboard_key = payment_keyboard_password()
                 # Сообщение пользователю
-                payment_mes = generate_payment_message(current_date, password_TelegramMaster)
+                payment_mes = generate_payment_message(current_date, password_TelegramMaster_PRO)
                 await bot.send_message(callback.message.chat.id, payment_mes, reply_markup=payment_keyboard_key)
                 await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
                                                                    f"ID {callback.from_user.id},\n"

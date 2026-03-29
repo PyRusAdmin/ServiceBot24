@@ -7,7 +7,7 @@ from loguru import logger  # https://github.com/Delgan/loguru
 
 from db.settings_db import init_password_tables, init_new_products_tables
 
-from handlers.payments.cryptomus_payments.cryptomus_payments import router as cryptomus_payments
+from handlers.payments.cryptomus_payments import router as cryptomus_payments
 
 from system.server_rent_checker import run_periodic_check
 from handlers.group_handlers import router as group_handlers

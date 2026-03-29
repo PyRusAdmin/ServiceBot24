@@ -13,7 +13,7 @@ from loguru import logger
 from db.settings_db import save_payment_info, get_product_password
 
 from handlers.payments.products_goods_services import (
-    TelegramMaster, TelegramMaster_Commentator, password_TelegramMaster,
+    TelegramMaster_PRO, TelegramMaster_Commentator, password_TelegramMaster_PRO,
     password_TelegramMaster_Commentator, payment_installation, TelegramMaster_Search_GPT, get_stars_amount
 )
 from messages.messages import message_check_payment
@@ -43,13 +43,13 @@ async def process_successful_payment(message: types.Message):
         # Определяем продукт по payload
         if payload.startswith("stars_program_"):
             product_name = "TelegramMaster-PRO"
-            price = TelegramMaster
+            price = TelegramMaster_PRO
         elif payload.startswith("stars_com_"):
             product_name = "TelegramMaster_Commentator"
             price = TelegramMaster_Commentator
         elif payload.startswith("stars_pass_"):
             product_name = "TelegramMaster-PRO"  # Пароль для TelegramMaster-PRO
-            price = password_TelegramMaster
+            price = password_TelegramMaster_PRO
         elif payload.startswith("stars_com_pass_"):
             product_name = "TelegramMaster_Commentator"  # Пароль для TelegramMaster_Commentator
             price = password_TelegramMaster_Commentator
@@ -151,7 +151,7 @@ async def process_successful_payment(message: types.Message):
 @router.callback_query(F.data == "payment_stars_program")
 async def payment_stars_program_handler(callback_query: types.CallbackQuery):
     """Оплата TelegramMaster-PRO звездами"""
-    rub_price = TelegramMaster
+    rub_price = TelegramMaster_PRO
     stars_amount = get_stars_amount(rub_price)
 
     try:
@@ -225,7 +225,7 @@ async def payment_stars_commentator_handler(callback_query: types.CallbackQuery)
 @router.callback_query(F.data == "payment_stars_password")
 async def payment_stars_password_handler(callback_query: types.CallbackQuery):
     """Оплата пароля TelegramMaster-PRO звездами"""
-    rub_price = password_TelegramMaster
+    rub_price = password_TelegramMaster_PRO
     stars_amount = get_stars_amount(rub_price)
 
     try:

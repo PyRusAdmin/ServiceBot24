@@ -7,7 +7,7 @@ from yookassa import Payment
 
 from db.settings_db import save_payment_info, add_user_if_not_exists, is_user_in_db, get_product_password
 from handlers.payment_yookassa import payment_yookassa_com
-from handlers.payments.products_goods_services import TelegramMaster
+from handlers.payments.products_goods_services import TelegramMaster_PRO
 from keyboards.user_keyboards import start_menu
 from messages.messages import message_payment, message_check_payment
 from system.dispatcher import bot, ADMIN_CHAT_ID
@@ -20,7 +20,7 @@ async def payment_url_handler(callback_query: types.CallbackQuery):
     """Отправка ссылки для оплаты TelegramMaster-PRO"""
     payment_url, payment_id = payment_yookassa_com(
         description_text=f"Оплата: TelegramMaster-PRO",  # Текст описания товара
-        product_price=TelegramMaster  # Цена товара в рублях
+        product_price=TelegramMaster_PRO  # Цена товара в рублях
     )
     # Создаем клавиатуру с кнопкой для проверки оплаты и возврата в меню
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
@@ -50,13 +50,13 @@ async def check_payment(callback_query: types.CallbackQuery, state: FSMContext):
         password = get_product_password("TelegramMaster-PRO")
 
         if password:
-            caption = (f"✅ <b>Платеж на сумму {TelegramMaster} руб прошел успешно‼️</b>\n\n"
+            caption = (f"✅ <b>Платеж на сумму {TelegramMaster_PRO} руб прошел успешно‼️</b>\n\n"
                        f"📦 Продукт: <b>TelegramMaster-PRO</b>\n\n"
                        f"🔑 <b>Ваш пароль:</b>\n"
                        f"<code>{password}</code>\n\n"
-                       f"{message_check_payment(product_price=TelegramMaster, product="TelegramMaster-PRO")}")
+                       f"{message_check_payment(product_price=TelegramMaster_PRO, product="TelegramMaster-PRO")}")
         else:
-            caption = (f"✅ <b>Платеж на сумму {TelegramMaster} руб прошел успешно‼️</b>\n\n"
+            caption = (f"✅ <b>Платеж на сумму {TelegramMaster_PRO} руб прошел успешно‼️</b>\n\n"
                        f"⚠️ <b>Внимание!</b> Пароль еще не установлен администратором.\n\n"
                        f"Пожалуйста, обратитесь к @PyAdminRU")
 
