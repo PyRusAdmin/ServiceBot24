@@ -66,8 +66,4 @@ async def check_payment_com(callback_query: types.CallbackQuery):
         await bot.send_message(callback_query.message.chat.id, "Payment failed.")
 
 
-def register_yookassa_program_com():
-    """Регистрируем handlers для бота"""
-    # Оплата TelegramMaster_Commentator
-    dp.callback_query.register(check_payment_com)
-    dp.callback_query.register(payment_yookassa_program_com)
+

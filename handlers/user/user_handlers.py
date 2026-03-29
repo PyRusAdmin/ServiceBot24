@@ -110,7 +110,4 @@ async def process_id_command(message: types.Message):
         logger.exception(error)
 
 
-def greeting_handler():
-    dp.message.register(greeting)
-    dp.message.register(process_id_command)
-    dp.message.register(payment_goods_and_services_handler)
+

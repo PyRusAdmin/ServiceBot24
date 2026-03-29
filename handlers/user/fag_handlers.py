@@ -17,6 +17,4 @@ async def fag_handler(callback_query: types.CallbackQuery):
                                 parse_mode="HTML")
 
 
-def fag_register_message_handler():
-    """Регистрируем handlers для бота"""
-    dp.message.register(fag_handler)
+

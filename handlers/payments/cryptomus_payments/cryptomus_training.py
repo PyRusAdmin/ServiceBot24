@@ -90,6 +90,4 @@ async def check_invoice_paid_training(callback_query: types.CallbackQuery):
         )
 
 
-def register_cryptomus_training():
-    """Регистрируем handlers для бота"""
-    dp.message.register(payment_crypta_pas_training_handler)
+

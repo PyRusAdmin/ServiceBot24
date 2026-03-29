@@ -59,7 +59,4 @@ async def check_payment_program_setup_service(callback_query: types.CallbackQuer
         await bot.send_message(callback_query.message.chat.id, "Payment failed.")
 
 
-def register_yookassa_training():
-    """Регистрируем handlers для бота"""
-    dp.message.register(check_payment_program_setup_service)
-    dp.message.register(payment_url_handler)
+

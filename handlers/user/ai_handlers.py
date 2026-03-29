@@ -56,6 +56,4 @@ async def handle_wish(message: Message, state: FSMContext):
     await state.clear()
 
 
-def register_ai_handlers():
-    dp.callback_query.register(cmd_wish)
-    dp.message.register(handle_wish, WishState.waiting_for_wish)
+

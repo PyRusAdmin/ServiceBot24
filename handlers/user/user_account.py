@@ -118,6 +118,4 @@ async def my_orders_handlers(callback: types.CallbackQuery):
     await callback.answer()
 
 
-def register_user_account_handlers():
-    dp.message.register(user_account_handlers)
-    dp.message.register(my_orders_handlers)
+

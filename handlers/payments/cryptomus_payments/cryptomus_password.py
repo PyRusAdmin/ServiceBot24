@@ -110,6 +110,4 @@ async def check_payment_handler(callback_query: types.CallbackQuery):
         )
 
 
-def register_cryptomus_password():
-    """Регистрируем handlers для бота"""
-    dp.message.register(buy_handler)
+

@@ -118,7 +118,4 @@ async def check_invoice_paid_program_com_tm_search_gpt_crypta(callback_query: ty
         )
 
 
-def register_cryptomus_search_gpt():
-    """Регистрируем handlers для бота"""
-    dp.callback_query.register(payment_crypta_pas_program_handler_com)
-    dp.callback_query.register(check_invoice_paid_program_com_tm_search_gpt_crypta)
+

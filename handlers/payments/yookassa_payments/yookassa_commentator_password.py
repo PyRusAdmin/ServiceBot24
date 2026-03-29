@@ -66,7 +66,4 @@ async def check_payments_commentator_password(callback_query: types.CallbackQuer
         await bot.send_message(callback_query.message.chat.id, "Payment failed.")
 
 
-def register_yookassa_password_commentator_password():
-    """Регистрируем handlers для бота"""
-    dp.message.register(payment_url_handler_commentator_password)
-    dp.message.register(check_payments_commentator_password)
+

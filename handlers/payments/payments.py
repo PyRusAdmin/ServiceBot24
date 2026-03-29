@@ -189,10 +189,4 @@ async def get_password(callback: types.CallbackQuery):
         logger.exception(e)
 
 
-def register_program_payments():
-    """Регистрируем handlers для бота"""
-    dp.message.register(buy)  # Покупка TelegramMaster-PRO
-    dp.message.register(buy_com)  # Покупка TelegramMaster_Commentator
-    dp.message.register(buy_program_setup_service)  # Оплата настройки и установки ПО
-    dp.message.register(get_password)  # Получение пароля
-    dp.message.register(get_password_tg_com)  # Получение пароля TelegramMaster_Commentator
+

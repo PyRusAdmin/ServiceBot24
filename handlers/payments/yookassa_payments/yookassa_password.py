@@ -71,7 +71,4 @@ async def check_payments(callback_query: types.CallbackQuery, state: FSMContext)
         await bot.send_message(callback_query.message.chat.id, "Payment failed.")
 
 
-def register_yookassa_password():
-    """Регистрируем handlers для бота"""
-    dp.message.register(check_payments)
-    dp.message.register(payment_url_handler)
+

@@ -64,7 +64,4 @@ async def check_pay_telegram_master_search_gpt(callback_query: types.CallbackQue
         logger.exception(e)
 
 
-def register_yookassa_telegram_master_search_gpt():
-    """Регистрируем handlers для бота для оплаты TelegramMaster_Search_GPT"""
-    dp.callback_query.register(check_pay_telegram_master_search_gpt)
-    dp.callback_query.register(payment_yookassa_telegram_master_search_gpt)
+

@@ -21,5 +21,4 @@ async def faq_handler(callback_query: types.CallbackQuery):
     )
 
 
-def register_faq_handler():
-    dp.message.register(faq_handler)
+
