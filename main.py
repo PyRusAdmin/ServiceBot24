@@ -5,7 +5,8 @@ import sys
 
 from loguru import logger  # https://github.com/Delgan/loguru
 
-from db.settings_db import init_password_tables
+from db.settings_db import init_password_tables, init_new_products_tables
+from system.server_rent_checker import run_periodic_check
 from handlers.group_handlers import router as group_handlers
 from handlers.payments.cryptomus_payments.cryptomus_commentator import router as cryptomus_commentator
 from handlers.payments.cryptomus_payments.cryptomus_commentator_password import router as cryptomus_commentator_password
@@ -20,7 +21,12 @@ from handlers.payments.yookassa_payments.yookassa_password import router as yook
 from handlers.payments.yookassa_payments.yookassa_program import router as yookassa_program
 from handlers.payments.yookassa_payments.yookassa_search import router as yookassa_search
 from handlers.payments.yookassa_payments.yookassa_training import router as yookassa_training
+from handlers.payments.yookassa_sbp_payments import router as yookassa_sbp_payments
 from handlers.payments.telegram_stars_payments import router as telegram_stars_payments
+from handlers.payments.maxmaster_payments import router as maxmaster_payments
+from handlers.payments.maxmaster_stars import router as maxmaster_stars
+from handlers.payments.server_rent_payments import router as server_rent_payments
+from handlers.payments.server_rent_stars import router as server_rent_stars
 from handlers.user.ai_handlers import router as ai_handlers
 from handlers.user.fag_handlers import router as fag_handlers
 from handlers.user.reference_handlers import router as faq_handler
@@ -40,9 +46,21 @@ async def main() -> None:
     # Инициализация таблиц базы данных для паролей
     init_password_tables()
     logger.info("Таблицы базы данных для паролей инициализированы")
+    
+    # Инициализация таблиц для MaxMaster и аренды сервера
+    init_new_products_tables()
+    logger.info("Таблицы базы данных для MaxMaster и аренды сервера инициализированы")
 
     # Админские команды (рассылка, статистика, справка)
     dp.include_router(admin_handlers)
+    
+    # MaxMaster
+    dp.include_router(maxmaster_payments)  # Оплата MaxMaster YooKassa
+    dp.include_router(maxmaster_stars)  # Оплата MaxMaster Stars
+    
+    # Аренда сервера
+    dp.include_router(server_rent_payments)  # Аренда сервера YooKassa
+    dp.include_router(server_rent_stars)  # Аренда сервера Stars
 
     # Кабинет пользователя
     dp.include_router(user_account)
@@ -70,6 +88,7 @@ async def main() -> None:
     dp.include_router(yookassa_commentator)  # Купить TelegramMaster_Commentator
     dp.include_router(yookassa_program)  # Купить TelegramMaster-PRO
     dp.include_router(yookassa_training)  # Оплата настройки ПО
+    dp.include_router(yookassa_sbp_payments)  # Оплата через СБП
 
     # Оплата Криптой
     dp.include_router(cryptomus_password)  # Покупка пароля TelegramMaster-PRO
@@ -84,6 +103,10 @@ async def main() -> None:
 
     # Оплата Telegram Stars
     dp.include_router(telegram_stars_payments)  # Оплата звездами всех услуг
+
+    # Запуск периодической проверки аренды сервера (в фоне)
+    asyncio.create_task(run_periodic_check(interval_hours=24))
+    logger.info("Запущена периодическая проверка аренды сервера (24 часа)")
 
     await dp.start_polling(bot)
 

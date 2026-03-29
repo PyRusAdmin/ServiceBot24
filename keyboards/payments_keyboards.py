@@ -87,9 +87,37 @@ def payment_keyboard() -> InlineKeyboardMarkup:
     return payment_keyboard_key
 
 
+def payment_keyboard_maxmaster() -> InlineKeyboardMarkup:
+    """Клавиатура оплаты MaxMaster"""
+    rows = [
+        [
+            InlineKeyboardButton(text="💳 Оплатить Yookassa", callback_data='payment_yookassa_maxmaster'),
+            InlineKeyboardButton(text="⭐️ Оплатить Stars", callback_data='payment_stars_maxmaster'),
+        ],
+        [InlineKeyboardButton(text='🏠 В начальное меню', callback_data='start_menu_keyboard')],
+    ]
+    payment_keyboard_key = InlineKeyboardMarkup(inline_keyboard=rows)
+    return payment_keyboard_key
+
+
+def payment_keyboard_server_rent() -> InlineKeyboardMarkup:
+    """Клавиатура оплаты аренды сервера"""
+    rows = [
+        [
+            InlineKeyboardButton(text="💳 Оплатить Yookassa", callback_data='payment_yookassa_server_rent'),
+            InlineKeyboardButton(text="⭐️ Оплатить Stars", callback_data='payment_stars_server_rent'),
+        ],
+        [InlineKeyboardButton(text='🏠 В начальное меню', callback_data='start_menu_keyboard')],
+    ]
+    payment_keyboard_key = InlineKeyboardMarkup(inline_keyboard=rows)
+    return payment_keyboard_key
+
+
 if __name__ == '__main__':
     payment_keyboard_com()
     payment_keyboard()
     purchasing_a_program_setup_service()
     payment_keyboard_password()
     payment_yookassa_password_commentator_password_keyboard()
+    payment_keyboard_maxmaster()
+    payment_keyboard_server_rent()

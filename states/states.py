@@ -30,3 +30,4 @@ class AdminState(StatesGroup):
     """
     waiting_for_broadcast_message = State()
     waiting_for_password = State()
+    waiting_for_maxmaster_password = State()

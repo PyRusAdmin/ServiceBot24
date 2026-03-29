@@ -6,7 +6,7 @@ from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from loguru import logger
 
-from db.settings_db import get_all_users, is_user_in_db, add_user_to_db, set_product_password
+from db.settings_db import get_all_users, is_user_in_db, add_user_to_db, set_product_password, get_product_password, set_maxmaster_password, get_maxmaster_password
 from states.states import AdminState
 from system.dispatcher import bot, ADMIN_CHAT_ID
 
@@ -37,6 +37,8 @@ async def admin_help_handler(message: types.Message):
 4️⃣ <b>/pass</b> - Установить пароль для TelegramMaster-PRO
 
 5️⃣ <b>/id</b> - Добавить пользователя в базу данных по ID
+
+6️⃣ <b>/maxmaster_pass</b> - Установить пароль для MaxMaster
 
 📝 <b>Как использовать рассылку:</b>
 
@@ -251,3 +253,60 @@ async def process_id_command(message: types.Message):
     except Exception as error:
         logger.exception(f"Ошибка при обработке команды /id: {error}")
         await message.reply("❌ Произошла ошибка при выполнении команды.")
+
+
+# ============================================================================
+# Админские команды для MaxMaster
+# ============================================================================
+
+@router.message(Command('maxmaster_pass'))
+async def send_maxmaster_pass(message: types.Message, state: FSMContext):
+    """
+    Обработчик команды /maxmaster_pass для установки пароля MaxMaster
+    Доступно только администратору
+    """
+    # Проверяем, является ли пользователь администратором
+    if str(message.from_user.id) != str(ADMIN_CHAT_ID):
+        await message.answer("❌ У вас нет доступа к этой команде.")
+        return
+
+    await message.answer(
+        '🔐 <b>Установка пароля для MaxMaster</b>\n\n'
+        'Введите пароль от архива MaxMaster:',
+        parse_mode="HTML"
+    )
+    await state.set_state(AdminState.waiting_for_maxmaster_password)
+
+
+@router.message(AdminState.waiting_for_maxmaster_password)
+async def save_maxmaster_password(message: types.Message, state: FSMContext):
+    """
+    Обработчик состояния waiting_for_maxmaster_password
+    Сохраняет пароль MaxMaster в базу данных
+    """
+    # Проверяем, является ли пользователь администратором
+    if str(message.from_user.id) != str(ADMIN_CHAT_ID):
+        await message.answer("❌ У вас нет доступа к этой команде.")
+        await state.clear()
+        return
+
+    password = message.text  # Получаем текст сообщения
+    
+    try:
+        # Сохраняем пароль в базу данных
+        result = set_maxmaster_password(password)
+        
+        if result:
+            logger.info(f"Администратор {message.from_user.id} обновил пароль для MaxMaster")
+            await message.answer(
+                f"✅ <b>Пароль MaxMaster успешно сохранен!</b>\n\n"
+                f"Пароль: <code>{password}</code>",
+                parse_mode="HTML"
+            )
+        else:
+            await message.answer("❌ Ошибка при сохранении пароля. Попробуйте позже.")
+    except Exception as e:
+        logger.exception(f"Ошибка при сохранении пароля MaxMaster: {e}")
+        await message.answer("❌ Ошибка при сохранении пароля. Проверьте логи.")
+    
+    await state.clear()

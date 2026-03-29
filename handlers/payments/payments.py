@@ -7,14 +7,14 @@ from loguru import logger  # Логирование с помощью loguru
 from db.settings_db import check_user_payment, is_user_in_db
 from handlers.payments.products_goods_services import (
     TelegramMaster, payment_installation, TelegramMaster_Commentator, password_TelegramMaster_Commentator,
-    TelegramMaster_Search_GPT
+    TelegramMaster_Search_GPT, MaxMaster, SERVER_RENT_PRICE
 )
 from handlers.payments.products_goods_services import password_TelegramMaster
 from keyboards.payments_keyboards import (
     payment_keyboard, payment_keyboard_password, payment_keyboard_com,
-    payment_yookassa_password_commentator_password_keyboard, payment_keyboard_telegram_master_search_gpt_1
+    payment_yookassa_password_commentator_password_keyboard, payment_keyboard_telegram_master_search_gpt_1,
+    payment_keyboard_maxmaster, payment_keyboard_server_rent, purchasing_a_program_setup_service
 )
-from keyboards.payments_keyboards import purchasing_a_program_setup_service
 from messages.messages import generate_payment_message, generate_payment_message_commentator
 from system.dispatcher import ADMIN_CHAT_ID
 from system.dispatcher import bot
@@ -71,6 +71,34 @@ async def buy_program_setup_service(callback_query: types.CallbackQuery):
                                 text=payment_mes,
                                 reply_markup=payment_keyboard_key,
                                 disable_web_page_preview=True)
+
+
+@router.callback_query(F.data == "delivery_maxmaster")
+async def buy_maxmaster(callback_query: types.CallbackQuery):
+    """Покупка MaxMaster"""
+    payment_keyboard_key = payment_keyboard_maxmaster()
+    payment_mes = ("Купить MaxMaster.\n\n"
+                   f"Цена на — {MaxMaster} рублей.\n\n"
+                   "📌 MaxMaster - программа для перебора номеров на наличие регистрации в мессенджере Max.\n\n"
+                   "Если по какой-либо причине бот не выдал пароль или произошла ошибка платежа, писать: "
+                   "@PyAdminRU. 🤖🔒\n\n"
+                   "Для возврата в начальное меню, нажмите: /start")
+    await bot.send_message(callback_query.message.chat.id, payment_mes, reply_markup=payment_keyboard_key)
+
+
+@router.callback_query(F.data == "delivery_server_rent")
+async def buy_server_rent(callback_query: types.CallbackQuery):
+    """Аренда сервера"""
+    payment_keyboard_key = payment_keyboard_server_rent()
+    payment_mes = ("🖥️ <b>Аренда сервера</b>\n\n"
+                   f"💰 Цена: <b>{SERVER_RENT_PRICE} ₽/месяц</b>\n\n"
+                   "📡 Аренда сервера для ваших задач.\n"
+                   "⚡️ Доступен 24/7.\n\n"
+                   "📅 Доступные сроки аренды:\n"
+                   "• 1-12 месяцев\n"
+                   "💳 Оплата через YooKassa или Telegram Stars\n\n"
+                   "Для возврата в начальное меню, нажмите: /start")
+    await bot.send_message(callback_query.message.chat.id, payment_mes, reply_markup=payment_keyboard_key, parse_mode="HTML")
 
 
 @router.callback_query(F.data == "commentator_password")

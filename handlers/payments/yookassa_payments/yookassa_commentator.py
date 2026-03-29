@@ -20,7 +20,7 @@ product = "TelegramMaster_Commentator"
 @router.callback_query(F.data == "payment_yookassa_commentator")
 async def payment_yookassa_program_com(callback_query: types.CallbackQuery):
     """Отправка ссылки для оплаты TelegramMaster_Commentator"""
-    payment_url, payment_id = payment_yookassa_com(
+    payment_url, payment_id, _ = payment_yookassa_com(
         description_text=f"Оплата: {product}",  # Текст описания товара
         product_price=TelegramMaster_Commentator  # Цена товара в рублях
     )

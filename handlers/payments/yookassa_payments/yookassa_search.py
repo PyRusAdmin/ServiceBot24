@@ -22,7 +22,7 @@ product = "TelegramMaster-Search-GPT"
 async def payment_yookassa_telegram_master_search_gpt(callback_query: types.CallbackQuery):
     """Отправка ссылки для оплаты TelegramMaster-Search-GPT"""
     try:
-        payment_url, payment_id = payment_yookassa_com(
+        payment_url, payment_id, _ = payment_yookassa_com(
             description_text=f"Оплата: {product}",  # Текст описания товара
             product_price=TelegramMaster_Search_GPT  # Цена товара в рублях
         )

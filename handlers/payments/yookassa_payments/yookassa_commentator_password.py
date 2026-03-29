@@ -9,7 +9,7 @@ from db.settings_db import save_payment_info, add_user_if_not_exists, is_user_in
 from handlers.payment_yookassa import payment_yookassa_com
 from handlers.payments.products_goods_services import password_TelegramMaster_Commentator
 from keyboards.user_keyboards import start_menu
-from messages.messages import message_payment, message_check_payment
+from messages.messages import message_payment
 from system.dispatcher import bot, ADMIN_CHAT_ID
 
 router = Router(name=__name__)
@@ -20,7 +20,7 @@ product = "Пароль TelegramMaster_Commentator"
 @router.callback_query(F.data.startswith("payment_yookassa_password_commentator_password"))
 async def payment_url_handler_commentator_password(callback_query: types.CallbackQuery):
     """Отправка ссылки для оплаты пароля от TelegramMaster-PRO"""
-    payment_url, payment_id = payment_yookassa_com(
+    payment_url, payment_id, _ = payment_yookassa_com(
         description_text=f"{product}",  # Текст описания товара
         product_price=password_TelegramMaster_Commentator  # Цена товара в рублях
     )
@@ -53,10 +53,10 @@ async def check_payments_commentator_password(callback_query: types.CallbackQuer
         
         if password:
             caption = (f"✅ <b>Платеж на сумму {password_TelegramMaster_Commentator} руб прошел успешно‼️</b>\n\n"
-                       f"📦 Продукт: <b>{product}</b>\n\n"
+                       f"📦 Продукт: <b>Пароль TelegramMaster_Commentator</b>\n\n"
                        f"🔑 <b>Ваш пароль:</b>\n"
                        f"<code>{password}</code>\n\n"
-                       f"{message_check_payment(product_price=password_TelegramMaster_Commentator, product=product)}")
+                       f"Для возврата в начальное меню нажмите /start")
         else:
             caption = (f"✅ <b>Платеж на сумму {password_TelegramMaster_Commentator} руб прошел успешно‼️</b>\n\n"
                        f"⚠️ <b>Внимание!</b> Пароль еще не установлен администратором.\n\n"

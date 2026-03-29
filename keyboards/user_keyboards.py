@@ -26,6 +26,18 @@ def payment_keyboards() -> InlineKeyboardMarkup:
             ],
             [
                 InlineKeyboardButton(
+                    text='🛒 Купить MaxMaster',
+                    callback_data='delivery_maxmaster'
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    text='🖥️ Аренда сервера',
+                    callback_data='delivery_server_rent'
+                )
+            ],
+            [
+                InlineKeyboardButton(
                     text='⚙️ Оплатить настройку ПО',
                     callback_data='purchasing_a_program_setup_service'
                 )

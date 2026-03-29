@@ -287,3 +287,213 @@ def get_all_product_passwords() -> list:
     except Exception as e:
         logger.exception(f"Ошибка при получении всех паролей: {e}")
         return []
+
+
+# ============================================================================
+# Модели для MaxMaster и аренды сервера
+# ============================================================================
+
+class MaxMasterPassword(BaseModel):
+    """
+    Модель для хранения пароля MaxMaster
+    """
+    id = AutoField(primary_key=True)
+    password = TextField()  # Пароль от архива MaxMaster
+    updated_at = DateTimeField(default=datetime.datetime.now)
+
+    class Meta:
+        table_name = 'maxmaster_password'
+
+
+class ServerRent(BaseModel):
+    """
+    Модель для хранения информации об аренде сервера
+    """
+    id = AutoField(primary_key=True)
+    user_id = IntegerField()  # ID пользователя в Telegram
+    username = TextField(null=True)  # Username пользователя
+    first_name = TextField(null=True)  # Имя пользователя
+    last_name = TextField(null=True)  # Фамилия пользователя
+    months = IntegerField()  # Количество месяцев аренды (1-12)
+    start_date = DateTimeField()  # Дата начала аренды
+    end_date = DateTimeField()  # Дата окончания аренды
+    payment_amount = DecimalField(max_digits=10, decimal_places=2)  # Сумма оплаты
+    payment_method = TextField()  # Способ оплаты: 'yookassa', 'stars', 'cryptomus'
+    payment_date = DateTimeField(default=datetime.datetime.now)  # Дата оплаты
+    is_active = BooleanField(default=True)  # Активна ли аренда
+
+    class Meta:
+        table_name = 'server_rent'
+        indexes = (
+            (('user_id', 'is_active'), False),  # Индекс для поиска активных аренд пользователя
+        )
+
+
+class MaxMasterSale(BaseModel):
+    """
+    Модель для хранения информации о продаже MaxMaster
+    """
+    id = AutoField(primary_key=True)
+    user_id = IntegerField()  # ID пользователя в Telegram
+    username = TextField(null=True)
+    first_name = TextField(null=True)
+    last_name = TextField(null=True)
+    purchase_date = DateTimeField(default=datetime.datetime.now)  # Дата покупки
+    payment_amount = DecimalField(max_digits=10, decimal_places=2)  # Сумма оплаты
+    payment_method = TextField()  # Способ оплаты: 'yookassa', 'stars', 'cryptomus'
+
+    class Meta:
+        table_name = 'maxmaster_sales'
+
+
+def init_new_products_tables():
+    """
+    Инициализация таблиц для MaxMaster и аренды сервера
+    """
+    db.connect()
+    db.create_tables([MaxMasterPassword, ServerRent, MaxMasterSale], safe=True)
+    db.close()
+
+
+# Функции для MaxMaster Password
+def set_maxmaster_password(password: str) -> bool:
+    """Устанавливает пароль для MaxMaster"""
+    try:
+        # Проверяем, существует ли запись
+        record = MaxMasterPassword.get_or_none()
+        if record:
+            record.password = password
+            record.updated_at = datetime.datetime.now()
+            record.save()
+        else:
+            MaxMasterPassword.create(password=password, updated_at=datetime.datetime.now())
+        return True
+    except Exception as e:
+        logger.exception(f"Ошибка при установке пароля MaxMaster: {e}")
+        return False
+
+
+def get_maxmaster_password() -> str | None:
+    """Получает пароль для MaxMaster"""
+    try:
+        record = MaxMasterPassword.get_or_none()
+        return record.password if record else None
+    except Exception as e:
+        logger.exception(f"Ошибка при получении пароля MaxMaster: {e}")
+        return None
+
+
+# Функции для ServerRent
+def add_server_rent(
+    user_id: int,
+    username: str,
+    first_name: str,
+    last_name: str,
+    months: int,
+    payment_amount: float,
+    payment_method: str,
+    start_date: datetime.datetime,
+    end_date: datetime.datetime
+) -> int:
+    """
+    Добавляет запись об аренде сервера
+    :return: ID записи
+    """
+    try:
+        rent = ServerRent.create(
+            user_id=user_id,
+            username=username,
+            first_name=first_name,
+            last_name=last_name,
+            months=months,
+            payment_amount=payment_amount,
+            payment_method=payment_method,
+            start_date=start_date,
+            end_date=end_date
+        )
+        return rent.id
+    except Exception as e:
+        logger.exception(f"Ошибка при добавлении аренды сервера: {e}")
+        return -1
+
+
+def get_active_server_rent(user_id: int) -> ServerRent | None:
+    """Получает активную аренду сервера для пользователя"""
+    try:
+        return ServerRent.get_or_none(
+            (ServerRent.user_id == user_id) & (ServerRent.is_active == True)
+        )
+    except Exception as e:
+        logger.exception(f"Ошибка при получении аренды сервера: {e}")
+        return None
+
+
+def get_expiring_rents(days_until: int = 3) -> list:
+    """
+    Получает аренды, которые истекают через days_until дней
+    :param days_until: за сколько дней до окончания предупреждать
+    :return: список истекающих аренд
+    """
+    try:
+        from peewee import fn
+        cutoff_date = datetime.datetime.now() + datetime.timedelta(days=days_until)
+        return list(ServerRent.select().where(
+            (ServerRent.is_active == True) &
+            (ServerRent.end_date <= cutoff_date) &
+            (ServerRent.end_date >= datetime.datetime.now())
+        ))
+    except Exception as e:
+        logger.exception(f"Ошибка при получении истекающих аренд: {e}")
+        return []
+
+
+def get_expired_rents() -> list:
+    """Получает аренды, у которых истек срок"""
+    try:
+        return list(ServerRent.select().where(
+            (ServerRent.is_active == True) &
+            (ServerRent.end_date < datetime.datetime.now())
+        ))
+    except Exception as e:
+        logger.exception(f"Ошибка при получении просроченных аренд: {e}")
+        return []
+
+
+def deactivate_server_rent(rent_id: int) -> bool:
+    """Деактивирует аренду сервера"""
+    try:
+        rent = ServerRent.get_by_id(rent_id)
+        rent.is_active = False
+        rent.save()
+        return True
+    except Exception as e:
+        logger.exception(f"Ошибка при деактивации аренды: {e}")
+        return False
+
+
+# Функции для MaxMasterSale
+def add_maxmaster_sale(
+    user_id: int,
+    username: str,
+    first_name: str,
+    last_name: str,
+    payment_amount: float,
+    payment_method: str
+) -> int:
+    """
+    Добавляет запись о продаже MaxMaster
+    :return: ID записи
+    """
+    try:
+        sale = MaxMasterSale.create(
+            user_id=user_id,
+            username=username,
+            first_name=first_name,
+            last_name=last_name,
+            payment_amount=payment_amount,
+            payment_method=payment_method
+        )
+        return sale.id
+    except Exception as e:
+        logger.exception(f"Ошибка при добавлении продажи MaxMaster: {e}")
+        return -1
