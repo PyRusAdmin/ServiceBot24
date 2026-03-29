@@ -1,28 +1,31 @@
 # -*- coding: utf-8 -*-
-import configparser
 import logging
+import os
 
+import environs
 from aiogram import Bot, Dispatcher, Router
 from aiogram.fsm.storage.memory import MemoryStorage
+from dotenv import load_dotenv
+from loguru import logger
 
-config = configparser.ConfigParser(empty_lines_in_values=False, allow_no_value=True)
-config.read("setting/config.ini")  # Чтение файла
-bot_token = config.get('BOT_TOKEN', 'BOT_TOKEN')  # Получение токена
+load_dotenv()  # Загружаем переменные окружения из файла .env
 
-# Telegram
-CHANNEL_ID = config.get('CHANNEL_ID', 'CHANNEL_ID')
-ADMIN_CHAT_ID = config.get('ADMIN_CHAT_ID', 'ADMIN_CHAT_ID')
+env = environs.Env()
+env.read_env('.env')
 
-# Юкасса
-ACCOUNT_ID = config.get('ACCOUNT_ID', 'ACCOUNT_ID')
-SECRET_KEY = config.get('SECRET_KEY', 'SECRET_KEY')
+CRYPTOMUS_API_KEY = env('CRYPTOMUS_API_KEY')
+CRYPTOMUS_MERCHANT_ID = env('CRYPTOMUS_MERCHANT_ID')
 
-# Крипта
-API_KEY = config.get('API_KEY', 'API_KEY')
-ID_MERCH = config.get('ID_MERCH', 'ID_MERCH')
+# Установка прокси
+PROXY_USER = get_proxy_user()
+PROXY_PASSWORD = get_proxy_password()
+PROXY_PORT = get_proxy_port()
+PROXY_IP = get_proxy_ip()
+
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
 bot = Bot(
-    token=bot_token,
+    token=TELEGRAM_BOT_TOKEN,
 )
 
 storage = MemoryStorage()  # Хранилище

@@ -33,7 +33,7 @@ async def cmd_wish(callback_query: CallbackQuery, state: FSMContext):
 @dp.message(WishState.waiting_for_wish)
 async def handle_wish(message: Message, state: FSMContext):
     """Обработчик текстовых сообщений с пожеланиями"""
-    setup_proxy()  # Установка прокси
+    setup_proxy(PROXY_USER, PROXY_PASSWORD, PROXY_IP, PROXY_PORT)  # Установка прокси
     # Инициализация Groq клиента
     client = AsyncGroq(api_key=get_groq_api_key())
     user_id = message.from_user.id

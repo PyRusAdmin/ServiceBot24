@@ -16,7 +16,7 @@ from handlers.payments.products_goods_services import TelegramMaster_Commentator
 from keyboards.user_keyboards import start_menu
 from messages.messages import message_check_payment
 from setting import settings
-from system.dispatcher import bot, dp, ADMIN_CHAT_ID
+from system.dispatcher import bot, dp
 
 # Оплата TelegramMaster_Commentator
 product = "TelegramMaster_Commentator"
@@ -98,12 +98,15 @@ async def check_invoice_paid_program_com(callback_query: types.CallbackQuery):
             result = is_user_in_db(callback_query.from_user.id)
             if result is None:
                 add_user_if_not_exists(callback_query.from_user.id)
-                await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
-                                                                   f"ID {callback_query.from_user.id},\n"
-                                                                   f"Username: @{callback_query.from_user.username},\n"
-                                                                   f"Имя: {callback_query.from_user.first_name},\n"
-                                                                   f"Фамилия: {callback_query.from_user.last_name},\n\n"
-                                                                   f"Приобрел TelegramMaster_Commentator (криптой)")
+                await bot.send_message(
+                    chat_id=ADMIN_CHAT_ID,
+                    text=f"Пользователь:\n"
+                         f"ID {callback_query.from_user.id},\n"
+                         f"Username: @{callback_query.from_user.username},\n"
+                         f"Имя: {callback_query.from_user.first_name},\n"
+                         f"Фамилия: {callback_query.from_user.last_name},\n\n"
+                         f"Приобрел TelegramMaster_Commentator (криптой)"
+                )
         else:
             # Если оплата еще не прошла
             await bot.send_message(
