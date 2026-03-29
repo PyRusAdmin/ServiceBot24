@@ -14,14 +14,12 @@ from system.dispatcher import bot, ADMIN_CHAT_ID
 
 router = Router(name=__name__)
 
-product = "Пароль TelegramMaster-PRO"
-
 
 @router.callback_query(F.data == "payment_yookassa_password")
 async def payment_url_handler(callback_query: types.CallbackQuery):
     """Отправка ссылки для оплаты пароля от TelegramMaster-PRO"""
     payment_url, payment_id = payment_yookassa_com(
-        description_text=f"{product}",
+        description_text=f"Пароль TelegramMaster-PRO",
         product_price=password_TelegramMaster
     )
     # Создаем клавиатуру с кнопкой для проверки оплаты и возврата в меню
@@ -30,7 +28,7 @@ async def payment_url_handler(callback_query: types.CallbackQuery):
         [InlineKeyboardButton(text='🏠 В начальное меню', callback_data='start_menu_keyboard')],
     ])
     await bot.send_message(chat_id=callback_query.from_user.id,
-                           text=message_payment(product, payment_url),
+                           text=message_payment("Пароль TelegramMaster-PRO", payment_url),
                            reply_markup=keyboard, parse_mode="HTML")
 
 
@@ -46,7 +44,7 @@ async def check_payments(callback_query: types.CallbackQuery, state: FSMContext)
         # Запись в базу данных пользователя, который оплатил счет в рублях
         save_payment_info(callback_query.from_user.id, callback_query.from_user.first_name,
                           callback_query.from_user.last_name, callback_query.from_user.username, payment_info.id,
-                          product, payment_info.captured_at, "succeeded")
+                          "Пароль TelegramMaster-PRO", payment_info.captured_at, "succeeded")
 
         # Получаем пароль из базы данных
         password = get_product_password("TelegramMaster-PRO")

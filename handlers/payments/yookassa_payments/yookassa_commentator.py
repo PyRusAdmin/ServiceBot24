@@ -13,15 +13,12 @@ from system.dispatcher import bot, ADMIN_CHAT_ID
 
 router = Router(name=__name__)
 
-# Оплата TelegramMaster_Commentator
-product = "TelegramMaster_Commentator"
-
 
 @router.callback_query(F.data == "payment_yookassa_commentator")
 async def payment_yookassa_program_com(callback_query: types.CallbackQuery):
     """Отправка ссылки для оплаты TelegramMaster_Commentator"""
     payment_url, payment_id = payment_yookassa_com(
-        description_text=f"Оплата: {product}",  # Текст описания товара
+        description_text=f"Оплата: TelegramMaster_Commentator",  # Текст описания товара
         product_price=TelegramMaster_Commentator  # Цена товара в рублях
     )
     # Создаем клавиатуру с кнопкой для проверки оплаты и возврата в меню
@@ -30,7 +27,7 @@ async def payment_yookassa_program_com(callback_query: types.CallbackQuery):
         [InlineKeyboardButton(text='🏠 В начальное меню', callback_data='start_menu_keyboard')],
     ])
     await bot.send_message(chat_id=callback_query.from_user.id,
-                           text=message_payment(product, payment_url),
+                           text=message_payment("TelegramMaster_Commentator", payment_url),
                            reply_markup=keyboard, parse_mode="HTML")
 
 
@@ -46,17 +43,17 @@ async def check_payment_com(callback_query: types.CallbackQuery):
         # Запись в базу данных пользователя, который оплатил счет в рублях
         save_payment_info(callback_query.from_user.id, callback_query.from_user.first_name,
                           callback_query.from_user.last_name, callback_query.from_user.username, payment_info.id,
-                          product, payment_info.captured_at, "succeeded")
+                          "TelegramMaster_Commentator", payment_info.captured_at, "succeeded")
 
         # Получаем пароль из базы данных
         password = get_product_password("TelegramMaster_Commentator")
 
         if password:
             caption = (f"✅ <b>Платеж на сумму {TelegramMaster_Commentator} руб прошел успешно‼️</b>\n\n"
-                       f"📦 Продукт: <b>{product}</b>\n\n"
+                       f"📦 Продукт: <b>TelegramMaster_Commentator</b>\n\n"
                        f"🔑 <b>Ваш пароль:</b>\n"
                        f"<code>{password}</code>\n\n"
-                       f"{message_check_payment(product_price=TelegramMaster_Commentator, product=product)}")
+                       f"{message_check_payment(product_price=TelegramMaster_Commentator, product="TelegramMaster_Commentator")}")
         else:
             caption = (f"✅ <b>Платеж на сумму {TelegramMaster_Commentator} руб прошел успешно‼️</b>\n\n"
                        f"⚠️ <b>Внимание!</b> Пароль еще не установлен администратором.\n\n"
@@ -77,7 +74,7 @@ async def check_payment_com(callback_query: types.CallbackQuery):
                                                                f"Username: @{callback_query.from_user.username},\n"
                                                                f"Имя: {callback_query.from_user.first_name},\n"
                                                                f"Фамилия: {callback_query.from_user.last_name},\n\n"
-                                                               f"Приобрел {product}")
+                                                               f"Приобрел TelegramMaster_Commentator")
     else:
         await bot.send_message(callback_query.message.chat.id,
                                "❌ Платеж еще не оплачен. Пожалуйста, завершите оплату и нажмите кнопку 'Проверить оплату' еще раз.")

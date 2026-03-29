@@ -13,14 +13,12 @@ from system.dispatcher import bot, ADMIN_CHAT_ID
 
 router = Router(name=__name__)
 
-product = "Помощь в настройке ПО (консультация)"
-
 
 @router.callback_query(F.data.startswith("payment_yookassa_training"))
 async def payment_url_handler(callback_query: types.CallbackQuery):
     """Отправка ссылки для оплаты TelegramMaster-PRO"""
     payment_url, payment_id = payment_yookassa_com(
-        description_text=f"{product}",  # Текст описания товара
+        description_text=f"Помощь в настройке ПО (консультация)",  # Текст описания товара
         product_price=payment_installation  # Цена товара в рублях
     )
     # Создаем клавиатуру с кнопкой для проверки оплаты и возврата в меню
@@ -29,7 +27,7 @@ async def payment_url_handler(callback_query: types.CallbackQuery):
         [InlineKeyboardButton(text='🏠 В начальное меню', callback_data='start_menu_keyboard')],
     ])
     await bot.send_message(chat_id=callback_query.from_user.id,
-                           text=message_payment(product, payment_url),
+                           text=message_payment("Помощь в настройке ПО (консультация)", payment_url),
                            reply_markup=keyboard, parse_mode="HTML")
 
 
@@ -44,7 +42,7 @@ async def check_payment_program_setup_service(callback_query: types.CallbackQuer
         # Запись в базу данных пользователя, который оплатил счет в рублях
         save_payment_info(callback_query.from_user.id, callback_query.from_user.first_name,
                           callback_query.from_user.last_name, callback_query.from_user.username, payment_info.id,
-                          product, payment_info.captured_at, "succeeded")
+                          "Помощь в настройке ПО (консультация)", payment_info.captured_at, "succeeded")
         await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
                                                            f"ID {callback_query.from_user.id},\n"
                                                            f"Username: @{callback_query.from_user.username},\n"
