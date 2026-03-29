@@ -6,12 +6,11 @@ from loguru import logger  # https://github.com/Delgan/loguru
 
 from handlers.admin.admin_handlers import register_admin_handlers
 from handlers.payments.cryptomus_payments.cryptomus_commentator import router as cryptomus_commentator
-
-from handlers.payments.cryptomus_payments.cryptomus_commentator_password import register_cryptomus_password_commentator
-from handlers.payments.cryptomus_payments.cryptomus_password import register_cryptomus_password
-from handlers.payments.cryptomus_payments.cryptomus_program import register_cryptomus_program
-from handlers.payments.cryptomus_payments.cryptomus_search import register_cryptomus_search_gpt
-from handlers.payments.cryptomus_payments.cryptomus_training import register_cryptomus_training
+from handlers.payments.cryptomus_payments.cryptomus_commentator_password import router as cryptomus_commentator_password
+from handlers.payments.cryptomus_payments.cryptomus_password import router as cryptomus_password
+from handlers.payments.cryptomus_payments.cryptomus_program import router as cryptomus_program
+from handlers.payments.cryptomus_payments.cryptomus_search import router as cryptomus_search
+from handlers.payments.cryptomus_payments.cryptomus_training import router as cryptomus_training
 from handlers.payments.payments import register_program_payments
 from handlers.payments.yookassa_payments.yookassa_commentator import register_yookassa_program_com
 from handlers.payments.yookassa_payments.yookassa_commentator_password import \
@@ -68,18 +67,14 @@ async def main() -> None:
     register_yookassa_training()  # Оплата настройки ПО
 
     # Оплата Криптой
-    register_cryptomus_password()  # Покупка пароля TelegramMaster-PRO
-    register_cryptomus_password_commentator()  # Покупка пароля TelegramMaster_Commentator
-
-    register_cryptomus_program()  # Покупка TelegramMaster-PRO
-
+    dp.include_router(cryptomus_password)  # Покупка пароля TelegramMaster-PRO
+    dp.include_router(cryptomus_commentator_password)  # Покупка пароля TelegramMaster_Commentator
+    dp.include_router(cryptomus_program)  # Покупка TelegramMaster-PRO
     dp.include_router(cryptomus_commentator)  # Купить TelegramMaster_Commentator
-
-    register_cryptomus_training()  # Покупка 'Помощь в настройке ПО (консультация)'
+    dp.include_router(cryptomus_training)  # Покупка 'Помощь в настройке ПО (консультация)'
 
     # Покупка TelegramMaster_Search_GPT
-    register_yookassa_telegram_master_search_gpt()
-    register_cryptomus_search_gpt()
+    dp.include_router(cryptomus_search)
 
 
 if __name__ == '__main__':
