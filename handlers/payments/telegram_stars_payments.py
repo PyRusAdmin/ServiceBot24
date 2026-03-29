@@ -6,12 +6,13 @@
 """
 import datetime
 import json
+import os
 
 from aiogram import F, Router, types
 from aiogram.types import FSInputFile
 from loguru import logger
 
-from db.settings_db import save_payment_info
+from db.settings_db import save_payment_info, get_product_password
 from handlers.payments.products_goods_services import (
     TelegramMaster, TelegramMaster_Commentator, password_TelegramMaster,
     password_TelegramMaster_Commentator, payment_installation, TelegramMaster_Search_GPT
@@ -25,7 +26,10 @@ router = Router(name=__name__)
 # Курс Telegram Stars (рублей за 1 звезду)
 # Обновите это значение при изменении курса Telegram
 # Актуальный курс на 2026 год: ~1.5 рубля за звезду
-STARS_TO_RUB_RATE = 1.5
+STARS_TO_RUB_RATE = 200
+
+# Базовый путь к файлам с паролями
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 def get_stars_amount(rub_amount: float) -> int:
@@ -36,7 +40,7 @@ def get_stars_amount(rub_amount: float) -> int:
     """
     stars = int(rub_amount / STARS_TO_RUB_RATE)
     # Округляем до ближайшего значения, которое принимает Telegram (минимум 50 звезд)
-    stars = max(50, stars)
+    stars = max(1, stars)
     return stars
 
 
@@ -88,6 +92,9 @@ async def process_successful_payment(message: types.Message):
             await message.answer("⚠️ Неизвестный тип платежа. Обратитесь к @PyAdminRU")
             return
 
+        logger.info(f"Путь к файлу с паролем: {password_file}")
+        logger.info(f"Файл существует: {os.path.exists(password_file)}")
+
         # Сохраняем информацию о платеже
         invoice_json = json.dumps({
             "product": product_name,
@@ -108,18 +115,40 @@ async def process_successful_payment(message: types.Message):
             status="succeeded"
         )
 
-        # Отправляем пароль или подтверждение
+        # Получаем пароль из базы данных и отправляем пользователю
         if password_file:
-            await bot.send_document(
-                chat_id=message.from_user.id,
-                document=FSInputFile(password_file),
-                caption=message_check_payment(product_price=price, product=product_name),
-                reply_markup=start_menu()
-            )
+            try:
+                password = get_product_password(product_name)
+                
+                if password:
+                    await bot.send_message(
+                        chat_id=message.from_user.id,
+                        text=f"✅ <b>Оплата подтверждена!</b>\n\n"
+                             f"📦 Продукт: <b>{product_name}</b>\n\n"
+                             f"🔑 <b>Ваш пароль:</b>\n"
+                             f"<code>{password}</code>\n\n"
+                             f"{message_check_payment(product_price=price, product=product_name)}",
+                        parse_mode="HTML"
+                    )
+                    logger.info(f"Пароль отправлен пользователю {message.from_user.id}")
+                else:
+                    # Пароль не найден в БД
+                    await bot.send_message(
+                        chat_id=message.from_user.id,
+                        text=f"⚠️ <b>Внимание!</b>\n\n"
+                             f"Оплата прошла успешно, но пароль для '{product_name}' еще не установлен администратором.\n\n"
+                             f"Пожалуйста, обратитесь к @PyAdminRU",
+                        parse_mode="HTML"
+                    )
+                    logger.warning(f"Пароль для {product_name} не найден в базе данных")
+            except Exception as send_error:
+                logger.exception(f"Ошибка при отправке пароля: {send_error}")
+                await message.answer("⚠️ Ошибка при отправке пароля. Обратитесь к @PyAdminRU")
         else:
             await message.answer(
-                f"✅ Оплата услуги '{product_name}' подтверждена!\n\n"
-                f"Пожалуйста, свяжитесь с @PyAdminRU для начала работы."
+                f"✅ <b>Оплата услуги '{product_name}' подтверждена!</b>\n\n"
+                f"Пожалуйста, свяжитесь с @PyAdminRU для начала работы.",
+                parse_mode="HTML"
             )
 
         # Уведомляем администратора

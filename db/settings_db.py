@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import datetime
 import sqlite3
 
 from loguru import logger
@@ -186,7 +187,7 @@ def get_all_users():
         cursor = conn.cursor()
         cursor.execute('''SELECT user_id, first_name, last_name, username, date FROM users_run''')
         rows = cursor.fetchall()
-        
+
         users = []
         for row in rows:
             users.append({
@@ -197,3 +198,92 @@ def get_all_users():
                 'date': row[4]
             })
         return users
+
+
+# ============================================================================
+# Модели Peewee для работы с паролями продуктов
+# ============================================================================
+
+class ProductPassword(BaseModel):
+    """
+    Модель для хранения паролей продуктов
+    """
+    product_name = TextField(unique=True, primary_key=True)  # Название продукта (первичный ключ)
+    password = TextField()  # Пароль
+    updated_at = DateTimeField(default=datetime.datetime.now)  # Дата последнего обновления
+
+    class Meta:
+        table_name = 'product_passwords'
+        indexes = (
+            (('product_name',), True),  # Уникальный индекс по product_name
+        )
+
+
+def init_password_tables():
+    """
+    Инициализация таблиц для хранения паролей
+    """
+    db.connect()
+    db.create_tables([ProductPassword], safe=True)
+    db.close()
+
+
+def get_product_password(product_name: str) -> str | None:
+    """
+    Получает пароль для продукта из базы данных
+    :param product_name: название продукта
+    :return: пароль или None, если не найден
+    """
+    try:
+        password_record = ProductPassword.get(ProductPassword.product_name == product_name)
+        return password_record.password
+    except ProductPassword.DoesNotExist:
+        return None
+
+
+def set_product_password(product_name: str, password: str) -> bool:
+    """
+    Устанавливает или обновляет пароль для продукта
+    :param product_name: название продукта
+    :param password: пароль
+    :return: True если успешно, False если ошибка
+    """
+    try:
+        # Проверяем, существует ли запись
+        try:
+            password_record = ProductPassword.get(ProductPassword.product_name == product_name)
+            # Обновляем существующую запись
+            password_record.password = password
+            password_record.updated_at = datetime.datetime.now()
+            password_record.save()
+        except ProductPassword.DoesNotExist:
+            # Создаем новую запись
+            ProductPassword.create(
+                product_name=product_name,
+                password=password,
+                updated_at=datetime.datetime.now()
+            )
+        return True
+    except Exception as e:
+        logger.exception(f"Ошибка при установке пароля для {product_name}: {e}")
+        return False
+
+
+def get_all_product_passwords() -> list:
+    """
+    Получает все пароли продуктов
+    :return: список словарей [{'product_name': '...', 'password': '...', 'updated_at': ...}, ...]
+    """
+    try:
+        passwords = ProductPassword.select()
+        return [
+            {
+                'product_name': p.product_name,
+                'password': p.password,
+                'updated_at': p.updated_at.strftime("%Y-%m-%d %H:%M:%S")
+            }
+            for p in passwords
+        ]
+    except Exception as e:
+        logger.exception(f"Ошибка при получении всех паролей: {e}")
+        return []

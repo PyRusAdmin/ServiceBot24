@@ -6,7 +6,7 @@ from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from loguru import logger
 
-from db.settings_db import get_all_users, is_user_in_db, add_user_to_db
+from db.settings_db import get_all_users, is_user_in_db, add_user_to_db, set_product_password, get_product_password
 from states.states import AdminState
 from system.dispatcher import bot, ADMIN_CHAT_ID
 
@@ -173,7 +173,11 @@ async def send_pass(message: types.Message, state: FSMContext):
         await message.answer("❌ У вас нет доступа к этой команде.")
         return
 
-    await message.answer('🔐 Введите новый пароль для TelegramMaster-PRO:')
+    await message.answer(
+        '🔐 <b>Установка пароля для TelegramMaster-PRO</b>\n\n'
+        'Введите новый пароль:',
+        parse_mode="HTML"
+    )
     await state.set_state(AdminState.waiting_for_password)
 
 
@@ -181,7 +185,7 @@ async def send_pass(message: types.Message, state: FSMContext):
 async def save_password(message: types.Message, state: FSMContext):
     """
     Обработчик состояния waiting_for_password
-    Сохраняет пароль в файл
+    Сохраняет пароль в базу данных
     """
     # Проверяем, является ли пользователь администратором
     if str(message.from_user.id) != str(ADMIN_CHAT_ID):
@@ -189,18 +193,24 @@ async def save_password(message: types.Message, state: FSMContext):
         await state.clear()
         return
 
-    text = message.text  # Получаем текст сообщения
+    password = message.text  # Получаем текст сообщения
     
     try:
-        # Используем with open для открытия файла с использованием кодека utf-8
-        with open("setting/password/TelegramMaster-PRO/password.txt", "w", encoding='utf-8') as file:
-            file.write(text)
+        # Сохраняем пароль в базу данных
+        result = set_product_password("TelegramMaster-PRO", password)
         
-        logger.info(f"Администратор {message.from_user.id} обновил пароль для TelegramMaster-PRO")
-        await message.answer("✅ Пароль успешно сохранен!")
+        if result:
+            logger.info(f"Администратор {message.from_user.id} обновил пароль для TelegramMaster-PRO")
+            await message.answer(
+                f"✅ <b>Пароль успешно сохранен!</b>\n\n"
+                f"Пароль: <code>{password}</code>",
+                parse_mode="HTML"
+            )
+        else:
+            await message.answer("❌ Ошибка при сохранении пароля. Попробуйте позже.")
     except Exception as e:
         logger.exception(f"Ошибка при сохранении пароля: {e}")
-        await message.answer("❌ Ошибка при сохранении пароля. Проверьте права доступа к файлу.")
+        await message.answer("❌ Ошибка при сохранении пароля. Проверьте логи.")
     
     await state.clear()
 
