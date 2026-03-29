@@ -6,7 +6,7 @@ from aiogram import types
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from loguru import logger
-
+from aiogram import F, Router, types
 from db.settings_db import save_user_activity, add_user_to_db, is_user_in_db
 from keyboards.user_keyboards import greeting_keyboards, payment_keyboards  # Клавиатуры поста приветствия
 from messages.messages import greeting_post, payment_goods_and_services_post  # Пояснение для пользователя FAG

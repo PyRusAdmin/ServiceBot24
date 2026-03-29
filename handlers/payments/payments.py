@@ -3,7 +3,7 @@ import datetime  # Дата
 
 from aiogram import types, F
 from loguru import logger  # Логирование с помощью loguru
-
+from aiogram import F, Router, types
 from db.settings_db import check_user_payment, is_user_in_db
 from handlers.payments.products_goods_services import (
     TelegramMaster, payment_installation, TelegramMaster_Commentator, password_TelegramMaster_Commentator,

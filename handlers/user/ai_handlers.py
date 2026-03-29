@@ -4,7 +4,7 @@ from aiogram.enums import ChatAction
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 from groq import AsyncGroq
-
+from aiogram import F, Router, types
 from db.settings_db import save_user_wish
 from setting.proxy_config import setup_proxy
 from states.states import WishState

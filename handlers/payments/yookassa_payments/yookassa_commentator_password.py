@@ -5,7 +5,7 @@ from aiogram.types import FSInputFile
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from loguru import logger  # Логирование с помощью loguru
 from yookassa import Payment
-
+from aiogram import F, Router, types
 from db.settings_db import save_payment_info, add_user_if_not_exists, is_user_in_db
 from handlers.payment_yookassa import payment_yookassa_com
 from handlers.payments.products_goods_services import password_TelegramMaster_Commentator

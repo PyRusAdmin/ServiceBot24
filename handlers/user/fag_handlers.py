@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from aiogram import types, F
-
+from aiogram import F, Router, types
 from keyboards.user_keyboards import start_menu
 from messages.messages import fag_post
 from system.dispatcher import bot, dp

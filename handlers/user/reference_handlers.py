@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from aiogram import F
 from aiogram import types
-
+from aiogram import F, Router, types
 from keyboards.user_keyboards import start_menu
 from messages.messages import message_text_faq  # Пояснение для пользователя FAG
 from system.dispatcher import dp, bot  # Подключение к боту и диспетчеру пользователя
