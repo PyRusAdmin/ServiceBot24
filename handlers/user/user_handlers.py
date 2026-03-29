@@ -13,6 +13,7 @@ from messages.messages import greeting_post, payment_goods_and_services_post  # 
 from states.states import SomeState
 from system.dispatcher import dp, bot  # Подключение к боту и диспетчеру пользователя
 
+router = Router(name=__name__)
 
 @dp.message(Command("pass"))
 async def send_pass(message: types.Message, state: FSMContext):

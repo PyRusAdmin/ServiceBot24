@@ -6,6 +6,7 @@ from keyboards.user_keyboards import start_menu
 from messages.messages import message_text_faq  # Пояснение для пользователя FAG
 from system.dispatcher import dp, bot  # Подключение к боту и диспетчеру пользователя
 
+router = Router(name=__name__)
 
 @dp.callback_query(F.data == "reference")
 async def faq_handler(callback_query: types.CallbackQuery):

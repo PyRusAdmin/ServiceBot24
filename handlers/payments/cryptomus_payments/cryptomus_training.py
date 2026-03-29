@@ -12,6 +12,7 @@ from handlers.payments.cryptomus_payments.cryptomus_commentator import make_requ
 from handlers.payments.products_goods_services import payment_installation
 from system.dispatcher import bot, dp, ADMIN_CHAT_ID
 
+router = Router(name=__name__)
 
 @dp.callback_query(F.data == "payment_crypta_pas_training_handler")
 async def payment_crypta_pas_training_handler(callback_query: types.CallbackQuery):

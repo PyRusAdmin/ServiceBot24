@@ -4,7 +4,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 
 from states.states import Form
-from system.dispatcher import dp, bot, ADMIN_CHAT_ID  # Подключение к боту и диспетчеру пользователя
+from system.dispatcher import bot, ADMIN_CHAT_ID  # Подключение к боту и диспетчеру пользователя
 
 router = Router(name=__name__)
 

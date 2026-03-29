@@ -19,6 +19,7 @@ from messages.messages import generate_payment_message, generate_payment_message
 from system.dispatcher import ADMIN_CHAT_ID
 from system.dispatcher import bot, dp
 
+router = Router(name=__name__)
 
 @dp.callback_query(F.data == "delivery")
 async def buy(callback_query: types.CallbackQuery):

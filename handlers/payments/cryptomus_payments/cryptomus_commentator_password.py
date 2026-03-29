@@ -14,6 +14,7 @@ from handlers.payments.products_goods_services import password_TelegramMaster_Co
 from keyboards.user_keyboards import start_menu
 from system.dispatcher import bot, dp
 
+router = Router(name=__name__)
 
 # Обработчик для создания счета и отправки кнопки "Проверить оплату"
 @dp.callback_query(F.data == "payment_crypta_commentator_pass")

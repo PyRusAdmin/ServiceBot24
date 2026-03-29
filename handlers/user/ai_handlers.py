@@ -10,6 +10,7 @@ from setting.proxy_config import setup_proxy
 from states.states import WishState
 from system.dispatcher import bot, dp, ADMIN_CHAT_ID, api_key, PROXY_USER, PROXY_PASSWORD, PROXY_IP, PROXY_PORT
 
+router = Router(name=__name__)
 
 def remove_markdown_symbols(text: str) -> str:
     """Удаляет символы Markdown (* и **) из текста."""

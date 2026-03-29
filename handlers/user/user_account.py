@@ -5,6 +5,7 @@ from db.settings_db import UserPayment
 from keyboards.user_keyboards import user_account_keyboard, start_menu
 from system.dispatcher import bot, dp
 
+router = Router(name=__name__)
 
 @dp.callback_query(F.data == "user_account")
 async def user_account_handlers(callback_query: types.CallbackQuery):

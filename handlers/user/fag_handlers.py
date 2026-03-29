@@ -5,6 +5,7 @@ from keyboards.user_keyboards import start_menu
 from messages.messages import fag_post
 from system.dispatcher import bot, dp
 
+router = Router(name=__name__)
 
 @dp.callback_query(F.data == "fag")
 async def fag_handler(callback_query: types.CallbackQuery):

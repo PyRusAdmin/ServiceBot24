@@ -17,6 +17,8 @@ from keyboards.user_keyboards import start_menu
 from messages.messages import message_check_payment
 from system.dispatcher import bot, dp
 
+router = Router(name=__name__)
+
 # Оплата TelegramMaster-Search-GPT
 
 product = "TelegramMaster-Search-GPT"

@@ -12,6 +12,8 @@ from keyboards.user_keyboards import start_menu
 from messages.messages import message_payment, message_check_payment
 from system.dispatcher import bot, dp, ADMIN_CHAT_ID
 
+router = Router(name=__name__)
+
 # Оплата TelegramMaster_Commentator
 product = "TelegramMaster_Commentator"
 

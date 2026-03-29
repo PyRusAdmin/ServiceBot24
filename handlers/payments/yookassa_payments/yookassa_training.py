@@ -11,6 +11,8 @@ from handlers.payments.products_goods_services import payment_installation
 from messages.messages import message_payment
 from system.dispatcher import bot, dp, ADMIN_CHAT_ID
 
+router = Router(name=__name__)
+
 product = "Помощь в настройке ПО (консультация)"
 
 
