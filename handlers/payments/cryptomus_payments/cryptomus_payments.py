@@ -130,15 +130,17 @@ async def payment_crypta_pas_program_handler_com(callback_query: types.CallbackQ
         )
         keyboard = InlineKeyboardMarkup(inline_keyboard=[[check_payment_button]])
 
-        await bot.send_message(chat_id=callback_query.message.chat.id,
-                               text=f"💳 <b>Счет для оплаты криптовалютой</b> 💳\n\n"
-                                    f"🌐 Вы собираетесь приобрести <b>TelegramMaster-Search-GPT</b>. Пожалуйста, воспользуйтесь ссылкой ниже для оплаты:\n"
-                                    f"🔗 <a href='{invoice_data['result']['url']}'>Перейти к оплате</a>\n\n"
-                                    f"⚠️ <b>Важная информация:</b> после завершения платежа бот автоматически отправит вам все необходимые данные.\n"
-                                    f"❗️ Обратите внимание, что возврат денежных средств после оплаты криптовалютой невозможен.\n\n"
-                                    f"💡 Если у вас возникнут вопросы, не стесняйтесь обращаться к нам. Спасибо за доверие! 🙌",
-                               reply_markup=keyboard,
-                               parse_mode="HTML")
+        await bot.send_message(
+            chat_id=callback_query.message.chat.id,
+            text=f"💳 <b>Счет для оплаты криптовалютой</b> 💳\n\n"
+                 f"🌐 Вы собираетесь приобрести <b>TelegramMaster-Search-GPT</b>. Пожалуйста, воспользуйтесь ссылкой ниже для оплаты:\n"
+                 f"🔗 <a href='{invoice_data['result']['url']}'>Перейти к оплате</a>\n\n"
+                 f"⚠️ <b>Важная информация:</b> после завершения платежа бот автоматически отправит вам все необходимые данные.\n"
+                 f"❗️ Обратите внимание, что возврат денежных средств после оплаты криптовалютой невозможен.\n\n"
+                 f"💡 Если у вас возникнут вопросы, не стесняйтесь обращаться к нам. Спасибо за доверие! 🙌",
+            reply_markup=keyboard,
+            parse_mode="HTML"
+        )
     except Exception as e:
         logger.exception(f"Ошибка в обработке оплаты TelegramMaster_Commentator: {e}")
 
@@ -152,29 +154,27 @@ async def check_invoice_paid_program_com_tm_search_gpt_crypta(callback_query: ty
         invoice_data = await get_payment_info(callback_query)
         if invoice_data['result']['payment_status'] in ('paid', 'paid_over'):
             # Если оплата прошла успешно
-            invoice_json = json.dumps(invoice_data)  # Преобразуем словарь в строку JSON
             # Запись в базу данных пользователя, который оплатил счет в рублях
             save_payment_info_user(
-                table_name="users_pay_search", user_id=callback_query.from_user.id,
-                first_name=callback_query.from_user.first_name, last_name=callback_query.from_user.last_name,
-                username=callback_query.from_user.username, invoice_json=invoice_json, product=product_telegram_search,
-                date=datetime.datetime.now().strftime("%Y-%m-%d"), status="succeeded", price=TelegramMaster_Search_GPT
+                table_name="users_pay_search",
+                user_id=callback_query.from_user.id,
+                first_name=callback_query.from_user.first_name,
+                last_name=callback_query.from_user.last_name,
+                username=callback_query.from_user.username,
+                invoice_json=json.dumps(invoice_data),  # Преобразуем словарь в строку JSON
+                product=product_telegram_search,
+                date=datetime.datetime.now().strftime("%Y-%m-%d"),
+                status="succeeded",
+                price=TelegramMaster_Search_GPT
             )
-
             # Получаем пароль из базы данных
             password = get_product_password("TelegramMaster_Search_GPT")
 
-            if password:
-                caption = (f"✅ <b>Платеж на сумму {TelegramMaster_Search_GPT} руб прошел успешно‼️</b>\n\n"
-                           f"📦 Продукт: <b>{product_telegram_search}</b>\n\n"
-                           f"🔑 <b>Ваш пароль:</b>\n"
-                           f"<code>{password}</code>\n\n"
-                           f"{message_check_payment(product_price=TelegramMaster_Search_GPT, product=product_telegram_search)}")
-            else:
-                caption = (f"✅ <b>Платеж на сумму {TelegramMaster_Search_GPT} руб прошел успешно‼️</b>\n\n"
-                           f"⚠️ <b>Внимание!</b> Пароль еще не установлен администратором.\n\n"
-                           f"Пожалуйста, обратитесь к @PyAdminRU")
-
+            caption = (f"✅ <b>Платеж на сумму {TelegramMaster_Search_GPT} руб прошел успешно‼️</b>\n\n"
+                       f"📦 Продукт: <b>{product_telegram_search}</b>\n\n"
+                       f"🔑 <b>Ваш пароль:</b>\n"
+                       f"<code>{password}</code>\n\n"
+                       f"{message_check_payment(product_price=TelegramMaster_Search_GPT, product=product_telegram_search)}")
             await bot.send_message(
                 chat_id=callback_query.from_user.id,
                 text=caption,
@@ -233,26 +233,25 @@ async def check_invoice_paid_program(callback_query: types.CallbackQuery):
         invoice_data = await get_payment_info(callback_query)
         if invoice_data['result']['payment_status'] in ('paid', 'paid_over'):
             # Если оплата прошла успешно
-            date = datetime.datetime.now().strftime("%Y-%m-%d")
-            invoice_json = json.dumps(invoice_data)  # Преобразуем словарь в строку JSON
             # Запись в базу данных пользователя, который оплатил счет в крипте
-            save_payment_info(callback_query.from_user.id, callback_query.from_user.first_name,
-                              callback_query.from_user.last_name, callback_query.from_user.username, invoice_json,
-                              "TelegramMaster-PRO", date, "succeeded")
+            save_payment_info(
+                callback_query.from_user.id,
+                callback_query.from_user.first_name,
+                callback_query.from_user.last_name,
+                callback_query.from_user.username,
+                json.dumps(invoice_data),  # Преобразуем словарь в строку JSON
+                "TelegramMaster-PRO",
+                datetime.datetime.now().strftime("%Y-%m-%d"),
+                "succeeded")
 
             # Получаем пароль из базы данных
             password = get_product_password("TelegramMaster-PRO")
 
-            if password:
-                caption = (f"✅ <b>Платеж на сумму {TelegramMaster} руб прошел успешно‼️</b>\n\n"
-                           f"📦 Продукт: <b>{product_telegram_master_pros}</b>\n\n"
-                           f"🔑 <b>Ваш пароль:</b>\n"
-                           f"<code>{password}</code>\n\n"
-                           f"{message_check_payment(product_price=TelegramMaster, product=product_telegram_master_pros)}")
-            else:
-                caption = (f"✅ <b>Платеж на сумму {TelegramMaster} руб прошел успешно‼️</b>\n\n"
-                           f"⚠️ <b>Внимание!</b> Пароль еще не установлен администратором.\n\n"
-                           f"Пожалуйста, обратитесь к @PyAdminRU")
+            caption = (f"✅ <b>Платеж на сумму {TelegramMaster} руб прошел успешно‼️</b>\n\n"
+                       f"📦 Продукт: <b>{product_telegram_master_pros}</b>\n\n"
+                       f"🔑 <b>Ваш пароль:</b>\n"
+                       f"<code>{password}</code>\n\n"
+                       f"{message_check_payment(product_price=TelegramMaster, product=product_telegram_master_pros)}")
 
             await bot.send_message(
                 chat_id=callback_query.from_user.id,
@@ -327,27 +326,26 @@ async def check_payment_handler(callback_query: types.CallbackQuery):
         invoice_data = await get_payment_info(callback_query)
         if invoice_data['result']['payment_status'] in ('paid', 'paid_over'):
             # Если оплата прошла успешно
-            date = datetime.datetime.now().strftime("%Y-%m-%d")
-            invoice_json = json.dumps(invoice_data)  # Преобразуем словарь в строку JSON
-
             # Запись в базу данных пользователя, который оплатил счет в крипте
-            save_payment_info(callback_query.from_user.id, callback_query.from_user.first_name,
-                              callback_query.from_user.last_name, callback_query.from_user.username, invoice_json,
-                              "Пароль TelegramMaster-PRO", date, "succeeded")
+            save_payment_info(
+                callback_query.from_user.id,
+                callback_query.from_user.first_name,
+                callback_query.from_user.last_name,
+                callback_query.from_user.username,
+                json.dumps(invoice_data),  # Преобразуем словарь в строку JSON
+                "Пароль TelegramMaster-PRO",
+                datetime.datetime.now().strftime("%Y-%m-%d"),
+                "succeeded"
+            )
 
             # Получаем пароль из базы данных
             password = get_product_password("TelegramMaster-PRO")
 
-            if password:
-                caption = (f"✅ <b>Платеж на сумму {password_TelegramMaster} руб прошел успешно‼️</b>\n\n"
-                           f"📦 Продукт: <b>{product_telegram_master_pro}</b>\n\n"
-                           f"🔑 <b>Ваш пароль:</b>\n"
-                           f"<code>{password}</code>\n\n"
-                           f"{message_check_payment(product_price=password_TelegramMaster, product=product_telegram_master_pro)}")
-            else:
-                caption = (f"✅ <b>Платеж на сумму {password_TelegramMaster} руб прошел успешно‼️</b>\n\n"
-                           f"⚠️ <b>Внимание!</b> Пароль еще не установлен администратором.\n\n"
-                           f"Пожалуйста, обратитесь к @PyAdminRU")
+            caption = (f"✅ <b>Платеж на сумму {password_TelegramMaster} руб прошел успешно‼️</b>\n\n"
+                       f"📦 Продукт: <b>{product_telegram_master_pro}</b>\n\n"
+                       f"🔑 <b>Ваш пароль:</b>\n"
+                       f"<code>{password}</code>\n\n"
+                       f"{message_check_payment(product_price=password_TelegramMaster, product=product_telegram_master_pro)}")
 
             await bot.send_message(
                 chat_id=callback_query.from_user.id,
@@ -433,11 +431,8 @@ async def check_payment_handler_commentator(callback_query: types.CallbackQuery)
                 datetime.datetime.now().strftime("%Y-%m-%d"),
                 "succeeded"
             )
-
             # Получаем пароль из базы данных
             password = get_product_password("TelegramMaster_Commentator")
-
-            # if password:
             caption = (
                 f"✅ <b>Платеж на сумму {password_TelegramMaster_Commentator} руб прошел успешно‼️</b>\n\n"
                 f"📦 Продукт: <b>Пароль TelegramMaster_Commentator</b>\n\n"
@@ -534,25 +529,26 @@ async def check_invoice_paid_program_com(callback_query: types.CallbackQuery):
         invoice_data = await get_payment_info(callback_query)
         if invoice_data['result']['payment_status'] in ('paid', 'paid_over'):
             # Если оплата прошла успешно
-            invoice_json = json.dumps(invoice_data)  # Преобразуем словарь в строку JSON
             # Запись в базу данных пользователя, который оплатил счет в крипте
-            save_payment_info(callback_query.from_user.id, callback_query.from_user.first_name,
-                              callback_query.from_user.last_name, callback_query.from_user.username, invoice_json,
-                              "TelegramMaster_Commentator", datetime.datetime.now().strftime("%Y-%m-%d"), "succeeded")
+            save_payment_info(
+                callback_query.from_user.id,
+                callback_query.from_user.first_name,
+                callback_query.from_user.last_name,
+                callback_query.from_user.username,
+                json.dumps(invoice_data),  # Преобразуем словарь в строку JSON
+                "TelegramMaster_Commentator",
+                datetime.datetime.now().strftime("%Y-%m-%d"),
+                "succeeded"
+            )
 
             # Получаем пароль из базы данных
             password = get_product_password("TelegramMaster_Commentator")
 
-            if password:
-                caption = (f"✅ <b>Платеж на сумму {TelegramMaster_Commentator} руб прошел успешно‼️</b>\n\n"
-                           f"📦 Продукт: <b>{TelegramMaster_Commentator}</b>\n\n"
-                           f"🔑 <b>Ваш пароль:</b>\n"
-                           f"<code>{password}</code>\n\n"
-                           f"{message_check_payment(product_price=TelegramMaster_Commentator, product=TelegramMaster_Commentator)}")
-            else:
-                caption = (f"✅ <b>Платеж на сумму {TelegramMaster_Commentator} руб прошел успешно‼️</b>\n\n"
-                           f"⚠️ <b>Внимание!</b> Пароль еще не установлен администратором.\n\n"
-                           f"Пожалуйста, обратитесь к @PyAdminRU")
+            caption = (f"✅ <b>Платеж на сумму {TelegramMaster_Commentator} руб прошел успешно‼️</b>\n\n"
+                       f"📦 Продукт: <b>{TelegramMaster_Commentator}</b>\n\n"
+                       f"🔑 <b>Ваш пароль:</b>\n"
+                       f"<code>{password}</code>\n\n"
+                       f"{message_check_payment(product_price=TelegramMaster_Commentator, product=TelegramMaster_Commentator)}")
 
             await bot.send_message(
                 chat_id=callback_query.from_user.id,
@@ -587,4 +583,4 @@ async def check_invoice_paid_program_com(callback_query: types.CallbackQuery):
             text="⚠️ Произошла ошибка при проверке оплаты. Пожалуйста, попробуйте позже."
         )
 
-# 656
+# 591
