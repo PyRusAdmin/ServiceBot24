@@ -8,7 +8,8 @@ from aiogram import F, Router, types
 from loguru import logger
 
 from db.settings_db import get_maxmaster_password, add_maxmaster_sale
-from handlers.payments.products_goods_services import MaxMaster, get_stars_amount
+from handlers.payments.products_goods_services import MaxMaster
+from handlers.payments.telegram_stars_payments import get_stars_amount
 
 from keyboards.user_keyboards import start_menu
 from messages.messages import message_check_payment

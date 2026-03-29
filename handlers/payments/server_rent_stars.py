@@ -10,7 +10,8 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from loguru import logger
 
 from db.settings_db import add_server_rent, get_active_server_rent
-from handlers.payments.products_goods_services import SERVER_RENT_PRICE, get_stars_amount
+from handlers.payments.products_goods_services import SERVER_RENT_PRICE
+from handlers.payments.telegram_stars_payments import get_stars_amount
 from keyboards.user_keyboards import start_menu
 from states.states import ServerRentStarsState
 from system.dispatcher import bot, ADMIN_CHAT_ID
@@ -39,15 +40,23 @@ async def server_rent_stars_handler(callback_query: types.CallbackQuery, state: 
         await callback_query.answer()
         return
 
-    # Создаем клавиатуру с выбором месяцев
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="1 месяц - 250 ₽ (~167 ⭐️)", callback_data="stars_rent_1_month")],
-        [InlineKeyboardButton(text="2 месяца - 500 ₽ (~333 ⭐️)", callback_data="stars_rent_2_months")],
-        [InlineKeyboardButton(text="3 месяца - 750 ₽ (~500 ⭐️)", callback_data="stars_rent_3_months")],
-        [InlineKeyboardButton(text="6 месяцев - 1500 ₽ (~1000 ⭐️)", callback_data="stars_rent_6_months")],
-        [InlineKeyboardButton(text="12 месяцев - 3000 ₽ (~2000 ⭐️)", callback_data="stars_rent_12_months")],
-        [InlineKeyboardButton(text="🏠 В главное меню", callback_data="start_menu_keyboard")],
-    ])
+    # Рассчитываем стоимость в звездах для каждого срока
+    months_options = [1, 2, 3, 6, 12]
+    keyboard_buttons = []
+    
+    for months in months_options:
+        rub_price = SERVER_RENT_PRICE * months
+        stars_price = get_stars_amount(rub_price)
+        month_word = "месяц" if months == 1 else "месяца" if months < 5 else "месяцев"
+        keyboard_buttons.append([
+            InlineKeyboardButton(
+                text=f"{months} {month_word} - {rub_price} ₽ ({stars_price} ⭐️)",
+                callback_data=f"stars_rent_{months}_month"
+            )
+        ])
+    
+    keyboard_buttons.append([InlineKeyboardButton(text="🏠 В главное меню", callback_data="start_menu_keyboard")])
+    keyboard = InlineKeyboardMarkup(inline_keyboard=keyboard_buttons)
 
     await bot.send_message(
         chat_id=callback_query.from_user.id,
@@ -68,7 +77,12 @@ async def server_rent_stars_handler(callback_query: types.CallbackQuery, state: 
 async def select_months_stars_handler(callback_query: types.CallbackQuery, state: FSMContext):
     """Обработчик выбора количества месяцев для Stars"""
     # Извлекаем количество месяцев из callback_data
-    months = int(callback_query.data.split("_")[3])
+    try:
+        months = int(callback_query.data.split("_")[3])
+    except (IndexError, ValueError):
+        await callback_query.answer("❌ Ошибка выбора срока аренды", show_alert=True)
+        return
+    
     rub_price = SERVER_RENT_PRICE * months
     stars_amount = get_stars_amount(rub_price)
 
