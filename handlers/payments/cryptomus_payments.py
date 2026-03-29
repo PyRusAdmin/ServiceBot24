@@ -147,15 +147,15 @@ async def check_invoice_paid_training(callback_query: types.CallbackQuery):
     try:
         invoice_data = await get_payment_info(callback_query)
         if invoice_data['result']['payment_status'] in ('paid', 'paid_over'):
-            data_payment = generates_payment_data(
-                callback_query=callback_query,
-                payment_info=json.dumps(invoice_data),
-                product="Помощь в настройке ПО (консультация)",
-                date=datetime.datetime.now().strftime("%Y-%m-%d")
-            )
             # Запись в базу данных пользователя, который оплатил счет в крипте
-            save_payment_info(data_payment)
-
+            save_payment_info(
+                generates_payment_data(
+                    callback_query=callback_query,
+                    payment_info=json.dumps(invoice_data),
+                    product="Помощь в настройке ПО (консультация)",
+                    date=datetime.datetime.now().strftime("%Y-%m-%d")
+                )
+            )
             await bot.send_message(
                 chat_id=callback_query.from_user.id,
                 text="Оплата прошла успешно‼️ \nДля согласования даты и времени , свяжитесь с администратором"
@@ -208,18 +208,14 @@ async def check_invoice_paid_program_com_tm_search_gpt_crypta(callback_query: ty
         invoice_data = await get_payment_info(callback_query)
         if invoice_data['result']['payment_status'] in ('paid', 'paid_over'):
             # Если оплата прошла успешно
-            # Запись в базу данных пользователя, который оплатил счет в рублях
-            save_payment_info_user(
-                table_name="users_pay_search",
-                user_id=callback_query.from_user.id,
-                first_name=callback_query.from_user.first_name,
-                last_name=callback_query.from_user.last_name,
-                username=callback_query.from_user.username,
-                invoice_json=json.dumps(invoice_data),  # Преобразуем словарь в строку JSON
-                product="TelegramMaster-Search-GPT",
-                date=datetime.datetime.now().strftime("%Y-%m-%d"),
-                status="succeeded",
-                price=TelegramMaster_Search_GPT
+            # Запись в базу данных пользователя, который оплатил счет в крипте
+            save_payment_info(
+                generates_payment_data(
+                    callback_query=callback_query,
+                    payment_info=json.dumps(invoice_data),
+                    product="TelegramMaster-Search-GPT",
+                    date=datetime.datetime.now().strftime("%Y-%m-%d")
+                )
             )
             await bot.send_message(
                 chat_id=callback_query.from_user.id,
@@ -278,14 +274,12 @@ async def check_invoice_paid_program(callback_query: types.CallbackQuery):
             # Если оплата прошла успешно
             # Запись в базу данных пользователя, который оплатил счет в крипте
             save_payment_info(
-                callback_query.from_user.id,
-                callback_query.from_user.first_name,
-                callback_query.from_user.last_name,
-                callback_query.from_user.username,
-                json.dumps(invoice_data),  # Преобразуем словарь в строку JSON
-                "TelegramMaster-PRO",
-                datetime.datetime.now().strftime("%Y-%m-%d"),
-                "succeeded"
+                generates_payment_data(
+                    callback_query=callback_query,
+                    payment_info=json.dumps(invoice_data),
+                    product="TelegramMaster-PRO",
+                    date=datetime.datetime.now().strftime("%Y-%m-%d")
+                )
             )
             await bot.send_message(
                 chat_id=callback_query.from_user.id,
@@ -355,14 +349,12 @@ async def check_payment_handler(callback_query: types.CallbackQuery):
             # Если оплата прошла успешно
             # Запись в базу данных пользователя, который оплатил счет в крипте
             save_payment_info(
-                callback_query.from_user.id,
-                callback_query.from_user.first_name,
-                callback_query.from_user.last_name,
-                callback_query.from_user.username,
-                json.dumps(invoice_data),  # Преобразуем словарь в строку JSON
-                "Пароль TelegramMaster-PRO",
-                datetime.datetime.now().strftime("%Y-%m-%d"),
-                "succeeded"
+                generates_payment_data(
+                    callback_query=callback_query,
+                    payment_info=json.dumps(invoice_data),
+                    product="Пароль TelegramMaster-PRO",
+                    date=datetime.datetime.now().strftime("%Y-%m-%d")
+                )
             )
             await bot.send_message(
                 chat_id=callback_query.from_user.id,
@@ -430,15 +422,13 @@ async def check_payment_handler_commentator(callback_query: types.CallbackQuery)
         invoice_data = await get_payment_info(callback_query)
         if invoice_data['result']['payment_status'] in ('paid', 'paid_over'):
             # Если оплата прошла успешно
-            save_payment_info(  # Запись в базу данных пользователя, который оплатил счет в крипте
-                callback_query.from_user.id,
-                callback_query.from_user.first_name,
-                callback_query.from_user.last_name,
-                callback_query.from_user.username,
-                json.dumps(invoice_data),  # Преобразуем словарь в строку JSON
-                "Пароль TelegramMaster_Commentator",
-                datetime.datetime.now().strftime("%Y-%m-%d"),
-                "succeeded"
+            save_payment_info(
+                generates_payment_data(
+                    callback_query=callback_query,
+                    payment_info=json.dumps(invoice_data),
+                    product="Пароль TelegramMaster_Commentator",
+                    date=datetime.datetime.now().strftime("%Y-%m-%d")
+                )
             )
             await bot.send_message(
                 chat_id=callback_query.from_user.id,
@@ -507,14 +497,12 @@ async def check_invoice_paid_program_com(callback_query: types.CallbackQuery):
             # Если оплата прошла успешно
             # Запись в базу данных пользователя, который оплатил счет в крипте
             save_payment_info(
-                callback_query.from_user.id,
-                callback_query.from_user.first_name,
-                callback_query.from_user.last_name,
-                callback_query.from_user.username,
-                json.dumps(invoice_data),  # Преобразуем словарь в строку JSON
-                "TelegramMaster_Commentator",
-                datetime.datetime.now().strftime("%Y-%m-%d"),
-                "succeeded"
+                generates_payment_data(
+                    callback_query=callback_query,
+                    payment_info=json.dumps(invoice_data),
+                    product="TelegramMaster_Commentator",
+                    date=datetime.datetime.now().strftime("%Y-%m-%d")
+                )
             )
             await bot.send_message(
                 chat_id=callback_query.from_user.id,
