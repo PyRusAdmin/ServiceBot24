@@ -53,27 +53,35 @@ async def format_payment_info(payment_info):
     )
 
 
+def keyboard_check_payment(callback_data_check_payment):
+    """Кнопка для проверки оплаты"""
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text="Проверить оплату",
+                    callback_data=callback_data_check_payment
+                )
+            ]
+        ]
+    )
+
+
 @router.callback_query(F.data == "payment_crypta_pas_training_handler")
 async def payment_crypta_pas_training_handler(callback_query: types.CallbackQuery):
     """Оплата установки и обучения криптой"""
-
     invoice_data = format_payment_info(payment_info)
-    # Создаем кнопку "Проверить оплату"
-    check_payment_button = InlineKeyboardButton(
-        text="Проверить оплату",
-        callback_data=f"check_paymentT_{invoice_data['result']['uuid']}"
+    await bot.send_message(
+        chat_id=callback_query.message.chat.id,
+        text=f"💳 <b>Счет для оплаты криптовалютой</b> 💳\n\n"
+             f"🌐 Вы собираетесь приобрести <b>Помощь в настройке ПО (консультация)</b>. Пожалуйста, воспользуйтесь ссылкой ниже для оплаты:\n"
+             f"🔗 <a href='{invoice_data['result']['url']}'>Перейти к оплате</a>\n\n"
+             f"⚠️ <b>Важная информация:</b> после завершения платежа бот автоматически отправит вам все необходимые данные.\n"
+             f"❗️ Обратите внимание, что возврат денежных средств после оплаты криптовалютой невозможен.\n\n"
+             f"💡 Если у вас возникнут вопросы, не стесняйтесь обращаться к нам. Спасибо за доверие! 🙌",
+        reply_markup=keyboard_check_payment(f"check_paymentT_{invoice_data['result']['uuid']}"),
+        parse_mode="HTML"
     )
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[[check_payment_button]])
-
-    await bot.send_message(chat_id=callback_query.message.chat.id,
-                           text=f"💳 <b>Счет для оплаты криптовалютой</b> 💳\n\n"
-                                f"🌐 Вы собираетесь приобрести <b>Помощь в настройке ПО (консультация)</b>. Пожалуйста, воспользуйтесь ссылкой ниже для оплаты:\n"
-                                f"🔗 <a href='{invoice_data['result']['url']}'>Перейти к оплате</a>\n\n"
-                                f"⚠️ <b>Важная информация:</b> после завершения платежа бот автоматически отправит вам все необходимые данные.\n"
-                                f"❗️ Обратите внимание, что возврат денежных средств после оплаты криптовалютой невозможен.\n\n"
-                                f"💡 Если у вас возникнут вопросы, не стесняйтесь обращаться к нам. Спасибо за доверие! 🙌",
-                           reply_markup=keyboard,
-                           parse_mode="HTML")
 
 
 # Обработчик для кнопки "Проверить оплату"
@@ -84,22 +92,28 @@ async def check_invoice_paid_training(callback_query: types.CallbackQuery):
     try:
         invoice_data = await get_payment_info(callback_query)
         if invoice_data['result']['payment_status'] in ('paid', 'paid_over'):
-            date = datetime.datetime.now().strftime("%Y-%m-%d")
-            invoice_json = json.dumps(invoice_data)  # Преобразуем словарь в строку JSON
-            # Запись в базу данных пользователя, который оплатил счет в крипте
-            save_payment_info(callback_query.from_user.id, callback_query.from_user.first_name,
-                              callback_query.from_user.last_name, callback_query.from_user.username, invoice_json,
-                              "Помощь в настройке ПО (консультация)", date, "succeeded")
+            save_payment_info(  # Запись в базу данных пользователя, который оплатил счет в крипте
+                callback_query.from_user.id,
+                callback_query.from_user.first_name,
+                callback_query.from_user.last_name,
+                callback_query.from_user.username,
+                json.dumps(invoice_data),  # Преобразуем словарь в строку JSON
+                "Помощь в настройке ПО (консультация)",
+                datetime.datetime.now().strftime("%Y-%m-%d"),
+                "succeeded"
+            )
             await bot.send_message(callback_query.from_user.id,
                                    "Оплата прошла успешно‼️ \nДля согласования даты и времени , свяжитесь с администратором"
                                    " через личные сообщения, используя указанный никнейм: @PyAdminRU. 🤖🔒\n\n"
                                    "Для возврата в начальное меню, нажмите: /start")
-            await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
-                                                               f"ID {callback_query.from_user.id},\n"
-                                                               f"Username: @{callback_query.from_user.username},\n"
-                                                               f"Имя: {callback_query.from_user.first_name},\n"
-                                                               f"Фамилия: {callback_query.from_user.last_name},\n\n"
-                                                               f"Приобрел 'Помощь в настройке ПО (консультация)' (криптой)")
+            await bot.send_message(
+                chat_id=ADMIN_CHAT_ID,
+                text=f"Пользователь:\n"
+                     f"ID {callback_query.from_user.id},\n"
+                     f"Username: @{callback_query.from_user.username},\n"
+                     f"Имя: {callback_query.from_user.first_name},\n"
+                     f"Фамилия: {callback_query.from_user.last_name},\n\n"
+                     f"Приобрел 'Помощь в настройке ПО (консультация)' (криптой)")
         else:
             # Если оплата еще не прошла
             await bot.send_message(
