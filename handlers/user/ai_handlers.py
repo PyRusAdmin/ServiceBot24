@@ -12,6 +12,7 @@ from system.dispatcher import bot, ADMIN_CHAT_ID, api_key, USER_PROXY, PASSWORD_
 
 router = Router(name=__name__)
 
+
 def remove_markdown_symbols(text: str) -> str:
     """Удаляет символы Markdown (* и **) из текста."""
     return text.replace("*", "")
@@ -54,6 +55,3 @@ async def handle_wish(message: Message, state: FSMContext):
     await message.answer("Ваше пожелание было обработано и отправлено администратору. Спасибо!")
     # Сбрасываем состояние
     await state.clear()
-
-
-

@@ -7,6 +7,7 @@ from system.dispatcher import bot  # Подключение к боту и ди�
 
 router = Router(name=__name__)
 
+
 @router.callback_query(F.data == "reference")
 async def faq_handler(callback_query: types.CallbackQuery):
     """Пояснение для пользователя FAG"""
@@ -18,6 +19,3 @@ async def faq_handler(callback_query: types.CallbackQuery):
         disable_web_page_preview=True,
         parse_mode='HTML'
     )
-
-
-

@@ -7,6 +7,7 @@ from system.dispatcher import bot, dp
 
 router = Router(name=__name__)
 
+
 @dp.callback_query(F.data == "user_account")
 async def user_account_handlers(callback_query: types.CallbackQuery):
     """Кабинет пользователя"""
@@ -116,6 +117,3 @@ async def my_orders_handlers(callback: types.CallbackQuery):
         )
 
     await callback.answer()
-
-
-

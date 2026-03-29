@@ -89,10 +89,10 @@ async def check_invoice_paid_program_com(callback_query: types.CallbackQuery):
             save_payment_info(callback_query.from_user.id, callback_query.from_user.first_name,
                               callback_query.from_user.last_name, callback_query.from_user.username, invoice_json,
                               "TelegramMaster_Commentator", datetime.datetime.now().strftime("%Y-%m-%d"), "succeeded")
-            
+
             # Получаем пароль из базы данных
             password = get_product_password("TelegramMaster_Commentator")
-            
+
             if password:
                 caption = (f"✅ <b>Платеж на сумму {TelegramMaster_Commentator} руб прошел успешно‼️</b>\n\n"
                            f"📦 Продукт: <b>{product}</b>\n\n"
@@ -103,14 +103,14 @@ async def check_invoice_paid_program_com(callback_query: types.CallbackQuery):
                 caption = (f"✅ <b>Платеж на сумму {TelegramMaster_Commentator} руб прошел успешно‼️</b>\n\n"
                            f"⚠️ <b>Внимание!</b> Пароль еще не установлен администратором.\n\n"
                            f"Пожалуйста, обратитесь к @PyAdminRU")
-            
+
             await bot.send_message(
                 chat_id=callback_query.from_user.id,
                 text=caption,
                 reply_markup=start_menu(),  # Отправляемся в главное меню
                 parse_mode="HTML"
             )
-            
+
             result = is_user_in_db(callback_query.from_user.id)
             if result is None:
                 add_user_if_not_exists(callback_query.from_user.id)

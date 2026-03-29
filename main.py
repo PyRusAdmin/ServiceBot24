@@ -21,7 +21,6 @@ from handlers.payments.yookassa_payments.yookassa_password import router as yook
 from handlers.payments.yookassa_payments.yookassa_program import router as yookassa_program
 from handlers.payments.yookassa_payments.yookassa_search import router as yookassa_search
 from handlers.payments.yookassa_payments.yookassa_training import router as yookassa_training
-from handlers.payments.yookassa_sbp_payments import router as yookassa_sbp_payments
 from handlers.payments.telegram_stars_payments import router as telegram_stars_payments
 from handlers.payments.maxmaster_payments import router as maxmaster_payments
 from handlers.payments.maxmaster_stars import router as maxmaster_stars
@@ -46,18 +45,18 @@ async def main() -> None:
     # Инициализация таблиц базы данных для паролей
     init_password_tables()
     logger.info("Таблицы базы данных для паролей инициализированы")
-    
+
     # Инициализация таблиц для MaxMaster и аренды сервера
     init_new_products_tables()
     logger.info("Таблицы базы данных для MaxMaster и аренды сервера инициализированы")
 
     # Админские команды (рассылка, статистика, справка)
     dp.include_router(admin_handlers)
-    
+
     # MaxMaster
     dp.include_router(maxmaster_payments)  # Оплата MaxMaster YooKassa
     dp.include_router(maxmaster_stars)  # Оплата MaxMaster Stars
-    
+
     # Аренда сервера
     dp.include_router(server_rent_payments)  # Аренда сервера YooKassa
     dp.include_router(server_rent_stars)  # Аренда сервера Stars
@@ -88,7 +87,6 @@ async def main() -> None:
     dp.include_router(yookassa_commentator)  # Купить TelegramMaster_Commentator
     dp.include_router(yookassa_program)  # Купить TelegramMaster-PRO
     dp.include_router(yookassa_training)  # Оплата настройки ПО
-    dp.include_router(yookassa_sbp_payments)  # Оплата через СБП
 
     # Оплата Криптой
     dp.include_router(cryptomus_password)  # Покупка пароля TelegramMaster-PRO

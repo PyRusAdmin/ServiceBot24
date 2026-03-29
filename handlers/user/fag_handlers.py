@@ -7,6 +7,7 @@ from system.dispatcher import bot
 
 router = Router(name=__name__)
 
+
 @router.callback_query(F.data == "fag")
 async def fag_handler(callback_query: types.CallbackQuery):
     inline_keyboard_markup = start_menu()  # Отправляемся в главное меню
@@ -15,6 +16,3 @@ async def fag_handler(callback_query: types.CallbackQuery):
                                 text=fag_post,
                                 reply_markup=inline_keyboard_markup,
                                 parse_mode="HTML")
-
-
-

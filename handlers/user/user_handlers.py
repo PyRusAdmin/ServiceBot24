@@ -74,6 +74,3 @@ async def payment_goods_and_services_handler(callback_query: types.CallbackQuery
         reply_markup=payment_keyboards(),
         parse_mode="HTML",
     )
-
-
-

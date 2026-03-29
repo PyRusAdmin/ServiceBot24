@@ -39,8 +39,11 @@ def payment_keyboard_password() -> InlineKeyboardMarkup:
     """Клавиатура оплаты пароля TelegramMaster"""
     rows = [
         [
-            InlineKeyboardButton(text=f"💳 Оплатить Yookassa", callback_data='payment_yookassa_password'),
+            InlineKeyboardButton(text=f"💳 Оплатить YooKassa (все методы)", callback_data='payment_yookassa_password'),
             InlineKeyboardButton(text="⭐️ Оплатить Stars", callback_data='payment_stars_password'),
+        ],
+        [
+            InlineKeyboardButton(text="⚡ СБП (быстрые платежи)", callback_data='payment_yookassa_password_sbp'),
         ],
         [InlineKeyboardButton(text='🏠 В начальное меню', callback_data='start_menu_keyboard')],
     ]

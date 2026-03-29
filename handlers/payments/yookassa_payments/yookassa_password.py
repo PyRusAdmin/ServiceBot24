@@ -9,7 +9,6 @@ from db.settings_db import save_payment_info, add_user_if_not_exists, is_user_in
 from handlers.payment_yookassa import payment_yookassa_com
 from handlers.payments.products_goods_services import password_TelegramMaster
 from keyboards.user_keyboards import start_menu
-from messages.messages import message_payment
 from system.dispatcher import bot, ADMIN_CHAT_ID
 
 router = Router(name=__name__)
@@ -17,12 +16,12 @@ router = Router(name=__name__)
 product = "Пароль TelegramMaster-PRO"
 
 
-@router.callback_query(F.data.startswith("payment_yookassa_password"))
+@router.callback_query(F.data == "payment_yookassa_password")
 async def payment_url_handler(callback_query: types.CallbackQuery):
     """Отправка ссылки для оплаты пароля от TelegramMaster-PRO"""
-    payment_url, payment_id, _ = payment_yookassa_com(
-        description_text=f"{product}",  # Текст описания товара
-        product_price=password_TelegramMaster  # Цена товара в рублях
+    payment_url, payment_id = payment_yookassa_com(
+        description_text=f"{product}",
+        product_price=password_TelegramMaster
     )
     # Создаем клавиатуру с кнопкой для проверки оплаты и возврата в меню
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
