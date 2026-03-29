@@ -38,6 +38,7 @@ async def greeting(message: types.Message, state: FSMContext):
     :param message: объект класса Message
     :param state: Функция clear очищает все сохраненные ранее значения
     """
+    logger.info(f"Получена команда /start от {message.from_user.id}")
     await state.clear()  # Стираем предыдущее сообщение
     # Записываем данные пользователя в базу данных
     save_user_activity(

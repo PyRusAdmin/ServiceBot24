@@ -8,7 +8,7 @@ from groq import AsyncGroq
 from db.settings_db import save_user_wish
 from setting.proxy_config import setup_proxy
 from states.states import WishState
-from system.dispatcher import bot, ADMIN_CHAT_ID, api_key, PROXY_USER, PROXY_PASSWORD, PROXY_IP, PROXY_PORT
+from system.dispatcher import bot, ADMIN_CHAT_ID, api_key, USER_PROXY, PASSWORD_PROXY, IP_PROXY, PORT_PROXY
 
 router = Router(name=__name__)
 
@@ -29,7 +29,7 @@ async def cmd_wish(callback_query: CallbackQuery, state: FSMContext):
 @router.message(WishState.waiting_for_wish)
 async def handle_wish(message: Message, state: FSMContext):
     """Обработчик текстовых сообщений с пожеланиями"""
-    setup_proxy(PROXY_USER, PROXY_PASSWORD, PROXY_IP, PROXY_PORT)  # Установка прокси
+    setup_proxy(USER_PROXY, PASSWORD_PROXY, IP_PROXY, PORT_PROXY)  # Установка прокси
     # Инициализация Groq клиента
     client = AsyncGroq(api_key=api_key)
     user_id = message.from_user.id
@@ -40,7 +40,7 @@ async def handle_wish(message: Message, state: FSMContext):
     chat_completion = await client.chat.completions.create(
         messages=[{"role": "user",
                    "content": f"""Сформулируй пожелание пользователя для разработчика. Пожелание: "{user_wish}"""}],
-        model="meta-llama/llama-4-maverick-17b-128e-instruct",
+        model="llama-3.3-70b-versatile",
     )
     # Получаем ответ от ИИ
     ai_response = chat_completion.choices[0].message.content

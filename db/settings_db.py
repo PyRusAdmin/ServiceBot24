@@ -102,15 +102,31 @@ def add_user_to_db(user_id):
 
 
 def save_user_activity(user_id, first_name, last_name, username, date):
-    """Сохраняет активность пользователя"""
+    """
+    Сохраняет активность пользователя.
+    Если пользователь уже существует - обновляет его данные (username, first_name, last_name, date).
+    Неизменным остается только user_id (уникальный ID Telegram).
+    """
     with connect_db() as conn:
         cursor = conn.cursor()
-        cursor.execute('''CREATE TABLE IF NOT EXISTS users_run (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, 
-                                                                first_name TEXT, last_name TEXT, username TEXT, 
+        cursor.execute('''CREATE TABLE IF NOT EXISTS users_run (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER UNIQUE,
+                                                                first_name TEXT, last_name TEXT, username TEXT,
                                                                 date TEXT)''')
-        cursor.execute(
-            '''INSERT INTO users_run (user_id, first_name, last_name, username, date) VALUES (?, ?, ?, ?, ?)''',
-            (user_id, first_name, last_name, username, date))
+        # Проверяем, существует ли пользователь
+        cursor.execute('''SELECT id FROM users_run WHERE user_id = ?''', (user_id,))
+        existing = cursor.fetchone()
+        
+        if existing:
+            # Обновляем существующую запись
+            cursor.execute('''UPDATE users_run 
+                              SET first_name = ?, last_name = ?, username = ?, date = ? 
+                              WHERE user_id = ?''',
+                           (first_name, last_name, username, date, user_id))
+        else:
+            # Создаем новую запись
+            cursor.execute('''INSERT INTO users_run (user_id, first_name, last_name, username, date) 
+                              VALUES (?, ?, ?, ?, ?)''',
+                           (user_id, first_name, last_name, username, date))
         conn.commit()
 
 
