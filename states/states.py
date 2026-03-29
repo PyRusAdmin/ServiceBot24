@@ -31,3 +31,9 @@ class AdminState(StatesGroup):
     waiting_for_broadcast_message = State()
     waiting_for_password = State()
     waiting_for_maxmaster_password = State()
+
+
+class ServerRentState(StatesGroup):
+    """Состояния для аренды сервера"""
+    selecting_months = State()
+    waiting_for_payment = State()

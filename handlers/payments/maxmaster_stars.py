@@ -3,7 +3,6 @@
 Обработчики оплаты MaxMaster через Telegram Stars
 """
 import datetime
-import json
 
 from aiogram import F, Router, types
 from loguru import logger

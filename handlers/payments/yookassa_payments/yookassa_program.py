@@ -43,16 +43,16 @@ async def check_payment(callback_query: types.CallbackQuery, state: FSMContext):
     logger.info(split_data[2])
     payment_info = Payment.find_one(split_data[2])  # Проверьте статус платежа с помощью API yookassa
     logger.info(payment_info)
-    
+
     if payment_info.status == "succeeded":  # Обработка статуса платежа
         # Запись в базу данных пользователя, который оплатил счет в рублях
         save_payment_info(callback_query.from_user.id, callback_query.from_user.first_name,
                           callback_query.from_user.last_name, callback_query.from_user.username, payment_info.id,
                           product, payment_info.captured_at, "succeeded")
-        
+
         # Получаем пароль из базы данных
         password = get_product_password("TelegramMaster-PRO")
-        
+
         if password:
             caption = (f"✅ <b>Платеж на сумму {TelegramMaster} руб прошел успешно‼️</b>\n\n"
                        f"📦 Продукт: <b>{product}</b>\n\n"
@@ -63,14 +63,14 @@ async def check_payment(callback_query: types.CallbackQuery, state: FSMContext):
             caption = (f"✅ <b>Платеж на сумму {TelegramMaster} руб прошел успешно‼️</b>\n\n"
                        f"⚠️ <b>Внимание!</b> Пароль еще не установлен администратором.\n\n"
                        f"Пожалуйста, обратитесь к @PyAdminRU")
-        
+
         await bot.send_message(
             chat_id=callback_query.from_user.id,
             text=caption,
             reply_markup=start_menu(),  # Отправляемся в главное меню
             parse_mode="HTML"
         )
-        
+
         result = is_user_in_db(callback_query.from_user.id)
         if result is None:
             add_user_if_not_exists(callback_query.from_user.id)
@@ -81,4 +81,5 @@ async def check_payment(callback_query: types.CallbackQuery, state: FSMContext):
                                                                f"Фамилия: {callback_query.from_user.last_name},\n\n"
                                                                f"Приобрел {product}")
     else:
-        await bot.send_message(callback_query.message.chat.id, "❌ Платеж еще не оплачен. Пожалуйста, завершите оплату и нажмите кнопку 'Проверить оплату' еще раз.")
+        await bot.send_message(callback_query.message.chat.id,
+                               "❌ Платеж еще не оплачен. Пожалуйста, завершите оплату и нажмите кнопку 'Проверить оплату' еще раз.")

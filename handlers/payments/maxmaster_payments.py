@@ -3,7 +3,6 @@
 Обработчики оплаты для MaxMaster
 """
 import datetime
-import json
 
 from aiogram import F, Router, types
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
@@ -30,12 +29,12 @@ async def payment_yookassa_maxmaster_handler(callback_query: types.CallbackQuery
             description_text=f"Оплата: {product}",
             product_price=MaxMaster
         )
-        
+
         keyboard = InlineKeyboardMarkup(inline_keyboard=[
             [InlineKeyboardButton(text='✅ Проверить оплату (ЮKassa)', callback_data=f"check_maxmaster_{payment_id}")],
             [InlineKeyboardButton(text='🏠 В главное меню', callback_data='start_menu_keyboard')],
         ])
-        
+
         await bot.send_message(
             chat_id=callback_query.from_user.id,
             text=message_payment(product, payment_url),
@@ -56,7 +55,7 @@ async def check_maxmaster_payment(callback_query: types.CallbackQuery):
     try:
         payment_id = callback_query.data.split("_")[2]
         payment_info = Payment.find_one(payment_id)
-        
+
         if payment_info.status == "succeeded":
             # Запись в базу данных
             add_maxmaster_sale(
@@ -67,10 +66,10 @@ async def check_maxmaster_payment(callback_query: types.CallbackQuery):
                 payment_amount=MaxMaster,
                 payment_method="yookassa"
             )
-            
+
             # Получаем пароль из БД
             password = get_maxmaster_password()
-            
+
             if password:
                 caption = (f"✅ <b>Платеж на сумму {MaxMaster} руб прошел успешно‼️</b>\n\n"
                            f"📦 Продукт: <b>{product}</b>\n\n"
@@ -81,19 +80,19 @@ async def check_maxmaster_payment(callback_query: types.CallbackQuery):
                 caption = (f"✅ <b>Платеж на сумму {MaxMaster} руб прошел успешно‼️</b>\n\n"
                            f"⚠️ <b>Внимание!</b> Пароль еще не установлен администратором.\n\n"
                            f"Пожалуйста, обратитесь к @PyAdminRU")
-            
+
             await bot.send_message(
                 chat_id=callback_query.from_user.id,
                 text=caption,
                 reply_markup=start_menu(),
                 parse_mode="HTML"
             )
-            
+
             # Уведомляем админа
             result = is_user_in_db(callback_query.from_user.id)
             if result is None:
                 add_user_if_not_exists(callback_query.from_user.id)
-            
+
             await bot.send_message(
                 chat_id=ADMIN_CHAT_ID,
                 text=f"📦 <b>Новая продажа MaxMaster!</b>\n\n"

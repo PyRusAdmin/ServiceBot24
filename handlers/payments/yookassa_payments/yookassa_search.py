@@ -40,7 +40,7 @@ async def check_pay_telegram_master_search_gpt(callback_query: types.CallbackQue
     try:
         split_data = callback_query.data.split("_")
         payment_info = Payment.find_one(split_data[1])  # Проверьте статус платежа с помощью API yookassa
-        
+
         if payment_info.status == "succeeded":  # Обработка статуса платежа
             # Запись в базу данных пользователя, который оплатил счет в рублях
             save_payment_info_user(
@@ -52,7 +52,7 @@ async def check_pay_telegram_master_search_gpt(callback_query: types.CallbackQue
 
             # Получаем пароль из базы данных
             password = get_product_password("TelegramMaster_Search_GPT")
-            
+
             if password:
                 caption = (f"✅ <b>Платеж на сумму {TelegramMaster_Search_GPT} руб прошел успешно‼️</b>\n\n"
                            f"📦 Продукт: <b>{product}</b>\n\n"
@@ -63,7 +63,7 @@ async def check_pay_telegram_master_search_gpt(callback_query: types.CallbackQue
                 caption = (f"✅ <b>Платеж на сумму {TelegramMaster_Search_GPT} руб прошел успешно‼️</b>\n\n"
                            f"⚠️ <b>Внимание!</b> Пароль еще не установлен администратором.\n\n"
                            f"Пожалуйста, обратитесь к @PyAdminRU")
-            
+
             await bot.send_message(
                 chat_id=callback_query.from_user.id,
                 text=caption,
@@ -71,6 +71,7 @@ async def check_pay_telegram_master_search_gpt(callback_query: types.CallbackQue
                 parse_mode="HTML"
             )
         else:
-            await bot.send_message(callback_query.message.chat.id, "❌ Платеж еще не оплачен. Пожалуйста, завершите оплату и нажмите кнопку 'Проверить оплату' еще раз.")
+            await bot.send_message(callback_query.message.chat.id,
+                                   "❌ Платеж еще не оплачен. Пожалуйста, завершите оплату и нажмите кнопку 'Проверить оплату' еще раз.")
     except Exception as e:
         logger.exception(e)

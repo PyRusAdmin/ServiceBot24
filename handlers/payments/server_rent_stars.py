@@ -3,7 +3,6 @@
 Обработчики оплаты аренды сервера через Telegram Stars
 """
 import datetime
-import json
 
 from aiogram import F, Router, types
 from aiogram.fsm.context import FSMContext
@@ -31,7 +30,7 @@ class ServerRentStarsState(StatesGroup):
 @router.callback_query(F.data == "payment_stars_server_rent")
 async def server_rent_stars_handler(callback_query: types.CallbackQuery, state: FSMContext):
     """Выбор количества месяцев для аренды сервера через Stars"""
-    
+
     # Проверяем, есть ли активная аренда
     active_rent = get_active_server_rent(callback_query.from_user.id)
     if active_rent:
@@ -46,7 +45,7 @@ async def server_rent_stars_handler(callback_query: types.CallbackQuery, state: 
         )
         await callback_query.answer()
         return
-    
+
     # Создаем клавиатуру с выбором месяцев
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="1 месяц - 250 ₽ (~167 ⭐️)", callback_data="stars_rent_1_month")],
@@ -56,7 +55,7 @@ async def server_rent_stars_handler(callback_query: types.CallbackQuery, state: 
         [InlineKeyboardButton(text="12 месяцев - 3000 ₽ (~2000 ⭐️)", callback_data="stars_rent_12_months")],
         [InlineKeyboardButton(text="🏠 В главное меню", callback_data="start_menu_keyboard")],
     ])
-    
+
     await bot.send_message(
         chat_id=callback_query.from_user.id,
         text="⭐️ <b>Аренда сервера за Stars</b>\n\n"
@@ -79,11 +78,11 @@ async def select_months_stars_handler(callback_query: types.CallbackQuery, state
     months = int(callback_query.data.split("_")[3])
     rub_price = SERVER_RENT_PRICE * months
     stars_amount = get_stars_amount(rub_price)
-    
+
     # Сохраняем выбранные месяцы в состоянии
     await state.update_data(months=months, rub_price=rub_price, stars_amount=stars_amount)
     await state.set_state(ServerRentStarsState.waiting_for_payment)
-    
+
     try:
         await bot.send_invoice(
             chat_id=callback_query.message.chat.id,
@@ -101,9 +100,9 @@ async def select_months_stars_handler(callback_query: types.CallbackQuery, state
             send_phone_number_to_provider=False,
             send_email_to_provider=False,
         )
-        
+
         logger.info(f"Создан инвойс для аренды сервера: {months} мес., {stars_amount} звезд")
-        
+
     except Exception as e:
         logger.exception(f"Ошибка при создании инвойса аренды сервера: {e}")
         await bot.send_message(
@@ -111,7 +110,7 @@ async def select_months_stars_handler(callback_query: types.CallbackQuery, state
             text="⚠️ Произошла ошибка при создании платежа. Пожалуйста, попробуйте позже."
         )
         await state.clear()
-    
+
     await callback_query.answer()
 
 
@@ -127,21 +126,21 @@ async def process_successful_payment_server_rent(message: types.Message, state: 
     try:
         payment_data = message.successful_payment
         payload = payment_data.invoice_payload
-        
+
         # Проверяем, что это оплата аренды сервера
         if not payload.startswith("stars_server_rent_"):
             return
-        
+
         # Извлекаем количество месяцев из payload
         parts = payload.split("_")
         months = int(parts[3])
-        
+
         logger.info(f"Успешная оплата аренды сервера звездами: {months} мес., {payment_data.total_amount} звезд")
-        
+
         # Рассчитываем даты
         start_date = datetime.datetime.now()
         end_date = start_date + datetime.timedelta(days=30 * months)
-        
+
         # Добавляем запись в БД
         rent_id = add_server_rent(
             user_id=message.from_user.id,
@@ -154,7 +153,7 @@ async def process_successful_payment_server_rent(message: types.Message, state: 
             start_date=start_date,
             end_date=end_date
         )
-        
+
         if rent_id > 0:
             await bot.send_message(
                 chat_id=message.from_user.id,
@@ -167,7 +166,7 @@ async def process_successful_payment_server_rent(message: types.Message, state: 
                 reply_markup=start_menu(),
                 parse_mode="HTML"
             )
-            
+
             # Уведомляем администратора
             await bot.send_message(
                 chat_id=ADMIN_CHAT_ID,
@@ -184,9 +183,9 @@ async def process_successful_payment_server_rent(message: types.Message, state: 
             )
         else:
             await message.answer("⚠️ Ошибка при сохранении аренды. Обратитесь к @PyAdminRU")
-        
+
         await state.clear()
-        
+
     except Exception as e:
         logger.exception(f"Ошибка при обработке оплаты аренды сервера: {e}")
         await message.answer("⚠️ Произошла ошибка при обработке платежа. Обратитесь к @PyAdminRU")

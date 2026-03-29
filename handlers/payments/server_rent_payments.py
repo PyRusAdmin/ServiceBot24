@@ -3,7 +3,6 @@
 Обработчики оплаты для аренды сервера
 """
 import datetime
-import json
 
 from aiogram import F, Router, types
 from aiogram.fsm.context import FSMContext
@@ -16,7 +15,6 @@ from db.settings_db import add_server_rent, get_active_server_rent
 from handlers.payment_yookassa import payment_yookassa_com
 from handlers.payments.products_goods_services import SERVER_RENT_PRICE
 from keyboards.user_keyboards import start_menu
-from messages.messages import message_payment
 from system.dispatcher import bot, ADMIN_CHAT_ID
 
 router = Router(name=__name__)
@@ -24,16 +22,13 @@ router = Router(name=__name__)
 product = "Аренда сервера"
 
 
-class ServerRentState(StatesGroup):
-    """Состояния для аренды сервера"""
-    selecting_months = State()
-    waiting_for_payment = State()
+
 
 
 @router.callback_query(F.data == "payment_yookassa_server_rent")
 async def server_rent_handler(callback_query: types.CallbackQuery, state: FSMContext):
     """Выбор количества месяцев для аренды сервера"""
-    
+
     # Проверяем, есть ли активная аренда
     active_rent = get_active_server_rent(callback_query.from_user.id)
     if active_rent:
@@ -48,7 +43,7 @@ async def server_rent_handler(callback_query: types.CallbackQuery, state: FSMCon
         )
         await callback_query.answer()
         return
-    
+
     # Создаем клавиатуру с выбором месяцев
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="1 месяц - 250 ₽", callback_data="rent_1_month")],
@@ -58,7 +53,7 @@ async def server_rent_handler(callback_query: types.CallbackQuery, state: FSMCon
         [InlineKeyboardButton(text="12 месяцев - 3000 ₽", callback_data="rent_12_months")],
         [InlineKeyboardButton(text="🏠 В главное меню", callback_data="start_menu_keyboard")],
     ])
-    
+
     await bot.send_message(
         chat_id=callback_query.from_user.id,
         text="🖥️ <b>Аренда сервера</b>\n\n"
@@ -80,26 +75,26 @@ async def select_months_handler(callback_query: types.CallbackQuery, state: FSMC
     # Извлекаем количество месяцев из callback_data
     months = int(callback_query.data.split("_")[1])
     price = SERVER_RENT_PRICE * months
-    
+
     # Сохраняем выбранные месяцы в состоянии
     await state.update_data(months=months, price=price)
-    
+
     # Создаем платеж YooKassa
     try:
         payment_url, payment_id = payment_yookassa_com(
             description_text=f"Аренда сервера на {months} мес.",
             product_price=price
         )
-        
+
         # Сохраняем payment_id в состоянии
         await state.update_data(payment_id=payment_id, months=months, price=price)
         await state.set_state(ServerRentState.waiting_for_payment)
-        
+
         keyboard = InlineKeyboardMarkup(inline_keyboard=[
             [InlineKeyboardButton(text='✅ Проверить оплату', callback_data=f"check_server_rent_{payment_id}")],
             [InlineKeyboardButton(text='🏠 В главное меню', callback_data='start_menu_keyboard')],
         ])
-        
+
         await bot.send_message(
             chat_id=callback_query.from_user.id,
             text=f"💳 <b>Оплата аренды сервера</b>\n\n"
@@ -110,14 +105,14 @@ async def select_months_handler(callback_query: types.CallbackQuery, state: FSMC
             reply_markup=keyboard,
             parse_mode="HTML"
         )
-        
+
     except Exception as e:
         logger.exception(f"Ошибка при создании платежа аренды сервера: {e}")
         await bot.send_message(
             chat_id=callback_query.from_user.id,
             text="⚠️ Произошла ошибка при создании платежа. Пожалуйста, попробуйте позже."
         )
-    
+
     await callback_query.answer()
 
 
@@ -127,12 +122,12 @@ async def check_server_rent_payment(callback_query: types.CallbackQuery, state: 
     try:
         payment_id = callback_query.data.split("_")[3]
         payment_info = Payment.find_one(payment_id)
-        
+
         if payment_info.status == "succeeded":
             # Получаем данные из состояния
             state_data = await state.get_data()
             months = state_data.get('months')
-            
+
             if not months:
                 # Если данных нет в состоянии, извлекаем из БД (резервный вариант)
                 await bot.send_message(
@@ -141,11 +136,11 @@ async def check_server_rent_payment(callback_query: types.CallbackQuery, state: 
                 )
                 await state.clear()
                 return
-            
+
             # Рассчитываем даты
             start_date = datetime.datetime.now()
             end_date = start_date + datetime.timedelta(days=30 * months)
-            
+
             # Добавляем запись в БД
             rent_id = add_server_rent(
                 user_id=callback_query.from_user.id,
@@ -158,7 +153,7 @@ async def check_server_rent_payment(callback_query: types.CallbackQuery, state: 
                 start_date=start_date,
                 end_date=end_date
             )
-            
+
             if rent_id > 0:
                 await bot.send_message(
                     chat_id=callback_query.from_user.id,
@@ -171,7 +166,7 @@ async def check_server_rent_payment(callback_query: types.CallbackQuery, state: 
                     reply_markup=start_menu(),
                     parse_mode="HTML"
                 )
-                
+
                 # Уведомляем админа
                 await bot.send_message(
                     chat_id=ADMIN_CHAT_ID,
@@ -191,7 +186,7 @@ async def check_server_rent_payment(callback_query: types.CallbackQuery, state: 
                     chat_id=callback_query.from_user.id,
                     text="⚠️ Ошибка при сохранении аренды. Обратитесь к @PyAdminRU"
                 )
-            
+
             await state.clear()
         else:
             await bot.send_message(

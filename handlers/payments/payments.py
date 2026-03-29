@@ -98,7 +98,8 @@ async def buy_server_rent(callback_query: types.CallbackQuery):
                    "• 1-12 месяцев\n"
                    "💳 Оплата через YooKassa или Telegram Stars\n\n"
                    "Для возврата в начальное меню, нажмите: /start")
-    await bot.send_message(callback_query.message.chat.id, payment_mes, reply_markup=payment_keyboard_key, parse_mode="HTML")
+    await bot.send_message(callback_query.message.chat.id, payment_mes, reply_markup=payment_keyboard_key,
+                           parse_mode="HTML")
 
 
 @router.callback_query(F.data == "commentator_password")

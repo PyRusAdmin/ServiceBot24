@@ -9,6 +9,7 @@ from db.settings_db import save_payment_info, add_user_if_not_exists, is_user_in
 from handlers.payment_yookassa import payment_yookassa_com
 from handlers.payments.products_goods_services import password_TelegramMaster
 from keyboards.user_keyboards import start_menu
+from messages.messages import message_payment
 from system.dispatcher import bot, ADMIN_CHAT_ID
 
 router = Router(name=__name__)
