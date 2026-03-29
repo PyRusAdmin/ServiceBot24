@@ -70,16 +70,15 @@ def keyboard_check_payment(callback_data_check_payment):
 @router.callback_query(F.data == "payment_crypta_pas_training_handler")
 async def payment_crypta_pas_training_handler(callback_query: types.CallbackQuery):
     """Оплата установки и обучения криптой"""
-    invoice_data = format_payment_info(payment_info)
     await bot.send_message(
         chat_id=callback_query.message.chat.id,
         text=f"💳 <b>Счет для оплаты криптовалютой</b> 💳\n\n"
              f"🌐 Вы собираетесь приобрести <b>Помощь в настройке ПО (консультация)</b>. Пожалуйста, воспользуйтесь ссылкой ниже для оплаты:\n"
-             f"🔗 <a href='{invoice_data['result']['url']}'>Перейти к оплате</a>\n\n"
+             f"🔗 <a href='{format_payment_info(payment_info)['result']['url']}'>Перейти к оплате</a>\n\n"
              f"⚠️ <b>Важная информация:</b> после завершения платежа бот автоматически отправит вам все необходимые данные.\n"
              f"❗️ Обратите внимание, что возврат денежных средств после оплаты криптовалютой невозможен.\n\n"
              f"💡 Если у вас возникнут вопросы, не стесняйтесь обращаться к нам. Спасибо за доверие! 🙌",
-        reply_markup=keyboard_check_payment(f"check_paymentT_{invoice_data['result']['uuid']}"),
+        reply_markup=keyboard_check_payment(f"check_paymentT_{format_payment_info(payment_info)['result']['uuid']}"),
         parse_mode="HTML"
     )
 
@@ -136,23 +135,16 @@ product_telegram_search = "TelegramMaster-Search-GPT"
 async def payment_crypta_pas_program_handler_com(callback_query: types.CallbackQuery):
     """Оплата TelegramMaster-Search-GPT"""
     try:
-        invoice_data = format_payment_info(payment_info)
-        # Создаем кнопку "Проверить оплату"
-        check_payment_button = InlineKeyboardButton(
-            text="Проверить оплату",
-            callback_data=f"CheckPayTMSearchGPTCrypta_{invoice_data['result']['uuid']}"
-        )
-        keyboard = InlineKeyboardMarkup(inline_keyboard=[[check_payment_button]])
-
         await bot.send_message(
             chat_id=callback_query.message.chat.id,
             text=f"💳 <b>Счет для оплаты криптовалютой</b> 💳\n\n"
                  f"🌐 Вы собираетесь приобрести <b>TelegramMaster-Search-GPT</b>. Пожалуйста, воспользуйтесь ссылкой ниже для оплаты:\n"
-                 f"🔗 <a href='{invoice_data['result']['url']}'>Перейти к оплате</a>\n\n"
+                 f"🔗 <a href='{format_payment_info(payment_info)['result']['url']}'>Перейти к оплате</a>\n\n"
                  f"⚠️ <b>Важная информация:</b> после завершения платежа бот автоматически отправит вам все необходимые данные.\n"
                  f"❗️ Обратите внимание, что возврат денежных средств после оплаты криптовалютой невозможен.\n\n"
                  f"💡 Если у вас возникнут вопросы, не стесняйтесь обращаться к нам. Спасибо за доверие! 🙌",
-            reply_markup=keyboard,
+            reply_markup=keyboard_check_payment(
+                f"CheckPayTMSearchGPTCrypta_{format_payment_info(payment_info)['result']['uuid']}"),
             parse_mode="HTML"
         )
     except Exception as e:
@@ -218,24 +210,17 @@ product_telegram_master_pros = "TelegramMaster-PRO"
 @router.callback_query(F.data == "payment_crypta_pas_program")
 async def payment_crypta_pas_program_handler(callback_query: types.CallbackQuery):
     """Оплата TelegramMaster-PRO криптой"""
-
-    invoice_data = format_payment_info(payment_info)
-    # Создаем кнопку "Проверить оплату"
-    check_payment_button = InlineKeyboardButton(
-        text="Проверить оплату",
-        callback_data=f"check_paymentP_{invoice_data['result']['uuid']}"
+    await bot.send_message(
+        chat_id=callback_query.message.chat.id,
+        text=f"💳 <b>Счет для оплаты криптовалютой</b> 💳\n\n"
+             f"🌐 Вы собираетесь приобрести <b>TelegramMaster-PRO</b>. Пожалуйста, воспользуйтесь ссылкой ниже для оплаты:\n"
+             f"🔗 <a href='{format_payment_info(payment_info)['result']['url']}'>Перейти к оплате</a>\n\n"
+             f"⚠️ <b>Важная информация:</b> после завершения платежа бот автоматически отправит вам все необходимые данные.\n"
+             f"❗️ Обратите внимание, что возврат денежных средств после оплаты криптовалютой невозможен.\n\n"
+             f"💡 Если у вас возникнут вопросы, не стесняйтесь обращаться к нам. Спасибо за доверие! 🙌",
+        reply_markup=keyboard_check_payment(f"check_paymentP_{format_payment_info(payment_info)['result']['uuid']}"),
+        parse_mode="HTML"
     )
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[[check_payment_button]])
-
-    await bot.send_message(chat_id=callback_query.message.chat.id,
-                           text=f"💳 <b>Счет для оплаты криптовалютой</b> 💳\n\n"
-                                f"🌐 Вы собираетесь приобрести <b>TelegramMaster-PRO</b>. Пожалуйста, воспользуйтесь ссылкой ниже для оплаты:\n"
-                                f"🔗 <a href='{invoice_data['result']['url']}'>Перейти к оплате</a>\n\n"
-                                f"⚠️ <b>Важная информация:</b> после завершения платежа бот автоматически отправит вам все необходимые данные.\n"
-                                f"❗️ Обратите внимание, что возврат денежных средств после оплаты криптовалютой невозможен.\n\n"
-                                f"💡 Если у вас возникнут вопросы, не стесняйтесь обращаться к нам. Спасибо за доверие! 🙌",
-                           reply_markup=keyboard,
-                           parse_mode="HTML")
 
 
 # Обработчик для кнопки "Проверить оплату TelegramMaster-PRO"
@@ -308,25 +293,16 @@ product_telegram_master_pro = "Пароль TelegramMaster-PRO"
 @router.callback_query(F.data == "payment_crypta_pas")
 async def buy_handler(callback_query: types.CallbackQuery):
     """Оплата пароля TelegramMaster-PRO криптой"""
-
-    invoice_data = format_payment_info(payment_info)
-    # Создаем кнопку "Проверить оплату"
-    check_payment_button = InlineKeyboardButton(
-        text="Проверить оплату",
-        callback_data=f"check_paymentPAS_{invoice_data['result']['uuid']}"
-    )
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[[check_payment_button]])
-
     # Отправляем сообщение с кнопкой
     await bot.send_message(
         chat_id=callback_query.message.chat.id,
         text=f"💳 <b>Счет для оплаты криптовалютой</b> 💳\n\n"
              f"🌐 Вы собираетесь получить пароль от <b>TelegramMaster-PRO</b>. Пожалуйста, воспользуйтесь ссылкой ниже для оплаты:\n"
-             f"🔗 <a href='{invoice_data['result']['url']}'>Перейти к оплате</a>\n\n"
+             f"🔗 <a href='{format_payment_info(payment_info)['result']['url']}'>Перейти к оплате</a>\n\n"
              f"⚠️ <b>Важная информация:</b> после завершения платежа нажмите кнопку 'Проверить оплату'.\n"
              f"❗️ Обратите внимание, что возврат денежных средств после оплаты криптовалютой невозможен.\n\n"
              f"💡 Если у вас возникнут вопросы, не стесняйтесь обращаться к нам. Спасибо за доверие! 🙌",
-        reply_markup=keyboard,
+        reply_markup=keyboard_check_payment(f"check_paymentPAS_{format_payment_info(payment_info)['result']['uuid']}"),
         parse_mode="HTML"
     )
 
@@ -401,25 +377,16 @@ async def check_payment_handler(callback_query: types.CallbackQuery):
 @router.callback_query(F.data == "payment_crypta_commentator_pass")
 async def buy_handler_commentator(callback_query: types.CallbackQuery):
     """Оплата пароля TelegramMaster_Commentator криптой"""
-
-    invoice_data = format_payment_info(payment_info)
-    # Создаем кнопку "Проверить оплату"
-    check_payment_button = InlineKeyboardButton(
-        text="Проверить оплату",
-        callback_data=f"check_paymentPass_{invoice_data['result']['uuid']}"
-    )
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[[check_payment_button]])
-
     # Отправляем сообщение с кнопкой
     await bot.send_message(
         chat_id=callback_query.message.chat.id,
         text=f"💳 <b>Счет для оплаты криптовалютой</b> 💳\n\n"
              f"🌐 Вы собираетесь получить пароль от <b>TelegramMaster_Commentator</b>. Пожалуйста, воспользуйтесь ссылкой ниже для оплаты:\n"
-             f"🔗 <a href='{invoice_data['result']['url']}'>Перейти к оплате</a>\n\n"
+             f"🔗 <a href='{format_payment_info(payment_info)['result']['url']}'>Перейти к оплате</a>\n\n"
              f"⚠️ <b>Важная информация:</b> после завершения платежа нажмите кнопку 'Проверить оплату'.\n"
              f"❗️ Обратите внимание, что возврат денежных средств после оплаты криптовалютой невозможен.\n\n"
              f"💡 Если у вас возникнут вопросы, не стесняйтесь обращаться к нам. Спасибо за доверие! 🙌",
-        reply_markup=keyboard,
+        reply_markup=keyboard_check_payment(f"check_paymentPass_{format_payment_info(payment_info)['result']['uuid']}"),
         parse_mode="HTML"
     )
 
@@ -513,25 +480,17 @@ async def make_request(url: str, invoice_data: dict):
 @router.callback_query(F.data == "payment_crypta_commentator")
 async def payment_crypta_pas_program_handler_com(callback_query: types.CallbackQuery):
     """Оплата TelegramMaster_Commentator криптой"""
-
-    invoice_data = format_payment_info(payment_info)
-
-    # Создаем кнопку "Проверить оплату"
-    check_payment_button = InlineKeyboardButton(
-        text="Проверить оплату",
-        callback_data=f"check_paymen_{invoice_data['result']['uuid']}"
+    await bot.send_message(
+        chat_id=callback_query.message.chat.id,
+        text=f"💳 <b>Счет для оплаты криптовалютой</b> 💳\n\n"
+             f"🌐 Вы собираетесь приобрести <b>TelegramMaster_Commentator</b>. Пожалуйста, воспользуйтесь ссылкой ниже для оплаты:\n"
+             f"🔗 <a href='{format_payment_info(payment_info)['result']['url']}'>Перейти к оплате</a>\n\n"
+             f"⚠️ <b>Важная информация:</b> после завершения платежа бот автоматически отправит вам все необходимые данные.\n"
+             f"❗️ Обратите внимание, что возврат денежных средств после оплаты криптовалютой невозможен.\n\n"
+             f"💡 Если у вас возникнут вопросы, не стесняйтесь обращаться к нам. Спасибо за доверие! 🙌",
+        reply_markup=keyboard_check_payment(f"check_paymen_{format_payment_info(payment_info)['result']['uuid']}"),
+        parse_mode="HTML"
     )
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[[check_payment_button]])
-
-    await bot.send_message(chat_id=callback_query.message.chat.id,
-                           text=f"💳 <b>Счет для оплаты криптовалютой</b> 💳\n\n"
-                                f"🌐 Вы собираетесь приобрести <b>TelegramMaster_Commentator</b>. Пожалуйста, воспользуйтесь ссылкой ниже для оплаты:\n"
-                                f"🔗 <a href='{invoice_data['result']['url']}'>Перейти к оплате</a>\n\n"
-                                f"⚠️ <b>Важная информация:</b> после завершения платежа бот автоматически отправит вам все необходимые данные.\n"
-                                f"❗️ Обратите внимание, что возврат денежных средств после оплаты криптовалютой невозможен.\n\n"
-                                f"💡 Если у вас возникнут вопросы, не стесняйтесь обращаться к нам. Спасибо за доверие! 🙌",
-                           reply_markup=keyboard,
-                           parse_mode="HTML")
 
 
 # Обработчик для кнопки "Проверить оплату TelegramMaster_Commentator"
@@ -597,4 +556,4 @@ async def check_invoice_paid_program_com(callback_query: types.CallbackQuery):
             text="⚠️ Произошла ошибка при проверке оплаты. Пожалуйста, попробуйте позже."
         )
 
-# 591
+# 564
