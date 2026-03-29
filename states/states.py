@@ -37,3 +37,9 @@ class ServerRentState(StatesGroup):
     """Состояния для аренды сервера"""
     selecting_months = State()
     waiting_for_payment = State()
+
+
+class ServerRentStarsState(StatesGroup):
+    """Состояния для аренды сервера через Stars"""
+    selecting_months = State()
+    waiting_for_payment = State()

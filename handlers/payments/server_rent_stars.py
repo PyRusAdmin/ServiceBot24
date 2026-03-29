@@ -6,25 +6,18 @@ import datetime
 
 from aiogram import F, Router, types
 from aiogram.fsm.context import FSMContext
-from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from loguru import logger
 
 from db.settings_db import add_server_rent, get_active_server_rent
-from handlers.payments.products_goods_services import SERVER_RENT_PRICE
-from handlers.payments.telegram_stars_payments import get_stars_amount
+from handlers.payments.products_goods_services import SERVER_RENT_PRICE, get_stars_amount
 from keyboards.user_keyboards import start_menu
+from states.states import ServerRentStarsState
 from system.dispatcher import bot, ADMIN_CHAT_ID
 
 router = Router(name=__name__)
 
 product = "Аренда сервера"
-
-
-class ServerRentStarsState(StatesGroup):
-    """Состояния для аренды сервера через Stars"""
-    selecting_months = State()
-    waiting_for_payment = State()
 
 
 @router.callback_query(F.data == "payment_stars_server_rent")

@@ -13,18 +13,12 @@ from loguru import logger
 from db.settings_db import save_payment_info, get_product_password
 from handlers.payments.products_goods_services import (
     TelegramMaster, TelegramMaster_Commentator, password_TelegramMaster,
-    password_TelegramMaster_Commentator, payment_installation, TelegramMaster_Search_GPT
+    password_TelegramMaster_Commentator, payment_installation, TelegramMaster_Search_GPT, get_stars_amount
 )
 from messages.messages import message_check_payment
 from system.dispatcher import bot, ADMIN_CHAT_ID
 
 router = Router(name=__name__)
-
-
-
-
-
-
 
 # Словарь для хранения ожидающих платежей
 pending_stars_payments = {}
