@@ -20,22 +20,10 @@ from system.dispatcher import bot, ADMIN_CHAT_ID
 
 router = Router(name=__name__)
 
-# Курс Telegram Stars (рублей за 1 звезду)
-# Обновите это значение при изменении курса Telegram
-# Актуальный курс на 2026 год: ~1.5 рубля за звезду
-STARS_TO_RUB_RATE = 200
 
 
-def get_stars_amount(rub_amount: float) -> int:
-    """
-    Конвертирует сумму из рублей в звезды Telegram
-    :param rub_amount: сумма в рублях
-    :return: количество звезд (целое число)
-    """
-    stars = int(rub_amount / STARS_TO_RUB_RATE)
-    # Округляем до ближайшего значения, которое принимает Telegram (минимум 50 звезд)
-    stars = max(1, stars)
-    return stars
+
+
 
 
 # Словарь для хранения ожидающих платежей

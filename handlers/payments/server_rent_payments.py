@@ -6,7 +6,6 @@ import datetime
 
 from aiogram import F, Router, types
 from aiogram.fsm.context import FSMContext
-from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from loguru import logger
 from yookassa import Payment
@@ -15,14 +14,12 @@ from db.settings_db import add_server_rent, get_active_server_rent
 from handlers.payment_yookassa import payment_yookassa_com
 from handlers.payments.products_goods_services import SERVER_RENT_PRICE
 from keyboards.user_keyboards import start_menu
+from states.states import ServerRentState
 from system.dispatcher import bot, ADMIN_CHAT_ID
 
 router = Router(name=__name__)
 
 product = "Аренда сервера"
-
-
-
 
 
 @router.callback_query(F.data == "payment_yookassa_server_rent")

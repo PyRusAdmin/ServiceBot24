@@ -24,7 +24,7 @@ async def payment_stars_maxmaster_handler(callback_query: types.CallbackQuery):
     """Оплата MaxMaster звездами"""
     rub_price = MaxMaster
     stars_amount = get_stars_amount(rub_price)
-    
+
     try:
         await bot.send_invoice(
             chat_id=callback_query.message.chat.id,
@@ -42,9 +42,9 @@ async def payment_stars_maxmaster_handler(callback_query: types.CallbackQuery):
             send_phone_number_to_provider=False,
             send_email_to_provider=False,
         )
-        
+
         logger.info(f"Создан инвойс для MaxMaster: {stars_amount} звезд, пользователь {callback_query.from_user.id}")
-        
+
     except Exception as e:
         logger.exception(f"Ошибка при создании инвойса MaxMaster: {e}")
         await bot.send_message(
@@ -65,13 +65,13 @@ async def process_successful_payment_maxmaster(message: types.Message):
     try:
         payment_data = message.successful_payment
         payload = payment_data.invoice_payload
-        
+
         # Проверяем, что это оплата MaxMaster
         if not payload.startswith("stars_maxmaster_"):
             return
-        
+
         logger.info(f"Успешная оплата MaxMaster звездами: {payload}, сумма: {payment_data.total_amount} звезд")
-        
+
         # Сохраняем информацию о продаже
         add_maxmaster_sale(
             user_id=message.from_user.id,
@@ -81,10 +81,10 @@ async def process_successful_payment_maxmaster(message: types.Message):
             payment_amount=MaxMaster,
             payment_method="stars"
         )
-        
+
         # Получаем пароль из БД
         password = get_maxmaster_password()
-        
+
         if password:
             caption = (f"✅ <b>Оплата подтверждена!</b>\n\n"
                        f"📦 Продукт: <b>{product}</b>\n\n"
@@ -95,16 +95,16 @@ async def process_successful_payment_maxmaster(message: types.Message):
             caption = (f"✅ <b>Оплата подтверждена!</b>\n\n"
                        f"⚠️ <b>Внимание!</b> Пароль еще не установлен администратором.\n\n"
                        f"Пожалуйста, обратитесь к @PyAdminRU")
-        
+
         await bot.send_message(
             chat_id=message.from_user.id,
             text=caption,
             reply_markup=start_menu(),
             parse_mode="HTML"
         )
-        
+
         logger.info(f"Пароль MaxMaster отправлен пользователю {message.from_user.id}")
-        
+
         # Уведомляем администратора
         await bot.send_message(
             chat_id=ADMIN_CHAT_ID,
@@ -119,7 +119,7 @@ async def process_successful_payment_maxmaster(message: types.Message):
                  f"🕒 Дата: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
             parse_mode="HTML"
         )
-        
+
     except Exception as e:
         logger.exception(f"Ошибка при обработке оплаты MaxMaster звездами: {e}")
         await message.answer("⚠️ Произошла ошибка при обработке платежа. Обратитесь к @PyAdminRU")
