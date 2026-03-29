@@ -5,7 +5,8 @@ import logging
 from loguru import logger  # https://github.com/Delgan/loguru
 
 from handlers.admin.admin_handlers import register_admin_handlers
-from handlers.payments.cryptomus_payments.cryptomus_commentator import register_cryptomus_program_com
+from handlers.payments.cryptomus_payments.cryptomus_commentator import router as cryptomus_commentator
+
 from handlers.payments.cryptomus_payments.cryptomus_commentator_password import register_cryptomus_password_commentator
 from handlers.payments.cryptomus_payments.cryptomus_password import register_cryptomus_password
 from handlers.payments.cryptomus_payments.cryptomus_program import register_cryptomus_program
@@ -22,7 +23,9 @@ from handlers.payments.yookassa_payments.yookassa_training import register_yooka
 from handlers.user.ai_handlers import register_ai_handlers
 from handlers.user.fag_handlers import fag_register_message_handler
 from handlers.user.reference_handlers import register_faq_handler
-from handlers.user.sending_log_file import sending_log_file_register_handler
+
+from handlers.user.sending_log_file import router as sending_log_file
+
 from handlers.user.user_account import register_user_account_handlers
 from handlers.user.user_handlers import greeting_handler
 from system.dispatcher import dp, bot
@@ -48,7 +51,9 @@ async def main() -> None:
     # Рабата с пользователем бота
     greeting_handler()  # Пост приветствие пользователей бота
     fag_register_message_handler()  # Помощь по боту
-    sending_log_file_register_handler()  # Отправка логов боту
+
+    dp.include_router(sending_log_file)  # Отправка логов боту
+
     register_faq_handler()  # Регистрация FAQ
 
     # Меню оплата
@@ -67,7 +72,9 @@ async def main() -> None:
     register_cryptomus_password_commentator()  # Покупка пароля TelegramMaster_Commentator
 
     register_cryptomus_program()  # Покупка TelegramMaster-PRO
-    register_cryptomus_program_com()  # Купить TelegramMaster_Commentator
+
+    dp.include_router(cryptomus_commentator)  # Купить TelegramMaster_Commentator
+
     register_cryptomus_training()  # Покупка 'Помощь в настройке ПО (консультация)'
 
     # Покупка TelegramMaster_Search_GPT

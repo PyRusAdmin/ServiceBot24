@@ -6,16 +6,17 @@ import json
 import uuid
 
 import aiohttp
-from aiogram import types, F
-from aiogram.types import FSInputFile
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram import F, Router, types
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, FSInputFile
 from loguru import logger  # Логирование с помощью loguru
 
 from db.settings_db import save_payment_info, add_user_if_not_exists, is_user_in_db
 from handlers.payments.products_goods_services import TelegramMaster_Commentator
 from keyboards.user_keyboards import start_menu
 from messages.messages import message_check_payment
-from system.dispatcher import bot, dp, ADMIN_CHAT_ID
+from system.dispatcher import bot, ADMIN_CHAT_ID
+
+router = Router(name=__name__)
 
 # Оплата TelegramMaster_Commentator
 product = "TelegramMaster_Commentator"
@@ -36,7 +37,7 @@ async def make_request(url: str, invoice_data: dict):
             return await response.json()
 
 
-@dp.callback_query(F.data == "payment_crypta_commentator")
+@router.callback_query(F.data == "payment_crypta_commentator")
 async def payment_crypta_pas_program_handler_com(callback_query: types.CallbackQuery):
     """Оплата TelegramMaster_Commentator криптой"""
 
@@ -69,7 +70,7 @@ async def payment_crypta_pas_program_handler_com(callback_query: types.CallbackQ
 
 
 # Обработчик для кнопки "Проверить оплату TelegramMaster_Commentator"
-@dp.callback_query(F.data.startswith("check_paymen"))
+@router.callback_query(F.data.startswith("check_paymen"))
 async def check_invoice_paid_program_com(callback_query: types.CallbackQuery):
     """Ручная проверка статуса оплаты"""
     invoice_uuid = callback_query.data.split("_")[2]  # Извлекаем UUID счета из callback_data
@@ -121,6 +122,6 @@ async def check_invoice_paid_program_com(callback_query: types.CallbackQuery):
         )
 
 
-def register_cryptomus_program_com():
-    """Регистрируем handlers для бота"""
-    dp.message.register(payment_crypta_pas_program_handler_com)
+# def register_cryptomus_program_com():
+#     """Регистрируем handlers для бота"""
+#     dp.message.register(payment_crypta_pas_program_handler_com)
