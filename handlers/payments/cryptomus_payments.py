@@ -125,6 +125,20 @@ async def payment_crypta_pas_training_handler(callback_query: types.CallbackQuer
     )
 
 
+def generates_payment_data(callback_query, payment_info, product, date):
+    """Генерация данных для оплаты"""
+    return {
+        "user_id": callback_query.from_user.id,
+        "first_name": callback_query.from_user.first_name,
+        "last_name": callback_query.from_user.last_name,
+        "username": callback_query.from_user.username,
+        "payment_info": payment_info,
+        "product": product,
+        "date": date,
+        "payment_status": "succeeded"
+    }
+
+
 # Обработчик для кнопки "Проверить оплату"
 @router.callback_query(F.data.startswith("check_paymentT_"))
 async def check_invoice_paid_training(callback_query: types.CallbackQuery):
@@ -133,16 +147,15 @@ async def check_invoice_paid_training(callback_query: types.CallbackQuery):
     try:
         invoice_data = await get_payment_info(callback_query)
         if invoice_data['result']['payment_status'] in ('paid', 'paid_over'):
-            save_payment_info(  # Запись в базу данных пользователя, который оплатил счет в крипте
-                callback_query.from_user.id,
-                callback_query.from_user.first_name,
-                callback_query.from_user.last_name,
-                callback_query.from_user.username,
-                json.dumps(invoice_data),  # Преобразуем словарь в строку JSON
-                "Помощь в настройке ПО (консультация)",
-                datetime.datetime.now().strftime("%Y-%m-%d"),
-                "succeeded"
+            data_payment = generates_payment_data(
+                callback_query=callback_query,
+                payment_info=json.dumps(invoice_data),
+                product="Помощь в настройке ПО (консультация)",
+                date=datetime.datetime.now().strftime("%Y-%m-%d")
             )
+            # Запись в базу данных пользователя, который оплатил счет в крипте
+            save_payment_info(data_payment)
+
             await bot.send_message(
                 chat_id=callback_query.from_user.id,
                 text="Оплата прошла успешно‼️ \nДля согласования даты и времени , свяжитесь с администратором"

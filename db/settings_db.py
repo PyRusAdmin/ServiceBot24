@@ -72,17 +72,18 @@ def save_payment_info_user(table_name, user_id, first_name, last_name, username,
         conn.commit()
 
 
-def save_payment_info(user_id, first_name, last_name, username, invoice_json, product, date, status):
+def save_payment_info(data_payment):
     """Сохраняет информацию о платеже"""
-    with connect_db() as conn:
-        cursor = conn.cursor()
-        cursor.execute('''CREATE TABLE IF NOT EXISTS users_pay (user_id INTEGER, first_name TEXT, last_name TEXT,
-                                                                username TEXT, payment_info TEXT, product TEXT,
-                                                                date TEXT, payment_status TEXT)''')
-        cursor.execute('''INSERT INTO users_pay (user_id, first_name, last_name, username, payment_info, 
-                        product, date, payment_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)''',
-                       (user_id, first_name, last_name, username, invoice_json, product, date, status))
-        conn.commit()
+    UserPayment.create(
+        user_id=data_payment.get('user_id'),
+        first_name=data_payment.get('first_name'),
+        last_name=data_payment.get('last_name'),
+        username=data_payment.get('username'),
+        payment_info=data_payment.get('payment_info'),
+        product=data_payment.get('product'),
+        date=data_payment.get('date'),
+        payment_status=data_payment.get('payment_status')
+    )
 
 
 def check_user_payment(user_id, product_name):
