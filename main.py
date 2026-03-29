@@ -6,14 +6,12 @@ import sys
 from loguru import logger  # https://github.com/Delgan/loguru
 
 from db.settings_db import init_password_tables, init_new_products_tables
+
+from handlers.payments.cryptomus_payments.cryptomus_payments import router as cryptomus_payments
+
 from system.server_rent_checker import run_periodic_check
 from handlers.group_handlers import router as group_handlers
-from handlers.payments.cryptomus_payments.cryptomus_commentator import router as cryptomus_commentator
-from handlers.payments.cryptomus_payments.cryptomus_commentator_password import router as cryptomus_commentator_password
-from handlers.payments.cryptomus_payments.cryptomus_password import router as cryptomus_password
-from handlers.payments.cryptomus_payments.cryptomus_program import router as cryptomus_program
-from handlers.payments.cryptomus_payments.cryptomus_search import router as cryptomus_search
-from handlers.payments.cryptomus_payments.cryptomus_training import router as cryptomus_training
+
 from handlers.payments.payments import router as payments
 from handlers.payments.yookassa_payments.yookassa_commentator import router as yookassa_commentator
 from handlers.payments.yookassa_payments.yookassa_commentator_password import router as yookassa_commentator_password
@@ -88,16 +86,9 @@ async def main() -> None:
     dp.include_router(yookassa_program)  # Купить TelegramMaster-PRO
     dp.include_router(yookassa_training)  # Оплата настройки ПО
 
-    # Оплата Криптой
-    dp.include_router(cryptomus_password)  # Покупка пароля TelegramMaster-PRO
-    dp.include_router(cryptomus_commentator_password)  # Покупка пароля TelegramMaster_Commentator
-    dp.include_router(cryptomus_program)  # Покупка TelegramMaster-PRO
-    dp.include_router(cryptomus_commentator)  # Купить TelegramMaster_Commentator
-    dp.include_router(cryptomus_training)  # Покупка 'Помощь в настройке ПО (консультация)'
-
+    dp.include_router(cryptomus_payments)  # Оплата Криптой
     # Покупка TelegramMaster_Search_GPT
     dp.include_router(yookassa_search)
-    dp.include_router(cryptomus_search)
 
     # Оплата Telegram Stars
     dp.include_router(telegram_stars_payments)  # Оплата звездами всех услуг

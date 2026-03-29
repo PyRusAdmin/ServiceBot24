@@ -11,30 +11,18 @@ from aiogram import F, Router, types
 from loguru import logger
 
 from db.settings_db import save_payment_info, get_product_password
+
 from handlers.payments.products_goods_services import (
     TelegramMaster, TelegramMaster_Commentator, password_TelegramMaster,
-    password_TelegramMaster_Commentator, payment_installation, TelegramMaster_Search_GPT
+    password_TelegramMaster_Commentator, payment_installation, TelegramMaster_Search_GPT, get_stars_amount
 )
 from messages.messages import message_check_payment
 from system.dispatcher import bot, ADMIN_CHAT_ID
 
 router = Router(name=__name__)
 
-# Курс Telegram Stars (рублей за 1 звезду)
-# Обновите это значение при изменении курса Telegram
-STARS_TO_RUB_RATE = 1.5
-
-
-def get_stars_amount(rub_amount: float) -> int:
-    """
-    Конвертирует сумму из рублей в звезды Telegram
-    :param rub_amount: сумма в рублях
-    :return: количество звезд (целое число)
-    """
-    stars = int(rub_amount / STARS_TO_RUB_RATE)
-    # Минимум 1 звезда
-    stars = max(1, stars)
-    return stars
+# Словарь для хранения ожидающих платежей
+pending_stars_payments = {}
 
 
 @router.pre_checkout_query()

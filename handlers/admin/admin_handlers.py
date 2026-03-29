@@ -6,7 +6,7 @@ from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from loguru import logger
 
-from db.settings_db import get_all_users, is_user_in_db, add_user_to_db, set_product_password, get_product_password, set_maxmaster_password, get_maxmaster_password
+from db.settings_db import get_all_users, is_user_in_db, add_user_to_db, set_product_password, set_maxmaster_password
 from states.states import AdminState
 from system.dispatcher import bot, ADMIN_CHAT_ID
 
@@ -196,11 +196,11 @@ async def save_password(message: types.Message, state: FSMContext):
         return
 
     password = message.text  # Получаем текст сообщения
-    
+
     try:
         # Сохраняем пароль в базу данных
         result = set_product_password("TelegramMaster-PRO", password)
-        
+
         if result:
             logger.info(f"Администратор {message.from_user.id} обновил пароль для TelegramMaster-PRO")
             await message.answer(
@@ -213,7 +213,7 @@ async def save_password(message: types.Message, state: FSMContext):
     except Exception as e:
         logger.exception(f"Ошибка при сохранении пароля: {e}")
         await message.answer("❌ Ошибка при сохранении пароля. Проверьте логи.")
-    
+
     await state.clear()
 
 
@@ -236,7 +236,7 @@ async def process_id_command(message: types.Message):
     try:
         user_id = int(message.text.split()[1])
         result = is_user_in_db(user_id)  # Проверка наличия ID в базе данных
-        
+
         if result is None:
             add_user_to_db(user_id)
             await message.reply(f"✅ ID {user_id} успешно записан в базу данных.")
@@ -291,11 +291,11 @@ async def save_maxmaster_password(message: types.Message, state: FSMContext):
         return
 
     password = message.text  # Получаем текст сообщения
-    
+
     try:
         # Сохраняем пароль в базу данных
         result = set_maxmaster_password(password)
-        
+
         if result:
             logger.info(f"Администратор {message.from_user.id} обновил пароль для MaxMaster")
             await message.answer(
@@ -308,5 +308,5 @@ async def save_maxmaster_password(message: types.Message, state: FSMContext):
     except Exception as e:
         logger.exception(f"Ошибка при сохранении пароля MaxMaster: {e}")
         await message.answer("❌ Ошибка при сохранении пароля. Проверьте логи.")
-    
+
     await state.clear()

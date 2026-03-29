@@ -67,7 +67,7 @@ def get_user_payments_formatted(user_id: int) -> str:
         username_str = f"@{p.username}" if p.username else ""
 
         line = (
-            f"{i}. {status_emoji} <b>{p.product}</b>\n"
+            f"{i}. {status_emoji} <b>{p.TelegramMaster_Commentator}</b>\n"
             f"   Дата: {date_str}\n"
             f"   Статус: {p.payment_status}\n"
         )

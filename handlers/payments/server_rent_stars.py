@@ -10,8 +10,8 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from loguru import logger
 
 from db.settings_db import add_server_rent, get_active_server_rent
-from handlers.payments.products_goods_services import SERVER_RENT_PRICE
-from handlers.payments.telegram_stars_payments import get_stars_amount
+from handlers.payments.products_goods_services import SERVER_RENT_PRICE, get_stars_amount
+
 from keyboards.user_keyboards import start_menu
 from states.states import ServerRentStarsState
 from system.dispatcher import bot, ADMIN_CHAT_ID
@@ -43,7 +43,7 @@ async def server_rent_stars_handler(callback_query: types.CallbackQuery, state: 
     # Рассчитываем стоимость в звездах для каждого срока
     months_options = [1, 2, 3, 6, 12]
     keyboard_buttons = []
-    
+
     for months in months_options:
         rub_price = SERVER_RENT_PRICE * months
         stars_price = get_stars_amount(rub_price)
@@ -51,10 +51,10 @@ async def server_rent_stars_handler(callback_query: types.CallbackQuery, state: 
         keyboard_buttons.append([
             InlineKeyboardButton(
                 text=f"{months} {month_word} - {rub_price} ₽ ({stars_price} ⭐️)",
-                callback_data=f"stars_rent_{months}_month"
+                callback_data=f"stars_rent_{months}"
             )
         ])
-    
+
     keyboard_buttons.append([InlineKeyboardButton(text="🏠 В главное меню", callback_data="start_menu_keyboard")])
     keyboard = InlineKeyboardMarkup(inline_keyboard=keyboard_buttons)
 
@@ -62,10 +62,6 @@ async def server_rent_stars_handler(callback_query: types.CallbackQuery, state: 
         chat_id=callback_query.from_user.id,
         text="⭐️ <b>Аренда сервера за Stars</b>\n\n"
              "Выберите срок аренды сервера:\n\n"
-             "💰 <b>Цена:</b> 250 ₽/месяц (~167 ⭐️)\n"
-             "⚡️ <b>Скидки:</b>\n"
-             "• 6 месяцев - 1500 ₽ (~1000 ⭐️)\n"
-             "• 12 месяцев - 3000 ₽ (~2000 ⭐️)\n\n"
              "📡 Сервер будет доступен 24/7 для ваших задач",
         reply_markup=keyboard,
         parse_mode="HTML"
@@ -78,11 +74,11 @@ async def select_months_stars_handler(callback_query: types.CallbackQuery, state
     """Обработчик выбора количества месяцев для Stars"""
     # Извлекаем количество месяцев из callback_data
     try:
-        months = int(callback_query.data.split("_")[3])
+        months = int(callback_query.data.split("_")[2])
     except (IndexError, ValueError):
         await callback_query.answer("❌ Ошибка выбора срока аренды", show_alert=True)
         return
-    
+
     rub_price = SERVER_RENT_PRICE * months
     stars_amount = get_stars_amount(rub_price)
 
