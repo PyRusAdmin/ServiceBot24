@@ -22,7 +22,14 @@ PROXY_PASSWORD = os.getenv("PROXY_PASSWORD")
 PROXY_PORT = os.getenv("PROXY_PORT")
 PROXY_IP = os.getenv("PROXY_IP")
 
+# Токен бота в Telegram
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+
+ADMIN_CHAT_ID = os.getenv("ADMIN_CHAT_ID")
+
+# Идентификатор и секретный ключ для Yookassa
+ACCOUNT_ID = os.getenv("ACCOUNT_ID")
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 bot = Bot(
     token=TELEGRAM_BOT_TOKEN,
