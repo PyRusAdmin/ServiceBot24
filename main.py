@@ -19,6 +19,7 @@ from handlers.payments.yookassa_payments.yookassa_password import router as yook
 from handlers.payments.yookassa_payments.yookassa_program import router as yookassa_program
 from handlers.payments.yookassa_payments.yookassa_search import router as yookassa_search
 from handlers.payments.yookassa_payments.yookassa_training import router as yookassa_training
+from handlers.payments.telegram_stars_payments import router as telegram_stars_payments
 from handlers.user.ai_handlers import router as ai_handlers
 from handlers.user.fag_handlers import router as fag_handlers
 from handlers.user.reference_handlers import router as faq_handler
@@ -75,6 +76,9 @@ async def main() -> None:
     # Покупка TelegramMaster_Search_GPT
     dp.include_router(yookassa_search)
     dp.include_router(cryptomus_search)
+
+    # Оплата Telegram Stars
+    dp.include_router(telegram_stars_payments)  # Оплата звездами всех услуг
 
     await dp.start_polling(bot)
 

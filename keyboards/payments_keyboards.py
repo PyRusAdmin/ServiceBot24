@@ -16,6 +16,7 @@ def payment_yookassa_password_commentator_password_keyboard() -> InlineKeyboardM
         [
             InlineKeyboardButton(text=f"💳 Оплатить Yookassa",
                                  callback_data='payment_yookassa_password_commentator_password'),
+            InlineKeyboardButton(text="⭐️ Оплатить Stars", callback_data='payment_stars_commentator_password'),
         ],
         [InlineKeyboardButton(text='🏠 В начальное меню', callback_data='start_menu_keyboard')],
     ]
@@ -27,6 +28,7 @@ def payment_keyboard_telegram_master_search_gpt_1() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(inline_keyboard=[
         [
             InlineKeyboardButton(text="💳 Оплатить Yookassa", callback_data='payment_yookassa_Search_GPT'),
+            InlineKeyboardButton(text="⭐️ Оплатить Stars", callback_data='payment_stars_search_gpt'),
         ],
         [InlineKeyboardButton(text='🏠 В начальное меню', callback_data='start_menu_keyboard')],
     ]
@@ -38,6 +40,7 @@ def payment_keyboard_password() -> InlineKeyboardMarkup:
     rows = [
         [
             InlineKeyboardButton(text=f"💳 Оплатить Yookassa", callback_data='payment_yookassa_password'),
+            InlineKeyboardButton(text="⭐️ Оплатить Stars", callback_data='payment_stars_password'),
         ],
         [InlineKeyboardButton(text='🏠 В начальное меню', callback_data='start_menu_keyboard')],
     ]
@@ -50,6 +53,7 @@ def purchasing_a_program_setup_service() -> InlineKeyboardMarkup:
     rows = [
         [
             InlineKeyboardButton(text=f"💳 Оплатить Yookassa", callback_data='payment_yookassa_training'),
+            InlineKeyboardButton(text="⭐️ Оплатить Stars", callback_data='payment_stars_training'),
         ],
         [InlineKeyboardButton(text='🏠 В начальное меню', callback_data='start_menu_keyboard')],
     ]
@@ -62,6 +66,7 @@ def payment_keyboard_com() -> InlineKeyboardMarkup:
     rows = [
         [
             InlineKeyboardButton(text="💳 Оплатить Yookassa", callback_data='payment_yookassa_commentator'),
+            InlineKeyboardButton(text="⭐️ Оплатить Stars", callback_data='payment_stars_commentator'),
         ],
         [InlineKeyboardButton(text='🏠 В начальное меню', callback_data='start_menu_keyboard')],
     ]
@@ -74,6 +79,7 @@ def payment_keyboard() -> InlineKeyboardMarkup:
     rows = [
         [
             InlineKeyboardButton(text=f"💳 Оплатить Yookassa", callback_data='payment_yookassa_program'),
+            InlineKeyboardButton(text="⭐️ Оплатить Stars", callback_data='payment_stars_program'),
         ],
         [InlineKeyboardButton(text='🏠 В начальное меню', callback_data='start_menu_keyboard')],
     ]
