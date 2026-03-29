@@ -16,7 +16,7 @@ from db.settings_db import (
 from handlers.payments.products_goods_services import (
     TelegramMaster_Commentator, TelegramMaster_PRO, TelegramMaster_Search_GPT, payment_installation
 )
-from handlers.payments.products_goods_services import password_TelegramMaster_Commentator, password_TelegramMaster_PRO
+from handlers.payments.products_goods_services import password_TelegramMaster_PRO
 from keyboards.user_keyboards import start_menu
 from messages.messages import message_check_payment
 from system.dispatcher import CRYPTOMUS_API_KEY, CRYPTOMUS_MERCHANT_ID, bot, ADMIN_CHAT_ID
@@ -244,9 +244,6 @@ async def check_invoice_paid_program_com_tm_search_gpt_crypta(callback_query: ty
         )
 
 
-"""Оплата TelegramMaster-PRO криптой"""
-
-
 @router.callback_query(F.data == "payment_crypta_pas_program")
 async def payment_crypta_pas_program_handler(callback_query: types.CallbackQuery):
     """Оплата TelegramMaster-PRO криптой"""
@@ -394,15 +391,15 @@ async def check_payment_handler(callback_query: types.CallbackQuery):
 # Обработчик для создания счета и отправки кнопки "Проверить оплату"
 @router.callback_query(F.data == "payment_crypta_commentator_pass")
 async def buy_handler_commentator(callback_query: types.CallbackQuery):
-    """Оплата пароля TelegramMaster_Commentator криптой"""
+    """Оплата пароля TelegramMaster-Commentator криптой"""
     await bot.send_message(
         chat_id=callback_query.message.chat.id,
         text=message_payment_for_user(
-            payment_info=password_TelegramMaster_Commentator,
-            name_goods="TelegramMaster_Commentator",
+            payment_info=TelegramMaster_Commentator.get("price_password"),
+            name_goods="TelegramMaster-Commentator",
         ),
         reply_markup=keyboard_check_payment(
-            f"check_paymentPass_{format_payment_info(password_TelegramMaster_Commentator)['result']['uuid']}"),
+            f"check_paymentPass_{format_payment_info(TelegramMaster_Commentator.get("price_password"))['result']['uuid']}"),
         parse_mode="HTML"
     )
 
@@ -427,7 +424,7 @@ async def check_payment_handler_commentator(callback_query: types.CallbackQuery)
             await bot.send_message(
                 chat_id=callback_query.from_user.id,
                 text=(
-                    f"✅ <b>Платеж на сумму {password_TelegramMaster_Commentator} руб прошел успешно‼️</b>\n\n"
+                    f"✅ <b>Платеж на сумму {TelegramMaster_Commentator.get("price_password")} руб прошел успешно‼️</b>\n\n"
                     f"📦 Продукт: <b>Пароль TelegramMaster_Commentator</b>\n\n"
                     f"🔑 <b>Ваш пароль:</b>\n"
                     f"<code>{get_product_password("TelegramMaster_Commentator")}</code>\n\n"
