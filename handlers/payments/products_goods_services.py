@@ -6,7 +6,7 @@ password_TelegramMaster_PRO = 300.00  # Сумма товара пароль Tel
 password_TelegramMaster_Commentator = 300.00  # Сумма товара пароль TelegramMaster_Commentator
 
 TelegramMaster_PRO = {
-    "name": "TelegramMaster-PRO",
+    "name": "TelegramMaster-PRO",  # Название товара
     "price": 1600.00  # Стоимость товара TelegramMaster-PRO
 }
 
