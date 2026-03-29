@@ -19,12 +19,12 @@ load_dotenv()
 
 
 # Функции для получения переменных окружения
-def get_groq_api_key() -> str:
-    """Возвращает API-ключ для Groq."""
-    api_key = os.getenv("GROQ_API_KEY")
-    if not api_key:
-        raise ValueError("GROQ_API_KEY не найден в переменных окружения.")
-    return api_key
+# def get_groq_api_key() -> str:
+#     """Возвращает API-ключ для Groq."""
+#     api_key = os.getenv("GROQ_API_KEY")
+#     if not api_key:
+#         raise ValueError("GROQ_API_KEY не найден в переменных окружения.")
+#     return api_key
 
 
 def get_telegram_bot_token() -> str:

@@ -8,8 +8,7 @@ from groq import AsyncGroq
 
 from db.settings_db import save_user_wish
 from setting.proxy_config import setup_proxy
-from setting.settings import get_groq_api_key
-from system.dispatcher import bot, dp, ADMIN_CHAT_ID
+from system.dispatcher import bot, dp, ADMIN_CHAT_ID, api_key, PROXY_USER, PROXY_PASSWORD, PROXY_IP, PROXY_PORT
 
 
 def remove_markdown_symbols(text: str) -> str:
@@ -35,7 +34,7 @@ async def handle_wish(message: Message, state: FSMContext):
     """Обработчик текстовых сообщений с пожеланиями"""
     setup_proxy(PROXY_USER, PROXY_PASSWORD, PROXY_IP, PROXY_PORT)  # Установка прокси
     # Инициализация Groq клиента
-    client = AsyncGroq(api_key=get_groq_api_key())
+    client = AsyncGroq(api_key=api_key)
     user_id = message.from_user.id
     user_wish = message.text
     # Показываем, что бот "печатает"

@@ -31,6 +31,11 @@ ADMIN_CHAT_ID = os.getenv("ADMIN_CHAT_ID")
 ACCOUNT_ID = os.getenv("ACCOUNT_ID")
 SECRET_KEY = os.getenv("SECRET_KEY")
 
+
+api_key = os.getenv("GROQ_API_KEY")
+
+
+
 bot = Bot(
     token=TELEGRAM_BOT_TOKEN,
 )
