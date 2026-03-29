@@ -15,7 +15,6 @@ from db.settings_db import save_payment_info_user
 from handlers.payments.products_goods_services import TelegramMaster_Search_GPT
 from keyboards.user_keyboards import start_menu
 from messages.messages import message_check_payment
-from setting import settings
 from system.dispatcher import bot, dp
 
 # Оплата TelegramMaster-Search-GPT

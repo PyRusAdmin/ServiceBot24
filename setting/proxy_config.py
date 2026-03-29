@@ -2,13 +2,13 @@
 import os
 
 
-def setup_proxy(proxy_user, proxy_password, proxy_ip, proxy_port):  # Имена параметров оставлены как есть, так как они не являются глобальными переменными
+def setup_proxy(proxy_user, proxy_password, proxy_ip, proxy_port):
     """
     Установка прокси для запросов к API Groq
-    :param proxy_user:
-    :param proxy_password:
-    :param proxy_ip:
-    :param proxy_port:
+    :param proxy_user: Имя пользователя прокси
+    :param proxy_password: Пароль пользователя прокси
+    :param proxy_ip: IP прокси
+    :param proxy_port: Порт прокси
     :return: None
     """
     # Указываем прокси для HTTP и HTTPS

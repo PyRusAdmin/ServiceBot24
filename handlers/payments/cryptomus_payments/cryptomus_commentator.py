@@ -15,8 +15,7 @@ from db.settings_db import save_payment_info, add_user_if_not_exists, is_user_in
 from handlers.payments.products_goods_services import TelegramMaster_Commentator
 from keyboards.user_keyboards import start_menu
 from messages.messages import message_check_payment
-from setting import settings
-from system.dispatcher import bot, dp
+from system.dispatcher import bot, dp, ADMIN_CHAT_ID
 
 # Оплата TelegramMaster_Commentator
 product = "TelegramMaster_Commentator"
