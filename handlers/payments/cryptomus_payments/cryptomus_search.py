@@ -1,17 +1,14 @@
 # -*- coding: utf-8 -*-
-import base64
 import datetime  # Дата
-import hashlib
 import json
 import uuid
 
-import aiohttp
 from aiogram import F, Router, types
-from aiogram.types import FSInputFile
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from loguru import logger  # Логирование с помощью loguru
 
-from db.settings_db import save_payment_info_user
+from db.settings_db import save_payment_info_user, get_product_password
+from handlers.payments.cryptomus_payments.cryptomus_commentator import make_request
 from handlers.payments.products_goods_services import TelegramMaster_Search_GPT
 from keyboards.user_keyboards import start_menu
 from messages.messages import message_check_payment
@@ -22,21 +19,6 @@ router = Router(name=__name__)
 # Оплата TelegramMaster-Search-GPT
 
 product = "TelegramMaster-Search-GPT"
-
-
-async def make_request(url: str, invoice_data: dict):
-    encoded_data = base64.b64encode(json.dumps(invoice_data).encode("utf-8")).decode("utf-8")
-    signature = hashlib.md5(f"{encoded_data}{CRYPTOMUS_API_KEY}".encode("utf-8")).hexdigest()
-
-    async with aiohttp.ClientSession(headers={
-        "merchant": CRYPTOMUS_MERCHANT_ID,
-        "sign": signature,
-    }) as session:
-        async with session.post(url=url, json=invoice_data) as response:
-            if not response.ok:
-                raise ValueError(response.reason)
-
-            return await response.json()
 
 
 @router.callback_query(F.data == "payment_crypta_Search_GPT")
@@ -96,12 +78,26 @@ async def check_invoice_paid_program_com_tm_search_gpt_crypta(callback_query: ty
                 username=callback_query.from_user.username, invoice_json=invoice_json, product=product,
                 date=datetime.datetime.now().strftime("%Y-%m-%d"), status="succeeded", price=TelegramMaster_Search_GPT
             )
-            # Отправка пароля в Telegram пользователю
-            await bot.send_document(
+            
+            # Получаем пароль из базы данных
+            password = get_product_password("TelegramMaster_Search_GPT")
+            
+            if password:
+                caption = (f"✅ <b>Платеж на сумму {TelegramMaster_Search_GPT} руб прошел успешно‼️</b>\n\n"
+                           f"📦 Продукт: <b>{product}</b>\n\n"
+                           f"🔑 <b>Ваш пароль:</b>\n"
+                           f"<code>{password}</code>\n\n"
+                           f"{message_check_payment(product_price=TelegramMaster_Search_GPT, product=product)}")
+            else:
+                caption = (f"✅ <b>Платеж на сумму {TelegramMaster_Search_GPT} руб прошел успешно‼️</b>\n\n"
+                           f"⚠️ <b>Внимание!</b> Пароль еще не установлен администратором.\n\n"
+                           f"Пожалуйста, обратитесь к @PyAdminRU")
+            
+            await bot.send_message(
                 chat_id=callback_query.from_user.id,
-                document=FSInputFile("setting/password/TelegramMaster_Search_GPT/password.txt"),
-                caption=message_check_payment(product_price=TelegramMaster_Search_GPT, product=product),
-                reply_markup=start_menu()  # Отправляемся в главное меню
+                text=caption,
+                reply_markup=start_menu(),  # Отправляемся в главное меню
+                parse_mode="HTML"
             )
         else:
             # Если оплата еще не прошла

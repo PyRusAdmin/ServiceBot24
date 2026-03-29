@@ -6,10 +6,8 @@
 """
 import datetime
 import json
-import os
 
 from aiogram import F, Router, types
-from aiogram.types import FSInputFile
 from loguru import logger
 
 from db.settings_db import save_payment_info, get_product_password
@@ -17,7 +15,6 @@ from handlers.payments.products_goods_services import (
     TelegramMaster, TelegramMaster_Commentator, password_TelegramMaster,
     password_TelegramMaster_Commentator, payment_installation, TelegramMaster_Search_GPT
 )
-from keyboards.user_keyboards import start_menu
 from messages.messages import message_check_payment
 from system.dispatcher import bot, ADMIN_CHAT_ID
 
@@ -27,9 +24,6 @@ router = Router(name=__name__)
 # Обновите это значение при изменении курса Telegram
 # Актуальный курс на 2026 год: ~1.5 рубля за звезду
 STARS_TO_RUB_RATE = 200
-
-# Базовый путь к файлам с паролями
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 def get_stars_amount(rub_amount: float) -> int:
@@ -67,33 +61,27 @@ async def process_successful_payment(message: types.Message):
         if payload.startswith("stars_program_"):
             product_name = "TelegramMaster-PRO"
             price = TelegramMaster
-            password_file = "setting/password/TelegramMaster-PRO/password.txt"
         elif payload.startswith("stars_com_"):
             product_name = "TelegramMaster_Commentator"
             price = TelegramMaster_Commentator
-            password_file = "setting/password/TelegramMaster_Commentator/password.txt"
         elif payload.startswith("stars_pass_"):
-            product_name = "Пароль TelegramMaster-PRO"
+            product_name = "TelegramMaster-PRO"  # Пароль для TelegramMaster-PRO
             price = password_TelegramMaster
-            password_file = "setting/password/TelegramMaster-PRO/password.txt"
         elif payload.startswith("stars_com_pass_"):
-            product_name = "Пароль TelegramMaster_Commentator"
+            product_name = "TelegramMaster_Commentator"  # Пароль для TelegramMaster_Commentator
             price = password_TelegramMaster_Commentator
-            password_file = "setting/password/TelegramMaster_Commentator/password.txt"
         elif payload.startswith("stars_training_"):
             product_name = "Настройка ПО"
             price = payment_installation
-            password_file = None
         elif payload.startswith("stars_search_"):
             product_name = "TelegramMaster_Search_GPT"
             price = TelegramMaster_Search_GPT
-            password_file = "setting/password/TelegramMaster_Search_GPT/password.txt"
         else:
             await message.answer("⚠️ Неизвестный тип платежа. Обратитесь к @PyAdminRU")
             return
 
-        logger.info(f"Путь к файлу с паролем: {password_file}")
-        logger.info(f"Файл существует: {os.path.exists(password_file)}")
+        # Проверяем, нужен ли пароль для этого продукта
+        needs_password = not payload.startswith("stars_training_")
 
         # Сохраняем информацию о платеже
         invoice_json = json.dumps({
@@ -116,10 +104,10 @@ async def process_successful_payment(message: types.Message):
         )
 
         # Получаем пароль из базы данных и отправляем пользователю
-        if password_file:
+        if needs_password:
             try:
                 password = get_product_password(product_name)
-                
+
                 if password:
                     await bot.send_message(
                         chat_id=message.from_user.id,

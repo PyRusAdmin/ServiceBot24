@@ -5,6 +5,7 @@ import sys
 
 from loguru import logger  # https://github.com/Delgan/loguru
 
+from db.settings_db import init_password_tables
 from handlers.group_handlers import router as group_handlers
 from handlers.payments.cryptomus_payments.cryptomus_commentator import router as cryptomus_commentator
 from handlers.payments.cryptomus_payments.cryptomus_commentator_password import router as cryptomus_commentator_password
@@ -35,6 +36,10 @@ logger.add("logs/log_ERROR.log", rotation="1 MB", compression="zip", level="ERRO
 
 async def main() -> None:
     """Запуск бота https://t.me/h24service_bot"""
+
+    # Инициализация таблиц базы данных для паролей
+    init_password_tables()
+    logger.info("Таблицы базы данных для паролей инициализированы")
 
     # Админские команды (рассылка, статистика, справка)
     dp.include_router(admin_handlers)

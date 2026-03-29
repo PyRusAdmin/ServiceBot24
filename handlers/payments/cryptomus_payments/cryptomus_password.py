@@ -4,11 +4,10 @@ import json
 import uuid
 
 from aiogram import F, Router, types
-from aiogram.types import FSInputFile
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from loguru import logger  # Логирование с помощью loguru
 
-from db.settings_db import save_payment_info, add_user_if_not_exists, is_user_in_db
+from db.settings_db import save_payment_info, add_user_if_not_exists, is_user_in_db, get_product_password
 from handlers.payments.cryptomus_payments.cryptomus_commentator import make_request
 from handlers.payments.products_goods_services import password_TelegramMaster
 from keyboards.user_keyboards import start_menu
@@ -17,7 +16,7 @@ from system.dispatcher import bot, ADMIN_CHAT_ID
 
 router = Router(name=__name__)
 
-product = "Пароль обновления: TelegramMaster-PRO"
+product = "Пароль TelegramMaster-PRO"
 
 
 # Обработчик для создания счета и отправки кнопки "Проверить оплату"
@@ -76,14 +75,29 @@ async def check_payment_handler(callback_query: types.CallbackQuery):
             # Запись в базу данных пользователя, который оплатил счет в крипте
             save_payment_info(callback_query.from_user.id, callback_query.from_user.first_name,
                               callback_query.from_user.last_name, callback_query.from_user.username, invoice_json,
-                              "Пароль обновления: TelegramMaster-PRO", date, "succeeded")
-            # Отправляем файл и сообщение об успешной оплате
-            await bot.send_document(chat_id=callback_query.from_user.id,
-                                    document=FSInputFile("setting/password/TelegramMaster-PRO/password.txt"),
-                                    caption=message_check_payment(product_price=password_TelegramMaster,
-                                                                  product=product),
-                                    reply_markup=start_menu()  # Отправляемся в главное меню
-                                    )
+                              "Пароль TelegramMaster-PRO", date, "succeeded")
+            
+            # Получаем пароль из базы данных
+            password = get_product_password("TelegramMaster-PRO")
+            
+            if password:
+                caption = (f"✅ <b>Платеж на сумму {password_TelegramMaster} руб прошел успешно‼️</b>\n\n"
+                           f"📦 Продукт: <b>{product}</b>\n\n"
+                           f"🔑 <b>Ваш пароль:</b>\n"
+                           f"<code>{password}</code>\n\n"
+                           f"{message_check_payment(product_price=password_TelegramMaster, product=product)}")
+            else:
+                caption = (f"✅ <b>Платеж на сумму {password_TelegramMaster} руб прошел успешно‼️</b>\n\n"
+                           f"⚠️ <b>Внимание!</b> Пароль еще не установлен администратором.\n\n"
+                           f"Пожалуйста, обратитесь к @PyAdminRU")
+            
+            await bot.send_message(
+                chat_id=callback_query.from_user.id,
+                text=caption,
+                reply_markup=start_menu(),  # Отправляемся в главное меню
+                parse_mode="HTML"
+            )
+            
             # Проверяем наличие пользователя в базе данных
             result = is_user_in_db(callback_query.from_user.id)
             if result is None:

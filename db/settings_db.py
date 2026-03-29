@@ -116,7 +116,7 @@ def save_user_activity(user_id, first_name, last_name, username, date):
         # Проверяем, существует ли пользователь
         cursor.execute('''SELECT id FROM users_run WHERE user_id = ?''', (user_id,))
         existing = cursor.fetchone()
-        
+
         if existing:
             # Обновляем существующую запись
             cursor.execute('''UPDATE users_run 

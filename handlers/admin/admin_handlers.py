@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 import datetime
 
-from aiogram import F, Router, types
+from aiogram import Router, types
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from loguru import logger
 
-from db.settings_db import get_all_users, is_user_in_db, add_user_to_db, set_product_password, get_product_password
+from db.settings_db import get_all_users, is_user_in_db, add_user_to_db, set_product_password
 from states.states import AdminState
 from system.dispatcher import bot, ADMIN_CHAT_ID
 

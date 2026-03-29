@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 from aiogram import F, Router, types
-from aiogram.types import FSInputFile
 from loguru import logger  # Логирование с помощью loguru
 from yookassa import Payment
 
-from db.settings_db import save_payment_info_user
+from db.settings_db import save_payment_info_user, get_product_password
 from handlers.payment_yookassa import payment_yookassa_com
 from handlers.payments.products_goods_services import TelegramMaster_Search_GPT
 from keyboards.payments_keyboards import payment_keyboard_telegram_master_search_gpt
@@ -41,8 +40,8 @@ async def check_pay_telegram_master_search_gpt(callback_query: types.CallbackQue
     try:
         split_data = callback_query.data.split("_")
         payment_info = Payment.find_one(split_data[1])  # Проверьте статус платежа с помощью API yookassa
+        
         if payment_info.status == "succeeded":  # Обработка статуса платежа
-
             # Запись в базу данных пользователя, который оплатил счет в рублях
             save_payment_info_user(
                 table_name="users_pay_search", user_id=callback_query.from_user.id,
@@ -51,14 +50,27 @@ async def check_pay_telegram_master_search_gpt(callback_query: types.CallbackQue
                 date=payment_info.captured_at, status="succeeded", price=TelegramMaster_Search_GPT
             )
 
-            # Отправка пароля в Telegram пользователю
-            await bot.send_document(
+            # Получаем пароль из базы данных
+            password = get_product_password("TelegramMaster_Search_GPT")
+            
+            if password:
+                caption = (f"✅ <b>Платеж на сумму {TelegramMaster_Search_GPT} руб прошел успешно‼️</b>\n\n"
+                           f"📦 Продукт: <b>{product}</b>\n\n"
+                           f"🔑 <b>Ваш пароль:</b>\n"
+                           f"<code>{password}</code>\n\n"
+                           f"{message_check_payment(product_price=TelegramMaster_Search_GPT, product=product)}")
+            else:
+                caption = (f"✅ <b>Платеж на сумму {TelegramMaster_Search_GPT} руб прошел успешно‼️</b>\n\n"
+                           f"⚠️ <b>Внимание!</b> Пароль еще не установлен администратором.\n\n"
+                           f"Пожалуйста, обратитесь к @PyAdminRU")
+            
+            await bot.send_message(
                 chat_id=callback_query.from_user.id,
-                document=FSInputFile("setting/password/TelegramMaster_Search_GPT/password.txt"),
-                caption=message_check_payment(product_price=TelegramMaster_Search_GPT, product=product),
-                reply_markup=start_menu()  # Отправляемся в главное меню
+                text=caption,
+                reply_markup=start_menu(),  # Отправляемся в главное меню
+                parse_mode="HTML"
             )
         else:
-            await bot.send_message(callback_query.message.chat.id, "Ошибка оплаты")
+            await bot.send_message(callback_query.message.chat.id, "❌ Платеж еще не оплачен. Пожалуйста, завершите оплату и нажмите кнопку 'Проверить оплату' еще раз.")
     except Exception as e:
         logger.exception(e)
