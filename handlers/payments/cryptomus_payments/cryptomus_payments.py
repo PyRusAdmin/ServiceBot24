@@ -14,31 +14,50 @@ from db.settings_db import (
     save_payment_info, add_user_if_not_exists, is_user_in_db, get_product_password, save_payment_info_user
 )
 from handlers.payments.products_goods_services import (
-    TelegramMaster_Commentator, TelegramMaster, TelegramMaster_Search_GPT, payment_installation
+    TelegramMaster_Commentator, TelegramMaster, TelegramMaster_Search_GPT
 )
 from handlers.payments.products_goods_services import password_TelegramMaster_Commentator, password_TelegramMaster
 from keyboards.user_keyboards import start_menu
 from messages.messages import message_check_payment
-from system.dispatcher import CRYPTOMUS_API_KEY, CRYPTOMUS_MERCHANT_ID
-from system.dispatcher import bot, ADMIN_CHAT_ID
+from system.dispatcher import CRYPTOMUS_API_KEY, CRYPTOMUS_MERCHANT_ID, bot, ADMIN_CHAT_ID
 
 router = Router(name=__name__)
+
+
+async def make_request(url, invoice_data):
+    """Отправка запроса к API Cryptomus"""
+    async with aiohttp.ClientSession() as session:
+        async with session.post(url, json=invoice_data) as response:
+            return await response.json()
+
+
+async def get_payment_info(callback_query):
+    """Получение информации о счете для оплаты криптовалютой"""
+    return await make_request(
+        url="https://api.cryptomus.com/v1/payment/info",
+        invoice_data={
+            "uuid": callback_query.data.split("_")[2]  # Извлекаем UUID счета из callback_data
+        },
+    )
+
+
+async def format_payment_info(payment_info):
+    """Форматирование информации о счете для оплаты криптовалютой"""
+    return await make_request(
+        url="https://api.cryptomus.com/v1/payment",
+        invoice_data={
+            "amount": f"{payment_info}",  # Сумма оплаты в криптовалюте
+            "currency": "RUB",  # Валюта
+            "order_id": str(uuid.uuid4())  # Номер заказа
+        },
+    )
 
 
 @router.callback_query(F.data == "payment_crypta_pas_training_handler")
 async def payment_crypta_pas_training_handler(callback_query: types.CallbackQuery):
     """Оплата установки и обучения криптой"""
 
-    invoice_data = await make_request(
-        url="https://api.cryptomus.com/v1/payment",
-        invoice_data={
-            "amount": f"{payment_installation}",
-            "currency": "RUB",
-            "order_id": str(uuid.uuid4())
-        },
-    )
-
-    logger.info(f"Счет для оплаты криптовалютой: {invoice_data}")
+    invoice_data = format_payment_info(payment_info)
     # Создаем кнопку "Проверить оплату"
     check_payment_button = InlineKeyboardButton(
         text="Проверить оплату",
@@ -61,15 +80,9 @@ async def payment_crypta_pas_training_handler(callback_query: types.CallbackQuer
 @router.callback_query(F.data.startswith("check_paymentT_"))
 async def check_invoice_paid_training(callback_query: types.CallbackQuery):
     """Проверка счета на оплаченность"""
-    # invoice_uuid = callback_query.data.split("_")[2]  # Извлекаем UUID счета из callback_data
-    # logger.info(f"Проверка статуса оплаты по UUID: {invoice_uuid}")
     # Проверяем статус оплаты
     try:
-        # invoice_data = await make_request(
-        #     url="https://api.cryptomus.com/v1/payment/info",
-        #     invoice_data={"uuid": id},
-        # )
-        invoice_data = await get_invoice_data(callback_query)
+        invoice_data = await get_payment_info(callback_query)
         if invoice_data['result']['payment_status'] in ('paid', 'paid_over'):
             date = datetime.datetime.now().strftime("%Y-%m-%d")
             invoice_json = json.dumps(invoice_data)  # Преобразуем словарь в строку JSON
@@ -109,16 +122,7 @@ product_telegram_search = "TelegramMaster-Search-GPT"
 async def payment_crypta_pas_program_handler_com(callback_query: types.CallbackQuery):
     """Оплата TelegramMaster-Search-GPT"""
     try:
-        invoice_data = await make_request(
-            url="https://api.cryptomus.com/v1/payment",
-            invoice_data={
-                "amount": f"{TelegramMaster_Search_GPT}",  # Сумма оплаты в криптовалюте за TelegramMaster_Commentator
-                "currency": "RUB",
-                "order_id": str(uuid.uuid4())
-            },
-        )
-        logger.info(f"Счет для оплаты криптовалютой: {invoice_data}")
-
+        invoice_data = format_payment_info(payment_info)
         # Создаем кнопку "Проверить оплату"
         check_payment_button = InlineKeyboardButton(
             text="Проверить оплату",
@@ -143,15 +147,9 @@ async def payment_crypta_pas_program_handler_com(callback_query: types.CallbackQ
 @router.callback_query(F.data.startswith("CheckPayTMSearchGPTCrypta"))
 async def check_invoice_paid_program_com_tm_search_gpt_crypta(callback_query: types.CallbackQuery):
     """Ручная проверка статуса оплаты TelegramMaster-Search-GPT"""
-    # invoice_uuid = callback_query.data.split("_")[1]  # Извлекаем UUID счета из callback_data
-    # logger.info(f"Проверка статуса оплаты по UUID: {invoice_uuid}")
     # Проверяем статус оплаты
     try:
-        # invoice_data = await make_request(
-        #     url="https://api.cryptomus.com/v1/payment/info",
-        #     invoice_data={"uuid": invoice_uuid},
-        # )
-        invoice_data = await get_invoice_data(callback_query)
+        invoice_data = await get_payment_info(callback_query)
         if invoice_data['result']['payment_status'] in ('paid', 'paid_over'):
             # Если оплата прошла успешно
             invoice_json = json.dumps(invoice_data)  # Преобразуем словарь в строку JSON
@@ -207,16 +205,7 @@ product_telegram_master_pros = "TelegramMaster-PRO"
 async def payment_crypta_pas_program_handler(callback_query: types.CallbackQuery):
     """Оплата TelegramMaster-PRO криптой"""
 
-    invoice_data = await make_request(
-        url="https://api.cryptomus.com/v1/payment",
-        invoice_data={
-            "amount": f"{TelegramMaster}",  # Сумма оплаты в криптовалюте за TelegramMaster
-            "currency": "RUB",
-            "order_id": str(uuid.uuid4())
-        },
-    )
-    logger.info(f"Счет для оплаты криптовалютой: {invoice_data}")
-
+    invoice_data = format_payment_info(payment_info)
     # Создаем кнопку "Проверить оплату"
     check_payment_button = InlineKeyboardButton(
         text="Проверить оплату",
@@ -239,15 +228,9 @@ async def payment_crypta_pas_program_handler(callback_query: types.CallbackQuery
 @router.callback_query(F.data.startswith("check_paymentP_"))
 async def check_invoice_paid_program(callback_query: types.CallbackQuery):
     """Ручная проверка статуса оплаты"""
-    # invoice_uuid = callback_query.data.split("_")[2]  # Извлекаем UUID счета из callback_data
-    # logger.info(f"Проверка статуса оплаты по UUID: {invoice_uuid}")
     # Проверяем статус оплаты
     try:
-        # invoice_data = await make_request(
-        #     url="https://api.cryptomus.com/v1/payment/info",
-        #     invoice_data={"uuid": invoice_uuid},
-        # )
-        invoice_data = await get_invoice_data(callback_query)
+        invoice_data = await get_payment_info(callback_query)
         if invoice_data['result']['payment_status'] in ('paid', 'paid_over'):
             # Если оплата прошла успешно
             date = datetime.datetime.now().strftime("%Y-%m-%d")
@@ -313,16 +296,7 @@ product_telegram_master_pro = "Пароль TelegramMaster-PRO"
 async def buy_handler(callback_query: types.CallbackQuery):
     """Оплата пароля TelegramMaster-PRO криптой"""
 
-    # Создаем счет для оплаты
-    invoice_data = await make_request(
-        url="https://api.cryptomus.com/v1/payment",
-        invoice_data={
-            "amount": f"{password_TelegramMaster}",
-            "currency": "RUB",
-            "order_id": str(uuid.uuid4())
-        },
-    )
-    logger.info(f"Счет для оплаты криптовалютой: {invoice_data}")
+    invoice_data = format_payment_info(payment_info)
     # Создаем кнопку "Проверить оплату"
     check_payment_button = InlineKeyboardButton(
         text="Проверить оплату",
@@ -348,15 +322,9 @@ async def buy_handler(callback_query: types.CallbackQuery):
 @router.callback_query(F.data.startswith("check_paymentPAS_"))
 async def check_payment_handler(callback_query: types.CallbackQuery):
     """Ручная проверка статуса оплаты"""
-    # invoice_uuid = callback_query.data.split("_")[2]  # Извлекаем UUID счета из callback_data
-    # logger.info(f"Проверка статуса оплаты по UUID: {invoice_uuid}")
     # Проверяем статус оплаты
     try:
-        # invoice_data = await make_request(
-        #     url="https://api.cryptomus.com/v1/payment/info",
-        #     invoice_data={"uuid": invoice_uuid},
-        # )
-        invoice_data = await get_invoice_data(callback_query)
+        invoice_data = await get_payment_info(callback_query)
         if invoice_data['result']['payment_status'] in ('paid', 'paid_over'):
             # Если оплата прошла успешно
             date = datetime.datetime.now().strftime("%Y-%m-%d")
@@ -422,16 +390,7 @@ async def check_payment_handler(callback_query: types.CallbackQuery):
 async def buy_handler_commentator(callback_query: types.CallbackQuery):
     """Оплата пароля TelegramMaster_Commentator криптой"""
 
-    # Создаем счет для оплаты
-    invoice_data = await make_request(
-        url="https://api.cryptomus.com/v1/payment",
-        invoice_data={
-            "amount": f"{password_TelegramMaster}",
-            "currency": "RUB",
-            "order_id": str(uuid.uuid4())
-        },
-    )
-    logger.info(f"Счет для оплаты криптовалютой: {invoice_data}")
+    invoice_data = format_payment_info(payment_info)
     # Создаем кнопку "Проверить оплату"
     check_payment_button = InlineKeyboardButton(
         text="Проверить оплату",
@@ -453,38 +412,18 @@ async def buy_handler_commentator(callback_query: types.CallbackQuery):
     )
 
 
-async def get_invoice_data(callback_query):
-    """Получение информации о счете для оплаты криптовалютой"""
-    return await make_request(
-        url="https://api.cryptomus.com/v1/payment/info",
-        invoice_data={
-            "uuid": callback_query.data.split("_")[2]  # Извлекаем UUID счета из callback_data
-        },
-    )
-
-
 # Обработчик для кнопки "Проверить оплату"
 @router.callback_query(F.data.startswith("check_paymentPass_"))
 async def check_payment_handler_commentator(callback_query: types.CallbackQuery):
     """Ручная проверка статуса оплаты"""
-    # invoice_uuid = callback_query.data.split("_")[2]
-    # logger.info(f"Проверка статуса оплаты по UUID: {invoice_uuid}")
     # Проверяем статус оплаты
     try:
-        # invoice_data = await make_request(
-        #     url="https://api.cryptomus.com/v1/payment/info",
-        #     invoice_data={
-        #         "uuid": callback_query.data.split("_")[2]  # Извлекаем UUID счета из callback_data
-        #     },
-        # )
-        invoice_data = await get_invoice_data(callback_query)
+        invoice_data = await get_payment_info(callback_query)
 
         if invoice_data['result']['payment_status'] in ('paid', 'paid_over'):
             # Если оплата прошла успешно
-            # date = datetime.datetime.now().strftime("%Y-%m-%d")
-            # invoice_json = json.dumps(invoice_data)
-            # Запись в базу данных пользователя, который оплатил счет в крипте
-            save_payment_info(
+
+            save_payment_info(  # Запись в базу данных пользователя, который оплатил счет в крипте
                 callback_query.from_user.id,
                 callback_query.from_user.first_name,
                 callback_query.from_user.last_name,
@@ -506,10 +445,6 @@ async def check_payment_handler_commentator(callback_query: types.CallbackQuery)
                 f"<code>{password}</code>\n\n"
                 f"Для возврата в начальное меню нажмите /start"
             )
-            # else:
-            #     caption = (f"✅ <b>Платеж на сумму {password_TelegramMaster_Commentator} руб прошел успешно‼️</b>\n\n"
-            #                f"⚠️ <b>Внимание!</b> Пароль еще не установлен администратором.\n\n"
-            #                f"Пожалуйста, обратитесь к @PyAdminRU")
             await bot.send_message(
                 chat_id=callback_query.from_user.id,
                 text=caption,
@@ -570,15 +505,7 @@ async def make_request(url: str, invoice_data: dict):
 async def payment_crypta_pas_program_handler_com(callback_query: types.CallbackQuery):
     """Оплата TelegramMaster_Commentator криптой"""
 
-    invoice_data = await make_request(
-        url="https://api.cryptomus.com/v1/payment",
-        invoice_data={
-            "amount": f"{TelegramMaster_Commentator}",  # Сумма оплаты в криптовалюте за TelegramMaster_Commentator
-            "currency": "RUB",
-            "order_id": str(uuid.uuid4())
-        },
-    )
-    logger.info(f"Счет для оплаты криптовалютой: {invoice_data}")
+    invoice_data = format_payment_info(payment_info)
 
     # Создаем кнопку "Проверить оплату"
     check_payment_button = InlineKeyboardButton(
@@ -602,16 +529,9 @@ async def payment_crypta_pas_program_handler_com(callback_query: types.CallbackQ
 @router.callback_query(F.data.startswith("check_paymen"))
 async def check_invoice_paid_program_com(callback_query: types.CallbackQuery):
     """Ручная проверка статуса оплаты"""
-    # invoice_uuid = callback_query.data.split("_")[2]  # Извлекаем UUID счета из callback_data
-    # logger.info(f"Проверка статуса оплаты по UUID: {invoice_uuid}")
     # Проверяем статус оплаты
-
     try:
-        # invoice_data = await make_request(
-        #     url="https://api.cryptomus.com/v1/payment/info",
-        #     invoice_data={"uuid": invoice_uuid},
-        # )
-        invoice_data = await get_invoice_data(callback_query)
+        invoice_data = await get_payment_info(callback_query)
         if invoice_data['result']['payment_status'] in ('paid', 'paid_over'):
             # Если оплата прошла успешно
             invoice_json = json.dumps(invoice_data)  # Преобразуем словарь в строку JSON
