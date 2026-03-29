@@ -25,6 +25,7 @@ from handlers.user.reference_handlers import router as faq_handler
 from handlers.user.sending_log_file import router as sending_log_file
 from handlers.user.user_account import router as user_account
 from handlers.user.user_handlers import router as user_handlers
+from handlers.admin.admin_handlers import router as admin_handlers
 from system.dispatcher import dp, bot
 
 logger.add("logs/log.log", rotation="1 MB", compression="zip", level="INFO")  # Логирование программы
@@ -33,6 +34,9 @@ logger.add("logs/log_ERROR.log", rotation="1 MB", compression="zip", level="ERRO
 
 async def main() -> None:
     """Запуск бота https://t.me/h24service_bot"""
+
+    # Админские команды (рассылка, статистика, справка)
+    dp.include_router(admin_handlers)
 
     # Кабинет пользователя
     dp.include_router(user_account)

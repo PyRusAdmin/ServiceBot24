@@ -15,7 +15,7 @@ from db.settings_db import save_payment_info_user
 from handlers.payments.products_goods_services import TelegramMaster_Search_GPT
 from keyboards.user_keyboards import start_menu
 from messages.messages import message_check_payment
-from system.dispatcher import bot
+from system.dispatcher import bot, CRYPTOMUS_API_KEY, CRYPTOMUS_MERCHANT_ID
 
 router = Router(name=__name__)
 
@@ -26,10 +26,10 @@ product = "TelegramMaster-Search-GPT"
 
 async def make_request(url: str, invoice_data: dict):
     encoded_data = base64.b64encode(json.dumps(invoice_data).encode("utf-8")).decode("utf-8")
-    signature = hashlib.md5(f"{encoded_data}{settings.CRYPTOMUS_API_KEY}".encode("utf-8")).hexdigest()
+    signature = hashlib.md5(f"{encoded_data}{CRYPTOMUS_API_KEY}".encode("utf-8")).hexdigest()
 
     async with aiohttp.ClientSession(headers={
-        "merchant": settings.CRYPTOMUS_MERCHANT_ID,
+        "merchant": CRYPTOMUS_MERCHANT_ID,
         "sign": signature,
     }) as session:
         async with session.post(url=url, json=invoice_data) as response:

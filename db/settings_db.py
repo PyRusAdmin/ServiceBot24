@@ -175,3 +175,25 @@ def add_new_group_member(chat_id, chat_title, user_id, username, first_name, las
                           VALUES (?, ?, ?, ?, ?, ?, ?)''',
                        (chat_id, chat_title, user_id, username, first_name, last_name, date_now))
         conn.commit()
+
+
+def get_all_users():
+    """
+    Получает всех пользователей из таблицы users_run
+    :return: список словарей с данными пользователей [{'user_id': 123, 'first_name': '...', ...}, ...]
+    """
+    with connect_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute('''SELECT user_id, first_name, last_name, username, date FROM users_run''')
+        rows = cursor.fetchall()
+        
+        users = []
+        for row in rows:
+            users.append({
+                'user_id': row[0],
+                'first_name': row[1],
+                'last_name': row[2],
+                'username': row[3],
+                'date': row[4]
+            })
+        return users
