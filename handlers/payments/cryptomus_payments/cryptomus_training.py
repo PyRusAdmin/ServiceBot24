@@ -14,6 +14,7 @@ from system.dispatcher import bot, ADMIN_CHAT_ID
 
 router = Router(name=__name__)
 
+
 @router.callback_query(F.data == "payment_crypta_pas_training_handler")
 async def payment_crypta_pas_training_handler(callback_query: types.CallbackQuery):
     """Оплата установки и обучения криптой"""
@@ -88,6 +89,3 @@ async def check_invoice_paid_training(callback_query: types.CallbackQuery):
             chat_id=callback_query.message.chat.id,
             text="⚠️ Произошла ошибка при проверке оплаты. Пожалуйста, попробуйте позже."
         )
-
-
-

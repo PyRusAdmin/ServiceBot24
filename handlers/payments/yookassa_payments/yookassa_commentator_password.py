@@ -64,6 +64,3 @@ async def check_payments_commentator_password(callback_query: types.CallbackQuer
                                                                f"Приобрел пароль от TelegramMaster_Commentator")
     else:
         await bot.send_message(callback_query.message.chat.id, "Payment failed.")
-
-
-

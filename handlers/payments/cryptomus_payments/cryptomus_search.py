@@ -116,6 +116,3 @@ async def check_invoice_paid_program_com_tm_search_gpt_crypta(callback_query: ty
             chat_id=callback_query.message.chat.id,
             text="⚠️ Произошла ошибка при проверке оплаты. Пожалуйста, попробуйте позже."
         )
-
-
-

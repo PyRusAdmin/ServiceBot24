@@ -57,6 +57,3 @@ async def check_payment_program_setup_service(callback_query: types.CallbackQuer
                                "Для возврата в начальное меню, нажмите: /start")
     else:
         await bot.send_message(callback_query.message.chat.id, "Payment failed.")
-
-
-

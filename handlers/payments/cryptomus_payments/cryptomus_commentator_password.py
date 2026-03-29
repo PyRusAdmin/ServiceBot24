@@ -16,6 +16,7 @@ from system.dispatcher import bot
 
 router = Router(name=__name__)
 
+
 # Обработчик для создания счета и отправки кнопки "Проверить оплату"
 @router.callback_query(F.data == "payment_crypta_commentator_pass")
 async def buy_handler_commentator(callback_query: types.CallbackQuery):
@@ -106,6 +107,3 @@ async def check_payment_handler_commentator(callback_query: types.CallbackQuery)
             chat_id=callback_query.message.chat.id,
             text="⚠️ Произошла ошибка при проверке оплаты. Пожалуйста, попробуйте позже."
         )
-
-
-

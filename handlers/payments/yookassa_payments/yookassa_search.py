@@ -62,6 +62,3 @@ async def check_pay_telegram_master_search_gpt(callback_query: types.CallbackQue
             await bot.send_message(callback_query.message.chat.id, "Ошибка оплаты")
     except Exception as e:
         logger.exception(e)
-
-
-

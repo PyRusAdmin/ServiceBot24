@@ -64,6 +64,3 @@ async def check_payment_com(callback_query: types.CallbackQuery):
                                                                f"Приобрел {product}")
     else:
         await bot.send_message(callback_query.message.chat.id, "Payment failed.")
-
-
-

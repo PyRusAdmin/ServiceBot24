@@ -21,6 +21,7 @@ from system.dispatcher import bot
 
 router = Router(name=__name__)
 
+
 @router.callback_query(F.data == "delivery")
 async def buy(callback_query: types.CallbackQuery):
     """Покупка TelegramMaster-PRO"""
@@ -187,6 +188,3 @@ async def get_password(callback: types.CallbackQuery):
                                                                f"Запросил пароль от TelegramMaster-PRO")
     except Exception as e:
         logger.exception(e)
-
-
-

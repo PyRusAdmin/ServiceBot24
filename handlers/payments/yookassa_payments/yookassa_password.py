@@ -69,6 +69,3 @@ async def check_payments(callback_query: types.CallbackQuery, state: FSMContext)
                                                                f"Приобрел пароль от TelegramMaster-PRO")
     else:
         await bot.send_message(callback_query.message.chat.id, "Payment failed.")
-
-
-

@@ -16,7 +16,6 @@ def payment_yookassa_password_commentator_password_keyboard() -> InlineKeyboardM
         [
             InlineKeyboardButton(text=f"💳 Оплатить Yookassa",
                                  callback_data='payment_yookassa_password_commentator_password'),
-            # InlineKeyboardButton(text=f"💳 Оплатить (Крипта)", callback_data=f"payment_crypta_commentator_pass")
         ],
         [InlineKeyboardButton(text='🏠 В начальное меню', callback_data='start_menu_keyboard')],
     ]
@@ -28,7 +27,6 @@ def payment_keyboard_telegram_master_search_gpt_1() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(inline_keyboard=[
         [
             InlineKeyboardButton(text="💳 Оплатить Yookassa", callback_data='payment_yookassa_Search_GPT'),
-            # InlineKeyboardButton(text="💳 Оплатить (Крипта)", callback_data='payment_crypta_Search_GPT'),
         ],
         [InlineKeyboardButton(text='🏠 В начальное меню', callback_data='start_menu_keyboard')],
     ]
@@ -40,7 +38,6 @@ def payment_keyboard_password() -> InlineKeyboardMarkup:
     rows = [
         [
             InlineKeyboardButton(text=f"💳 Оплатить Yookassa", callback_data='payment_yookassa_password'),
-            # InlineKeyboardButton(text=f"💳 Оплатить (Крипта)", callback_data=f"payment_crypta_pas")
         ],
         [InlineKeyboardButton(text='🏠 В начальное меню', callback_data='start_menu_keyboard')],
     ]
@@ -53,7 +50,6 @@ def purchasing_a_program_setup_service() -> InlineKeyboardMarkup:
     rows = [
         [
             InlineKeyboardButton(text=f"💳 Оплатить Yookassa", callback_data='payment_yookassa_training'),
-            # InlineKeyboardButton(text=f"💳 Оплатить (Крипта)", callback_data=f"payment_crypta_pas_training_handler")
         ],
         [InlineKeyboardButton(text='🏠 В начальное меню', callback_data='start_menu_keyboard')],
     ]
@@ -66,7 +62,6 @@ def payment_keyboard_com() -> InlineKeyboardMarkup:
     rows = [
         [
             InlineKeyboardButton(text="💳 Оплатить Yookassa", callback_data='payment_yookassa_commentator'),
-            # InlineKeyboardButton(text="💳 Оплатить (Крипта)", callback_data="payment_crypta_commentator"),
         ],
         [InlineKeyboardButton(text='🏠 В начальное меню', callback_data='start_menu_keyboard')],
     ]
@@ -79,7 +74,6 @@ def payment_keyboard() -> InlineKeyboardMarkup:
     rows = [
         [
             InlineKeyboardButton(text=f"💳 Оплатить Yookassa", callback_data='payment_yookassa_program'),
-            # InlineKeyboardButton(text=f"💳 Оплатить (Крипта)", callback_data=f"payment_crypta_pas_program"),
         ],
         [InlineKeyboardButton(text='🏠 В начальное меню', callback_data='start_menu_keyboard')],
     ]

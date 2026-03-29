@@ -100,6 +100,3 @@ async def check_invoice_paid_program(callback_query: types.CallbackQuery):
             chat_id=callback_query.message.chat.id,
             text="⚠️ Произошла ошибка при проверке оплаты. Пожалуйста, попробуйте позже."
         )
-
-
-

@@ -108,6 +108,3 @@ async def check_payment_handler(callback_query: types.CallbackQuery):
             chat_id=callback_query.message.chat.id,
             text="⚠️ Произошла ошибка при проверке оплаты. Пожалуйста, попробуйте позже."
         )
-
-
-
