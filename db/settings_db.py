@@ -385,15 +385,15 @@ def get_maxmaster_password() -> str | None:
 
 # Функции для ServerRent
 def add_server_rent(
-    user_id: int,
-    username: str,
-    first_name: str,
-    last_name: str,
-    months: int,
-    payment_amount: float,
-    payment_method: str,
-    start_date: datetime.datetime,
-    end_date: datetime.datetime
+        user_id: int,
+        username: str,
+        first_name: str,
+        last_name: str,
+        months: int,
+        payment_amount: float,
+        payment_method: str,
+        start_date: datetime.datetime,
+        end_date: datetime.datetime
 ) -> int:
     """
     Добавляет запись об аренде сервера
@@ -473,12 +473,12 @@ def deactivate_server_rent(rent_id: int) -> bool:
 
 # Функции для MaxMasterSale
 def add_maxmaster_sale(
-    user_id: int,
-    username: str,
-    first_name: str,
-    last_name: str,
-    payment_amount: float,
-    payment_method: str
+        user_id: int,
+        username: str,
+        first_name: str,
+        last_name: str,
+        payment_amount: float,
+        payment_method: str
 ) -> int:
     """
     Добавляет запись о продаже MaxMaster

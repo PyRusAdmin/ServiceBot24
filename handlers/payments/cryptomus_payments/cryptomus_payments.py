@@ -24,10 +24,18 @@ from system.dispatcher import CRYPTOMUS_API_KEY, CRYPTOMUS_MERCHANT_ID, bot, ADM
 router = Router(name=__name__)
 
 
-async def make_request(url, invoice_data):
+async def make_request(url: str, invoice_data: dict):
     """Отправка запроса к API Cryptomus"""
-    async with aiohttp.ClientSession() as session:
-        async with session.post(url, json=invoice_data) as response:
+    async with aiohttp.ClientSession(headers={
+        "merchant": CRYPTOMUS_MERCHANT_ID,
+        "sign": hashlib.md5(
+            f"{base64.b64encode(json.dumps(invoice_data).encode("utf-8")).decode("utf-8")}{CRYPTOMUS_API_KEY}".encode(
+                "utf-8")).hexdigest(),
+    }) as session:
+        async with session.post(url=url, json=invoice_data) as response:
+            if not response.ok:
+                raise ValueError(response.reason)
+
             return await response.json()
 
 
@@ -67,17 +75,49 @@ def keyboard_check_payment(callback_data_check_payment):
     )
 
 
+def message_payment_fo_admin(callback_query, name_goods):
+    """
+    Сообщение админу о том, что пользователь оплатил счет
+
+    :param callback_query: CallbackQuery - объект callback_query
+    :param name_goods: str - название товара
+    """
+    return (
+        f"Пользователь:\n"
+        f"ID {callback_query.from_user.id},\n"
+        f"Username: @{callback_query.from_user.username},\n"
+        f"Имя: {callback_query.from_user.first_name},\n"
+        f"Фамилия: {callback_query.from_user.last_name},\n\n"
+        f"Приобрел {name_goods}"
+    )
+
+
+def message_payment_for_user(payment_info, name_goods):
+    """
+    Сообщение пользователю о том, что он оплатил счет
+
+    :param callback_query: CallbackQuery - объект callback_query
+    :param name_goods: str - название товара
+    """
+    return (
+        f"💳 <b>Счет для оплаты криптовалютой</b> 💳\n\n"
+        f"🌐 Вы собираетесь приобрести <b>{name_goods}</b>. Пожалуйста, воспользуйтесь ссылкой ниже для оплаты:\n"
+        f"🔗 <a href='{format_payment_info(payment_info)['result']['url']}'>Перейти к оплате</a>\n\n"
+        f"⚠️ <b>Важная информация:</b> после завершения платежа бот автоматически отправит вам все необходимые данные.\n"
+        f"❗️ Обратите внимание, что возврат денежных средств после оплаты криптовалютой невозможен.\n\n"
+        f"💡 Если у вас возникнут вопросы, не стесняйтесь обращаться к нам. Спасибо за доверие! 🙌",
+    )
+
+
 @router.callback_query(F.data == "payment_crypta_pas_training_handler")
 async def payment_crypta_pas_training_handler(callback_query: types.CallbackQuery):
     """Оплата установки и обучения криптой"""
     await bot.send_message(
         chat_id=callback_query.message.chat.id,
-        text=f"💳 <b>Счет для оплаты криптовалютой</b> 💳\n\n"
-             f"🌐 Вы собираетесь приобрести <b>Помощь в настройке ПО (консультация)</b>. Пожалуйста, воспользуйтесь ссылкой ниже для оплаты:\n"
-             f"🔗 <a href='{format_payment_info(payment_info)['result']['url']}'>Перейти к оплате</a>\n\n"
-             f"⚠️ <b>Важная информация:</b> после завершения платежа бот автоматически отправит вам все необходимые данные.\n"
-             f"❗️ Обратите внимание, что возврат денежных средств после оплаты криптовалютой невозможен.\n\n"
-             f"💡 Если у вас возникнут вопросы, не стесняйтесь обращаться к нам. Спасибо за доверие! 🙌",
+        text=message_payment_for_user(
+            payment_info=payment_info,
+            name_goods="Помощь в настройке ПО (консультация)",
+        ),
         reply_markup=keyboard_check_payment(f"check_paymentT_{format_payment_info(payment_info)['result']['uuid']}"),
         parse_mode="HTML"
     )
@@ -101,18 +141,19 @@ async def check_invoice_paid_training(callback_query: types.CallbackQuery):
                 datetime.datetime.now().strftime("%Y-%m-%d"),
                 "succeeded"
             )
-            await bot.send_message(callback_query.from_user.id,
-                                   "Оплата прошла успешно‼️ \nДля согласования даты и времени , свяжитесь с администратором"
-                                   " через личные сообщения, используя указанный никнейм: @PyAdminRU. 🤖🔒\n\n"
-                                   "Для возврата в начальное меню, нажмите: /start")
+            await bot.send_message(
+                chat_id=callback_query.from_user.id,
+                text="Оплата прошла успешно‼️ \nДля согласования даты и времени , свяжитесь с администратором"
+                     " через личные сообщения, используя указанный никнейм: @PyAdminRU. 🤖🔒\n\n"
+                     "Для возврата в начальное меню, нажмите: /start"
+            )
             await bot.send_message(
                 chat_id=ADMIN_CHAT_ID,
-                text=f"Пользователь:\n"
-                     f"ID {callback_query.from_user.id},\n"
-                     f"Username: @{callback_query.from_user.username},\n"
-                     f"Имя: {callback_query.from_user.first_name},\n"
-                     f"Фамилия: {callback_query.from_user.last_name},\n\n"
-                     f"Приобрел 'Помощь в настройке ПО (консультация)' (криптой)")
+                text=message_payment_fo_admin(
+                    callback_query=callback_query,
+                    name_goods="Помощь в настройке ПО (консультация)' (криптой)"
+                )
+            )
         else:
             # Если оплата еще не прошла
             await bot.send_message(
@@ -134,21 +175,16 @@ product_telegram_search = "TelegramMaster-Search-GPT"
 @router.callback_query(F.data == "payment_crypta_Search_GPT")
 async def payment_crypta_pas_program_handler_com(callback_query: types.CallbackQuery):
     """Оплата TelegramMaster-Search-GPT"""
-    try:
-        await bot.send_message(
-            chat_id=callback_query.message.chat.id,
-            text=f"💳 <b>Счет для оплаты криптовалютой</b> 💳\n\n"
-                 f"🌐 Вы собираетесь приобрести <b>TelegramMaster-Search-GPT</b>. Пожалуйста, воспользуйтесь ссылкой ниже для оплаты:\n"
-                 f"🔗 <a href='{format_payment_info(payment_info)['result']['url']}'>Перейти к оплате</a>\n\n"
-                 f"⚠️ <b>Важная информация:</b> после завершения платежа бот автоматически отправит вам все необходимые данные.\n"
-                 f"❗️ Обратите внимание, что возврат денежных средств после оплаты криптовалютой невозможен.\n\n"
-                 f"💡 Если у вас возникнут вопросы, не стесняйтесь обращаться к нам. Спасибо за доверие! 🙌",
-            reply_markup=keyboard_check_payment(
-                f"CheckPayTMSearchGPTCrypta_{format_payment_info(payment_info)['result']['uuid']}"),
-            parse_mode="HTML"
-        )
-    except Exception as e:
-        logger.exception(f"Ошибка в обработке оплаты TelegramMaster_Commentator: {e}")
+    await bot.send_message(
+        chat_id=callback_query.message.chat.id,
+        text=message_payment_for_user(
+            payment_info=payment_info,
+            name_goods="TelegramMaster-Search-GPT",
+        ),
+        reply_markup=keyboard_check_payment(
+            f"CheckPayTMSearchGPTCrypta_{format_payment_info(payment_info)['result']['uuid']}"),
+        parse_mode="HTML"
+    )
 
 
 # Обработчик для кнопки "Проверить оплату TelegramMaster-Search-GPT"
@@ -173,17 +209,15 @@ async def check_invoice_paid_program_com_tm_search_gpt_crypta(callback_query: ty
                 status="succeeded",
                 price=TelegramMaster_Search_GPT
             )
-            # Получаем пароль из базы данных
-            password = get_product_password("TelegramMaster_Search_GPT")
-
-            caption = (f"✅ <b>Платеж на сумму {TelegramMaster_Search_GPT} руб прошел успешно‼️</b>\n\n"
-                       f"📦 Продукт: <b>{product_telegram_search}</b>\n\n"
-                       f"🔑 <b>Ваш пароль:</b>\n"
-                       f"<code>{password}</code>\n\n"
-                       f"{message_check_payment(product_price=TelegramMaster_Search_GPT, product=product_telegram_search)}")
             await bot.send_message(
                 chat_id=callback_query.from_user.id,
-                text=caption,
+                text=(
+                    f"✅ <b>Платеж на сумму {TelegramMaster_Search_GPT} руб прошел успешно‼️</b>\n\n"
+                    f"📦 Продукт: <b>{product_telegram_search}</b>\n\n"
+                    f"🔑 <b>Ваш пароль:</b>\n"
+                    f"<code>{get_product_password("TelegramMaster_Search_GPT")}</code>\n\n"
+                    f"{message_check_payment(product_price=TelegramMaster_Search_GPT, product=product_telegram_search)}"
+                ),
                 reply_markup=start_menu(),  # Отправляемся в главное меню
                 parse_mode="HTML"
             )
@@ -212,12 +246,10 @@ async def payment_crypta_pas_program_handler(callback_query: types.CallbackQuery
     """Оплата TelegramMaster-PRO криптой"""
     await bot.send_message(
         chat_id=callback_query.message.chat.id,
-        text=f"💳 <b>Счет для оплаты криптовалютой</b> 💳\n\n"
-             f"🌐 Вы собираетесь приобрести <b>TelegramMaster-PRO</b>. Пожалуйста, воспользуйтесь ссылкой ниже для оплаты:\n"
-             f"🔗 <a href='{format_payment_info(payment_info)['result']['url']}'>Перейти к оплате</a>\n\n"
-             f"⚠️ <b>Важная информация:</b> после завершения платежа бот автоматически отправит вам все необходимые данные.\n"
-             f"❗️ Обратите внимание, что возврат денежных средств после оплаты криптовалютой невозможен.\n\n"
-             f"💡 Если у вас возникнут вопросы, не стесняйтесь обращаться к нам. Спасибо за доверие! 🙌",
+        text=message_payment_for_user(
+            payment_info=payment_info,
+            name_goods="TelegramMaster-PRO",
+        ),
         reply_markup=keyboard_check_payment(f"check_paymentP_{format_payment_info(payment_info)['result']['uuid']}"),
         parse_mode="HTML"
     )
@@ -241,40 +273,36 @@ async def check_invoice_paid_program(callback_query: types.CallbackQuery):
                 json.dumps(invoice_data),  # Преобразуем словарь в строку JSON
                 "TelegramMaster-PRO",
                 datetime.datetime.now().strftime("%Y-%m-%d"),
-                "succeeded")
-
-            # Получаем пароль из базы данных
-            password = get_product_password("TelegramMaster-PRO")
-
-            caption = (f"✅ <b>Платеж на сумму {TelegramMaster} руб прошел успешно‼️</b>\n\n"
-                       f"📦 Продукт: <b>{product_telegram_master_pros}</b>\n\n"
-                       f"🔑 <b>Ваш пароль:</b>\n"
-                       f"<code>{password}</code>\n\n"
-                       f"{message_check_payment(product_price=TelegramMaster, product=product_telegram_master_pros)}")
-
+                "succeeded"
+            )
             await bot.send_message(
                 chat_id=callback_query.from_user.id,
-                text=caption,
+                text=(
+                    f"✅ <b>Платеж на сумму {TelegramMaster} руб прошел успешно‼️</b>\n\n"
+                    f"📦 Продукт: <b>{product_telegram_master_pros}</b>\n\n"
+                    f"🔑 <b>Ваш пароль:</b>\n"
+                    f"<code>{get_product_password("TelegramMaster-PRO")}</code>\n\n"
+                    f"{message_check_payment(product_price=TelegramMaster, product=product_telegram_master_pros)}"
+                ),
                 reply_markup=start_menu(),  # Отправляемся в главное меню
                 parse_mode="HTML"
             )
-
             result = is_user_in_db(callback_query.from_user.id)
             if result is None:
                 add_user_if_not_exists(callback_query.from_user.id)
-                await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
-                                                                   f"ID {callback_query.from_user.id},\n"
-                                                                   f"Username: @{callback_query.from_user.username},\n"
-                                                                   f"Имя: {callback_query.from_user.first_name},\n"
-                                                                   f"Фамилия: {callback_query.from_user.last_name},\n\n"
-                                                                   f"Приобрел {product_telegram_master_pros} (криптой)")
+                await bot.send_message(
+                    chat_id=ADMIN_CHAT_ID,
+                    text=message_payment_fo_admin(
+                        callback_query=callback_query,
+                        name_goods="TelegramMaster-PRO (криптой)"
+                    )
+                )
         else:
             # Если оплата еще не прошла
             await bot.send_message(
                 chat_id=callback_query.message.chat.id,
                 text="❌ Платеж еще не оплачен. Пожалуйста, завершите оплату и нажмите кнопку 'Проверить оплату' еще раз."
             )
-
     except Exception as e:
         # Обработка ошибок
         logger.error(f"Ошибка при проверке оплаты: {e}")
@@ -296,12 +324,10 @@ async def buy_handler(callback_query: types.CallbackQuery):
     # Отправляем сообщение с кнопкой
     await bot.send_message(
         chat_id=callback_query.message.chat.id,
-        text=f"💳 <b>Счет для оплаты криптовалютой</b> 💳\n\n"
-             f"🌐 Вы собираетесь получить пароль от <b>TelegramMaster-PRO</b>. Пожалуйста, воспользуйтесь ссылкой ниже для оплаты:\n"
-             f"🔗 <a href='{format_payment_info(payment_info)['result']['url']}'>Перейти к оплате</a>\n\n"
-             f"⚠️ <b>Важная информация:</b> после завершения платежа нажмите кнопку 'Проверить оплату'.\n"
-             f"❗️ Обратите внимание, что возврат денежных средств после оплаты криптовалютой невозможен.\n\n"
-             f"💡 Если у вас возникнут вопросы, не стесняйтесь обращаться к нам. Спасибо за доверие! 🙌",
+        text=message_payment_for_user(
+            payment_info=payment_info,
+            name_goods="TelegramMaster-PRO",
+        ),
         reply_markup=keyboard_check_payment(f"check_paymentPAS_{format_payment_info(payment_info)['result']['uuid']}"),
         parse_mode="HTML"
     )
@@ -327,40 +353,35 @@ async def check_payment_handler(callback_query: types.CallbackQuery):
                 datetime.datetime.now().strftime("%Y-%m-%d"),
                 "succeeded"
             )
-
-            # Получаем пароль из базы данных
-            password = get_product_password("TelegramMaster-PRO")
-
-            caption = (f"✅ <b>Платеж на сумму {password_TelegramMaster} руб прошел успешно‼️</b>\n\n"
-                       f"📦 Продукт: <b>{product_telegram_master_pro}</b>\n\n"
-                       f"🔑 <b>Ваш пароль:</b>\n"
-                       f"<code>{password}</code>\n\n"
-                       f"{message_check_payment(product_price=password_TelegramMaster, product=product_telegram_master_pro)}")
-
             await bot.send_message(
                 chat_id=callback_query.from_user.id,
-                text=caption,
+                text=(
+                    f"✅ <b>Платеж на сумму {password_TelegramMaster} руб прошел успешно‼️</b>\n\n"
+                    f"📦 Продукт: <b>{product_telegram_master_pro}</b>\n\n"
+                    f"🔑 <b>Ваш пароль:</b>\n"
+                    f"<code>{get_product_password("TelegramMaster-PRO")}</code>\n\n"
+                    f"{message_check_payment(product_price=password_TelegramMaster, product=product_telegram_master_pro)}"
+                ),
                 reply_markup=start_menu(),  # Отправляемся в главное меню
                 parse_mode="HTML"
             )
-
             # Проверяем наличие пользователя в базе данных
             result = is_user_in_db(callback_query.from_user.id)
             if result is None:
                 add_user_if_not_exists(callback_query.from_user.id)
-                await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
-                                                                   f"ID {callback_query.from_user.id},\n"
-                                                                   f"Username: @{callback_query.from_user.username},\n"
-                                                                   f"Имя: {callback_query.from_user.first_name},\n"
-                                                                   f"Фамилия: {callback_query.from_user.last_name},\n\n"
-                                                                   f"Приобрел пароль от TelegramMaster-PRO (криптой)")
-        else:
-            # Если оплата еще не прошла
-            await bot.send_message(
-                chat_id=callback_query.message.chat.id,
-                text="❌ Платеж еще не оплачен. Пожалуйста, завершите оплату и нажмите кнопку 'Проверить оплату' еще раз."
-            )
-
+                await bot.send_message(
+                    chat_id=ADMIN_CHAT_ID,
+                    text=message_payment_fo_admin(
+                        callback_query=callback_query,
+                        name_goods="TelegramMaster-PRO (криптой)"
+                    )
+                )
+            else:
+                # Если оплата еще не прошла
+                await bot.send_message(
+                    chat_id=callback_query.message.chat.id,
+                    text="❌ Платеж еще не оплачен. Пожалуйста, завершите оплату и нажмите кнопку 'Проверить оплату' еще раз."
+                )
     except Exception as e:
         # Обработка ошибок
         logger.error(f"Ошибка при проверке оплаты: {e}")
@@ -377,15 +398,12 @@ async def check_payment_handler(callback_query: types.CallbackQuery):
 @router.callback_query(F.data == "payment_crypta_commentator_pass")
 async def buy_handler_commentator(callback_query: types.CallbackQuery):
     """Оплата пароля TelegramMaster_Commentator криптой"""
-    # Отправляем сообщение с кнопкой
     await bot.send_message(
         chat_id=callback_query.message.chat.id,
-        text=f"💳 <b>Счет для оплаты криптовалютой</b> 💳\n\n"
-             f"🌐 Вы собираетесь получить пароль от <b>TelegramMaster_Commentator</b>. Пожалуйста, воспользуйтесь ссылкой ниже для оплаты:\n"
-             f"🔗 <a href='{format_payment_info(payment_info)['result']['url']}'>Перейти к оплате</a>\n\n"
-             f"⚠️ <b>Важная информация:</b> после завершения платежа нажмите кнопку 'Проверить оплату'.\n"
-             f"❗️ Обратите внимание, что возврат денежных средств после оплаты криптовалютой невозможен.\n\n"
-             f"💡 Если у вас возникнут вопросы, не стесняйтесь обращаться к нам. Спасибо за доверие! 🙌",
+        text=message_payment_for_user(
+            payment_info=payment_info,
+            name_goods="TelegramMaster_Commentator",
+        ),
         reply_markup=keyboard_check_payment(f"check_paymentPass_{format_payment_info(payment_info)['result']['uuid']}"),
         parse_mode="HTML"
     )
@@ -398,10 +416,8 @@ async def check_payment_handler_commentator(callback_query: types.CallbackQuery)
     # Проверяем статус оплаты
     try:
         invoice_data = await get_payment_info(callback_query)
-
         if invoice_data['result']['payment_status'] in ('paid', 'paid_over'):
             # Если оплата прошла успешно
-
             save_payment_info(  # Запись в базу данных пользователя, который оплатил счет в крипте
                 callback_query.from_user.id,
                 callback_query.from_user.first_name,
@@ -412,41 +428,35 @@ async def check_payment_handler_commentator(callback_query: types.CallbackQuery)
                 datetime.datetime.now().strftime("%Y-%m-%d"),
                 "succeeded"
             )
-            # Получаем пароль из базы данных
-            password = get_product_password("TelegramMaster_Commentator")
-            caption = (
-                f"✅ <b>Платеж на сумму {password_TelegramMaster_Commentator} руб прошел успешно‼️</b>\n\n"
-                f"📦 Продукт: <b>Пароль TelegramMaster_Commentator</b>\n\n"
-                f"🔑 <b>Ваш пароль:</b>\n"
-                f"<code>{password}</code>\n\n"
-                f"Для возврата в начальное меню нажмите /start"
-            )
             await bot.send_message(
                 chat_id=callback_query.from_user.id,
-                text=caption,
+                text=(
+                    f"✅ <b>Платеж на сумму {password_TelegramMaster_Commentator} руб прошел успешно‼️</b>\n\n"
+                    f"📦 Продукт: <b>Пароль TelegramMaster_Commentator</b>\n\n"
+                    f"🔑 <b>Ваш пароль:</b>\n"
+                    f"<code>{get_product_password("TelegramMaster_Commentator")}</code>\n\n"
+                    f"Для возврата в начальное меню нажмите /start"
+                ),
                 reply_markup=start_menu(),  # Отправляемся в главное меню
                 parse_mode="HTML"
             )
-
             # Проверяем наличие пользователя в базе данных
             result = is_user_in_db(callback_query.from_user.id)
             if result is None:
                 add_user_if_not_exists(callback_query.from_user.id)
                 await bot.send_message(
                     chat_id=ADMIN_CHAT_ID,
-                    text=f"Пользователь:\n"
-                         f"ID {callback_query.from_user.id},\n"
-                         f"Username: @{callback_query.from_user.username},\n"
-                         f"Имя: {callback_query.from_user.first_name},\n"
-                         f"Фамилия: {callback_query.from_user.last_name},\n\n"
-                         f"Приобрел пароль от TelegramMaster_Commentator (криптой)"
+                    text=message_payment_fo_admin(
+                        callback_query=callback_query,
+                        name_goods="пароль от TelegramMaster_Commentator (криптой)"
+                    )
                 )
-        else:
-            # Если оплата еще не прошла
-            await bot.send_message(
-                chat_id=callback_query.message.chat.id,
-                text="❌ Платеж еще не оплачен. Пожалуйста, завершите оплату и нажмите кнопку 'Проверить оплату' еще раз."
-            )
+            else:
+                # Если оплата еще не прошла
+                await bot.send_message(
+                    chat_id=callback_query.message.chat.id,
+                    text="❌ Платеж еще не оплачен. Пожалуйста, завершите оплату и нажмите кнопку 'Проверить оплату' еще раз."
+                )
     except Exception as e:
         # Обработка ошибок
         logger.error(f"Ошибка при проверке оплаты: {e}")
@@ -462,32 +472,15 @@ async def check_payment_handler_commentator(callback_query: types.CallbackQuery)
 TelegramMaster_Commentator = "TelegramMaster_Commentator"
 
 
-async def make_request(url: str, invoice_data: dict):
-    encoded_data = base64.b64encode(json.dumps(invoice_data).encode("utf-8")).decode("utf-8")
-    signature = hashlib.md5(f"{encoded_data}{CRYPTOMUS_API_KEY}".encode("utf-8")).hexdigest()
-
-    async with aiohttp.ClientSession(headers={
-        "merchant": CRYPTOMUS_MERCHANT_ID,
-        "sign": signature,
-    }) as session:
-        async with session.post(url=url, json=invoice_data) as response:
-            if not response.ok:
-                raise ValueError(response.reason)
-
-            return await response.json()
-
-
 @router.callback_query(F.data == "payment_crypta_commentator")
 async def payment_crypta_pas_program_handler_com(callback_query: types.CallbackQuery):
     """Оплата TelegramMaster_Commentator криптой"""
     await bot.send_message(
         chat_id=callback_query.message.chat.id,
-        text=f"💳 <b>Счет для оплаты криптовалютой</b> 💳\n\n"
-             f"🌐 Вы собираетесь приобрести <b>TelegramMaster_Commentator</b>. Пожалуйста, воспользуйтесь ссылкой ниже для оплаты:\n"
-             f"🔗 <a href='{format_payment_info(payment_info)['result']['url']}'>Перейти к оплате</a>\n\n"
-             f"⚠️ <b>Важная информация:</b> после завершения платежа бот автоматически отправит вам все необходимые данные.\n"
-             f"❗️ Обратите внимание, что возврат денежных средств после оплаты криптовалютой невозможен.\n\n"
-             f"💡 Если у вас возникнут вопросы, не стесняйтесь обращаться к нам. Спасибо за доверие! 🙌",
+        text=message_payment_for_user(
+            payment_info=payment_info,
+            name_goods="TelegramMaster_Commentator",
+        ),
         reply_markup=keyboard_check_payment(f"check_paymen_{format_payment_info(payment_info)['result']['uuid']}"),
         parse_mode="HTML"
     )
@@ -513,34 +506,27 @@ async def check_invoice_paid_program_com(callback_query: types.CallbackQuery):
                 datetime.datetime.now().strftime("%Y-%m-%d"),
                 "succeeded"
             )
-
-            # Получаем пароль из базы данных
-            password = get_product_password("TelegramMaster_Commentator")
-
-            caption = (f"✅ <b>Платеж на сумму {TelegramMaster_Commentator} руб прошел успешно‼️</b>\n\n"
-                       f"📦 Продукт: <b>{TelegramMaster_Commentator}</b>\n\n"
-                       f"🔑 <b>Ваш пароль:</b>\n"
-                       f"<code>{password}</code>\n\n"
-                       f"{message_check_payment(product_price=TelegramMaster_Commentator, product=TelegramMaster_Commentator)}")
-
             await bot.send_message(
                 chat_id=callback_query.from_user.id,
-                text=caption,
+                text=(
+                    f"✅ <b>Платеж на сумму {TelegramMaster_Commentator} руб прошел успешно‼️</b>\n\n"
+                    f"📦 Продукт: <b>{TelegramMaster_Commentator}</b>\n\n"
+                    f"🔑 <b>Ваш пароль:</b>\n"
+                    f"<code>{get_product_password("TelegramMaster_Commentator")}</code>\n\n"
+                    f"{message_check_payment(product_price=TelegramMaster_Commentator, product=TelegramMaster_Commentator)}"
+                ),
                 reply_markup=start_menu(),  # Отправляемся в главное меню
                 parse_mode="HTML"
             )
-
             result = is_user_in_db(callback_query.from_user.id)
             if result is None:
                 add_user_if_not_exists(callback_query.from_user.id)
                 await bot.send_message(
                     chat_id=ADMIN_CHAT_ID,
-                    text=f"Пользователь:\n"
-                         f"ID {callback_query.from_user.id},\n"
-                         f"Username: @{callback_query.from_user.username},\n"
-                         f"Имя: {callback_query.from_user.first_name},\n"
-                         f"Фамилия: {callback_query.from_user.last_name},\n\n"
-                         f"Приобрел {TelegramMaster_Commentator} (криптой)"
+                    text=message_payment_fo_admin(
+                        callback_query=callback_query,
+                        name_goods="TelegramMaster_Commentator (криптой)"
+                    )
                 )
         else:
             # Если оплата еще не прошла
@@ -556,4 +542,4 @@ async def check_invoice_paid_program_com(callback_query: types.CallbackQuery):
             text="⚠️ Произошла ошибка при проверке оплаты. Пожалуйста, попробуйте позже."
         )
 
-# 564
+# 543
