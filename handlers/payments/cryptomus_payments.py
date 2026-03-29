@@ -253,8 +253,8 @@ async def payment_crypta_pas_program_handler(callback_query: types.CallbackQuery
     await bot.send_message(
         chat_id=callback_query.message.chat.id,
         text=message_payment_for_user(
-            payment_info=TelegramMaster_PRO,
-            name_goods="TelegramMaster-PRO",
+            payment_info=TelegramMaster_PRO.get("price"),
+            name_goods=TelegramMaster_PRO.get("name"),
         ),
         reply_markup=keyboard_check_payment(
             f"check_paymentP_{format_payment_info(TelegramMaster_PRO)['result']['uuid']}"
