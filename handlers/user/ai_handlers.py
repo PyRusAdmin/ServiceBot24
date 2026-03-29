@@ -2,22 +2,18 @@
 from aiogram import F
 from aiogram.enums import ChatAction
 from aiogram.fsm.context import FSMContext
-from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import Message, CallbackQuery
 from groq import AsyncGroq
 
 from db.settings_db import save_user_wish
 from setting.proxy_config import setup_proxy
+from states.states import WishState
 from system.dispatcher import bot, dp, ADMIN_CHAT_ID, api_key, PROXY_USER, PROXY_PASSWORD, PROXY_IP, PROXY_PORT
 
 
 def remove_markdown_symbols(text: str) -> str:
     """Удаляет символы Markdown (* и **) из текста."""
     return text.replace("*", "")
-
-
-class WishState(StatesGroup):
-    waiting_for_wish = State()
 
 
 @dp.callback_query(F.data.startswith("wish"))

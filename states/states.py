@@ -26,3 +26,7 @@ class SomeState(StatesGroup):
         или как шаблон для создания новых состояний.
     """
     some_state = State()  # Пример состояния, можно добавить дополнительные состояния
+
+
+class WishState(StatesGroup):
+    waiting_for_wish = State()
