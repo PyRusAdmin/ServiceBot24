@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import datetime  # Дата
 
-from aiogram import types, F
-from loguru import logger  # Логирование с помощью loguru
 from aiogram import F, Router, types
+from loguru import logger  # Логирование с помощью loguru
+
 from db.settings_db import check_user_payment, is_user_in_db
 from handlers.payments.products_goods_services import (
     TelegramMaster, payment_installation, TelegramMaster_Commentator, password_TelegramMaster_Commentator,
@@ -17,11 +17,11 @@ from keyboards.payments_keyboards import (
 from keyboards.payments_keyboards import purchasing_a_program_setup_service
 from messages.messages import generate_payment_message, generate_payment_message_commentator
 from system.dispatcher import ADMIN_CHAT_ID
-from system.dispatcher import bot, dp
+from system.dispatcher import bot
 
 router = Router(name=__name__)
 
-@dp.callback_query(F.data == "delivery")
+@router.callback_query(F.data == "delivery")
 async def buy(callback_query: types.CallbackQuery):
     """Покупка TelegramMaster-PRO"""
     payment_keyboard_key = payment_keyboard()
@@ -33,7 +33,7 @@ async def buy(callback_query: types.CallbackQuery):
     await bot.send_message(callback_query.message.chat.id, payment_mes, reply_markup=payment_keyboard_key)
 
 
-@dp.callback_query(F.data == "delivery_telegrammaster_search_gpt")
+@router.callback_query(F.data == "delivery_telegrammaster_search_gpt")
 async def buy_com(callback_query: types.CallbackQuery):
     """Покупка TelegramMaster_Search_GPT"""
     payment_mes = ("Купить TelegramMaster_Search_GPT.\n\n"
@@ -45,7 +45,7 @@ async def buy_com(callback_query: types.CallbackQuery):
                            reply_markup=payment_keyboard_telegram_master_search_gpt_1())
 
 
-@dp.callback_query(F.data == "delivery_com")
+@router.callback_query(F.data == "delivery_com")
 async def buy_com(callback_query: types.CallbackQuery):
     """Покупка TelegramMaster_Commentator"""
     payment_mes = ("Купить TelegramMaster_Commentator.\n\n"
@@ -56,7 +56,7 @@ async def buy_com(callback_query: types.CallbackQuery):
     await bot.send_message(callback_query.message.chat.id, payment_mes, reply_markup=payment_keyboard_com())
 
 
-@dp.callback_query(F.data == "purchasing_a_program_setup_service")
+@router.callback_query(F.data == "purchasing_a_program_setup_service")
 async def buy_program_setup_service(callback_query: types.CallbackQuery):
     """Оплата услуг по установке ПО"""
     payment_keyboard_key = purchasing_a_program_setup_service()
@@ -72,7 +72,7 @@ async def buy_program_setup_service(callback_query: types.CallbackQuery):
                                 disable_web_page_preview=True)
 
 
-@dp.callback_query(F.data == "commentator_password")
+@router.callback_query(F.data == "commentator_password")
 async def get_password_tg_com(callback: types.CallbackQuery):
     """Проверка подписки на канал, бот обязательно должен быть админом, ссылка в виде: @master_tg_d"""
     try:
@@ -129,7 +129,7 @@ async def get_password_tg_com(callback: types.CallbackQuery):
         logger.exception(e)
 
 
-@dp.callback_query(F.data == "get_password")
+@router.callback_query(F.data == "get_password")
 async def get_password(callback: types.CallbackQuery):
     """Обработчик команды /get_password для получения пароля для пользователя"""
     try:

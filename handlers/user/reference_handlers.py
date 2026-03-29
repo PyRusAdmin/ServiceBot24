@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
-from aiogram import F
-from aiogram import types
 from aiogram import F, Router, types
+
 from keyboards.user_keyboards import start_menu
 from messages.messages import message_text_faq  # Пояснение для пользователя FAG
-from system.dispatcher import dp, bot  # Подключение к боту и диспетчеру пользователя
+from system.dispatcher import bot  # Подключение к боту и диспетчеру пользователя
 
 router = Router(name=__name__)
 
-@dp.callback_query(F.data == "reference")
+@router.callback_query(F.data == "reference")
 async def faq_handler(callback_query: types.CallbackQuery):
     """Пояснение для пользователя FAG"""
     await bot.edit_message_text(

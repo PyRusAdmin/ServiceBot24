@@ -2,22 +2,22 @@
 import datetime  # Дата
 import json
 import uuid
+
 from aiogram import F, Router, types
-from aiogram import types, F
 from aiogram.types import FSInputFile
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from loguru import logger  # Логирование с помощью loguru
-from aiogram import F, Router, types
+
 from db.settings_db import save_payment_info, add_user_if_not_exists, is_user_in_db
 from handlers.payments.cryptomus_payments.cryptomus_commentator import make_request
 from handlers.payments.products_goods_services import password_TelegramMaster_Commentator, password_TelegramMaster
 from keyboards.user_keyboards import start_menu
-from system.dispatcher import bot, dp
+from system.dispatcher import bot
 
 router = Router(name=__name__)
 
 # Обработчик для создания счета и отправки кнопки "Проверить оплату"
-@dp.callback_query(F.data == "payment_crypta_commentator_pass")
+@router.callback_query(F.data == "payment_crypta_commentator_pass")
 async def buy_handler_commentator(callback_query: types.CallbackQuery):
     """Оплата пароля TelegramMaster_Commentator криптой"""
 
@@ -53,7 +53,7 @@ async def buy_handler_commentator(callback_query: types.CallbackQuery):
 
 
 # Обработчик для кнопки "Проверить оплату"
-@dp.callback_query(F.data.startswith("check_paymentPass_"))
+@router.callback_query(F.data.startswith("check_paymentPass_"))
 async def check_payment_handler_commentator(callback_query: types.CallbackQuery):
     """Ручная проверка статуса оплаты"""
     invoice_uuid = callback_query.data.split("_")[2]  # Извлекаем UUID счета из callback_data

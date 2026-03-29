@@ -3,18 +3,18 @@ import datetime  # Дата
 import json
 import uuid
 
-from aiogram import types, F
+from aiogram import F, Router, types
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from loguru import logger  # Логирование с помощью loguru
-from aiogram import F, Router, types
+
 from db.settings_db import save_payment_info
 from handlers.payments.cryptomus_payments.cryptomus_commentator import make_request
 from handlers.payments.products_goods_services import payment_installation
-from system.dispatcher import bot, dp, ADMIN_CHAT_ID
+from system.dispatcher import bot, ADMIN_CHAT_ID
 
 router = Router(name=__name__)
 
-@dp.callback_query(F.data == "payment_crypta_pas_training_handler")
+@router.callback_query(F.data == "payment_crypta_pas_training_handler")
 async def payment_crypta_pas_training_handler(callback_query: types.CallbackQuery):
     """Оплата установки и обучения криптой"""
 
@@ -47,7 +47,7 @@ async def payment_crypta_pas_training_handler(callback_query: types.CallbackQuer
 
 
 # Обработчик для кнопки "Проверить оплату"
-@dp.callback_query(F.data.startswith("check_paymentT_"))
+@router.callback_query(F.data.startswith("check_paymentT_"))
 async def check_invoice_paid_training(callback_query: types.CallbackQuery):
     """Проверка счета на оплаченность"""
     invoice_uuid = callback_query.data.split("_")[2]  # Извлекаем UUID счета из callback_data

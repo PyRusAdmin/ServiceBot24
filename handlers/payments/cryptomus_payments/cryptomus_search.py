@@ -4,18 +4,18 @@ import datetime  # Дата
 import hashlib
 import json
 import uuid
-from aiogram import F, Router, types
+
 import aiohttp
-from aiogram import types, F
+from aiogram import F, Router, types
 from aiogram.types import FSInputFile
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from loguru import logger  # Логирование с помощью loguru
-from aiogram import F, Router, types
+
 from db.settings_db import save_payment_info_user
 from handlers.payments.products_goods_services import TelegramMaster_Search_GPT
 from keyboards.user_keyboards import start_menu
 from messages.messages import message_check_payment
-from system.dispatcher import bot, dp
+from system.dispatcher import bot
 
 router = Router(name=__name__)
 
@@ -39,7 +39,7 @@ async def make_request(url: str, invoice_data: dict):
             return await response.json()
 
 
-@dp.callback_query(F.data == "payment_crypta_Search_GPT")
+@router.callback_query(F.data == "payment_crypta_Search_GPT")
 async def payment_crypta_pas_program_handler_com(callback_query: types.CallbackQuery):
     """Оплата TelegramMaster-Search-GPT"""
     try:
@@ -74,7 +74,7 @@ async def payment_crypta_pas_program_handler_com(callback_query: types.CallbackQ
 
 
 # Обработчик для кнопки "Проверить оплату TelegramMaster-Search-GPT"
-@dp.callback_query(F.data.startswith("CheckPayTMSearchGPTCrypta"))
+@router.callback_query(F.data.startswith("CheckPayTMSearchGPTCrypta"))
 async def check_invoice_paid_program_com_tm_search_gpt_crypta(callback_query: types.CallbackQuery):
     """Ручная проверка статуса оплаты TelegramMaster-Search-GPT"""
     invoice_uuid = callback_query.data.split("_")[1]  # Извлекаем UUID счета из callback_data

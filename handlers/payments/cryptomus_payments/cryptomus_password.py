@@ -2,18 +2,18 @@
 import datetime  # Дата
 import json
 import uuid
+
 from aiogram import F, Router, types
-from aiogram import types, F
 from aiogram.types import FSInputFile
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from loguru import logger  # Логирование с помощью loguru
-from aiogram import F, Router, types
+
 from db.settings_db import save_payment_info, add_user_if_not_exists, is_user_in_db
 from handlers.payments.cryptomus_payments.cryptomus_commentator import make_request
 from handlers.payments.products_goods_services import password_TelegramMaster
 from keyboards.user_keyboards import start_menu
 from messages.messages import message_check_payment
-from system.dispatcher import bot, dp, ADMIN_CHAT_ID
+from system.dispatcher import bot, ADMIN_CHAT_ID
 
 router = Router(name=__name__)
 
@@ -21,7 +21,7 @@ product = "Пароль обновления: TelegramMaster-PRO"
 
 
 # Обработчик для создания счета и отправки кнопки "Проверить оплату"
-@dp.callback_query(F.data == "payment_crypta_pas")
+@router.callback_query(F.data == "payment_crypta_pas")
 async def buy_handler(callback_query: types.CallbackQuery):
     """Оплата пароля TelegramMaster-PRO криптой"""
 
@@ -57,7 +57,7 @@ async def buy_handler(callback_query: types.CallbackQuery):
 
 
 # Обработчик для кнопки "Проверить оплату"
-@dp.callback_query(F.data.startswith("check_paymentPAS_"))
+@router.callback_query(F.data.startswith("check_paymentPAS_"))
 async def check_payment_handler(callback_query: types.CallbackQuery):
     """Ручная проверка статуса оплаты"""
     invoice_uuid = callback_query.data.split("_")[2]  # Извлекаем UUID счета из callback_data

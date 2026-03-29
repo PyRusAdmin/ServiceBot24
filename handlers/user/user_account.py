@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from aiogram import types, F
 from aiogram import F, Router, types
+
 from db.settings_db import UserPayment
 from keyboards.user_keyboards import user_account_keyboard, start_menu
 from system.dispatcher import bot, dp
@@ -87,7 +87,7 @@ def user_has_product(user_id: int, product_name: str) -> bool:
     ).exists()
 
 
-@dp.callback_query(F.data == "my_orders")
+@router.callback_query(F.data == "my_orders")
 async def my_orders_handlers(callback: types.CallbackQuery):
     """Покупки пользователя"""
 

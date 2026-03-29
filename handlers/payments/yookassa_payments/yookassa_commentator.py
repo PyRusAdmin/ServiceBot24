@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
-from aiogram import types, F
+from aiogram import F, Router, types
 from aiogram.types import FSInputFile
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from loguru import logger  # Логирование с помощью loguru
 from yookassa import Payment
-from aiogram import F, Router, types
+
 from db.settings_db import save_payment_info, add_user_if_not_exists, is_user_in_db
 from handlers.payment_yookassa import payment_yookassa_com
 from handlers.payments.products_goods_services import TelegramMaster_Commentator
 from keyboards.user_keyboards import start_menu
 from messages.messages import message_payment, message_check_payment
-from system.dispatcher import bot, dp, ADMIN_CHAT_ID
+from system.dispatcher import bot, ADMIN_CHAT_ID
 
 router = Router(name=__name__)
 
@@ -18,7 +18,7 @@ router = Router(name=__name__)
 product = "TelegramMaster_Commentator"
 
 
-@dp.callback_query(F.data == "payment_yookassa_commentator")
+@router.callback_query(F.data == "payment_yookassa_commentator")
 async def payment_yookassa_program_com(callback_query: types.CallbackQuery):
     """Отправка ссылки для оплаты TelegramMaster_Commentator"""
     payment_url, payment_id = payment_yookassa_com(
@@ -35,7 +35,7 @@ async def payment_yookassa_program_com(callback_query: types.CallbackQuery):
                            reply_markup=keyboard, parse_mode="HTML")
 
 
-@dp.callback_query(F.data.startswith("cccheck_pay"))
+@router.callback_query(F.data.startswith("cccheck_pay"))
 async def check_payment_com(callback_query: types.CallbackQuery):
     """"Проверка платежа TelegramMaster_Commentator"""
     split_data = callback_query.data.split("_")

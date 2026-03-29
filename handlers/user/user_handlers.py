@@ -1,28 +1,27 @@
 # -*- coding: utf-8 -*-
 import datetime  # Дата
 
-from aiogram import F
-from aiogram import types
+from aiogram import F, Router, types
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from loguru import logger
-from aiogram import F, Router, types
+
 from db.settings_db import save_user_activity, add_user_to_db, is_user_in_db
 from keyboards.user_keyboards import greeting_keyboards, payment_keyboards  # Клавиатуры поста приветствия
 from messages.messages import greeting_post, payment_goods_and_services_post  # Пояснение для пользователя FAG
 from states.states import SomeState
-from system.dispatcher import dp, bot  # Подключение к боту и диспетчеру пользователя
+from system.dispatcher import bot  # Подключение к боту и диспетчеру пользователя
 
 router = Router(name=__name__)
 
-@dp.message(Command("pass"))
+@router.message(Command("pass"))
 async def send_pass(message: types.Message, state: FSMContext):
     """Обработчик команды /pass, для отправки пароля в бота"""
     await message.answer(f'Введите пароль: {message.text}')
     await state.set_state(SomeState.some_state)  # Обновляем состояние
 
 
-@dp.message(SomeState.some_state)
+@router.message(SomeState.some_state)
 async def greeting(message: types.Message, state: FSMContext):
     """Обработчик состояния some_state, он же пост приветствия"""
     text = message.text  # Получаем текст сообщения
@@ -32,7 +31,7 @@ async def greeting(message: types.Message, state: FSMContext):
     await state.clear()
 
 
-@dp.message(Command('start'))
+@router.message(Command('start'))
 async def greeting(message: types.Message, state: FSMContext):
     """
     Обработчик команды /start, он же пост приветствия
@@ -59,7 +58,7 @@ async def greeting(message: types.Message, state: FSMContext):
     )
 
 
-@dp.callback_query(F.data == 'start_menu_keyboard')
+@router.callback_query(F.data == 'start_menu_keyboard')
 async def start_menu_no_edit(callback_query: types.CallbackQuery, state: FSMContext):
     """Обработчик команды /start, он же пост приветствия"""
     await state.clear()
@@ -81,7 +80,7 @@ async def start_menu_no_edit(callback_query: types.CallbackQuery, state: FSMCont
     )
 
 
-@dp.callback_query(F.data == 'payment_goods_and_services')
+@router.callback_query(F.data == 'payment_goods_and_services')
 async def payment_goods_and_services_handler(callback_query: types.CallbackQuery, state: FSMContext):
     """Обработчик кнопки оплаты товаров"""
     await state.clear()
@@ -93,7 +92,7 @@ async def payment_goods_and_services_handler(callback_query: types.CallbackQuery
     )
 
 
-@dp.message(Command('id'))
+@router.message(Command('id'))
 async def process_id_command(message: types.Message):
     """Обработчик команды /id"""
     try:

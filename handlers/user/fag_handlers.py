@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
-from aiogram import types, F
 from aiogram import F, Router, types
+
 from keyboards.user_keyboards import start_menu
 from messages.messages import fag_post
-from system.dispatcher import bot, dp
+from system.dispatcher import bot
 
 router = Router(name=__name__)
 
-@dp.callback_query(F.data == "fag")
+@router.callback_query(F.data == "fag")
 async def fag_handler(callback_query: types.CallbackQuery):
     inline_keyboard_markup = start_menu()  # Отправляемся в главное меню
     await bot.edit_message_text(chat_id=callback_query.message.chat.id,

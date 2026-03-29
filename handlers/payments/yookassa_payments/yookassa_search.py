@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
-from aiogram import types, F
+from aiogram import F, Router, types
 from aiogram.types import FSInputFile
 from loguru import logger  # Логирование с помощью loguru
 from yookassa import Payment
-from aiogram import F, Router, types
+
 from db.settings_db import save_payment_info_user
 from handlers.payment_yookassa import payment_yookassa_com
 from handlers.payments.products_goods_services import TelegramMaster_Search_GPT
 from keyboards.payments_keyboards import payment_keyboard_telegram_master_search_gpt
 from keyboards.user_keyboards import start_menu
 from messages.messages import message_payment, message_check_payment
-from system.dispatcher import bot, dp
+from system.dispatcher import bot
 
 router = Router(name=__name__)
 
@@ -19,7 +19,7 @@ router = Router(name=__name__)
 product = "TelegramMaster-Search-GPT"
 
 
-@dp.callback_query(F.data == "payment_yookassa_Search_GPT")
+@router.callback_query(F.data == "payment_yookassa_Search_GPT")
 async def payment_yookassa_telegram_master_search_gpt(callback_query: types.CallbackQuery):
     """Отправка ссылки для оплаты TelegramMaster-Search-GPT"""
     try:
@@ -35,7 +35,7 @@ async def payment_yookassa_telegram_master_search_gpt(callback_query: types.Call
         logger.exception(e)
 
 
-@dp.callback_query(F.data.startswith("CheckPayTMSearchGPT"))
+@router.callback_query(F.data.startswith("CheckPayTMSearchGPT"))
 async def check_pay_telegram_master_search_gpt(callback_query: types.CallbackQuery):
     """"Проверка платежа TelegramMaster-Search-GPT"""
     try:

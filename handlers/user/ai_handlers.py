@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
-from aiogram import F
+from aiogram import F, Router
 from aiogram.enums import ChatAction
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 from groq import AsyncGroq
-from aiogram import F, Router, types
+
 from db.settings_db import save_user_wish
 from setting.proxy_config import setup_proxy
 from states.states import WishState
-from system.dispatcher import bot, dp, ADMIN_CHAT_ID, api_key, PROXY_USER, PROXY_PASSWORD, PROXY_IP, PROXY_PORT
+from system.dispatcher import bot, ADMIN_CHAT_ID, api_key, PROXY_USER, PROXY_PASSWORD, PROXY_IP, PROXY_PORT
 
 router = Router(name=__name__)
 
@@ -17,7 +17,7 @@ def remove_markdown_symbols(text: str) -> str:
     return text.replace("*", "")
 
 
-@dp.callback_query(F.data.startswith("wish"))
+@router.callback_query(F.data.startswith("wish"))
 async def cmd_wish(callback_query: CallbackQuery, state: FSMContext):
     """Обработчик команды /wish для запроса пожеланий"""
     await callback_query.answer()
@@ -26,7 +26,7 @@ async def cmd_wish(callback_query: CallbackQuery, state: FSMContext):
     await state.set_state(WishState.waiting_for_wish)
 
 
-@dp.message(WishState.waiting_for_wish)
+@router.message(WishState.waiting_for_wish)
 async def handle_wish(message: Message, state: FSMContext):
     """Обработчик текстовых сообщений с пожеланиями"""
     setup_proxy(PROXY_USER, PROXY_PASSWORD, PROXY_IP, PROXY_PORT)  # Установка прокси
