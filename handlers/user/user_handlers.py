@@ -6,29 +6,12 @@ from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from loguru import logger
 
-from db.settings_db import save_user_activity, add_user_to_db, is_user_in_db
-from keyboards.user_keyboards import greeting_keyboards, payment_keyboards  # Клавиатуры поста приветствия
-from messages.messages import greeting_post, payment_goods_and_services_post  # Пояснение для пользователя FAG
-from states.states import SomeState
-from system.dispatcher import bot  # Подключение к боту и диспетчеру пользователя
+from db.settings_db import save_user_activity
+from keyboards.user_keyboards import greeting_keyboards, payment_keyboards
+from messages.messages import greeting_post, payment_goods_and_services_post
+from system.dispatcher import bot
 
 router = Router(name=__name__)
-
-@router.message(Command("pass"))
-async def send_pass(message: types.Message, state: FSMContext):
-    """Обработчик команды /pass, для отправки пароля в бота"""
-    await message.answer(f'Введите пароль: {message.text}')
-    await state.set_state(SomeState.some_state)  # Обновляем состояние
-
-
-@router.message(SomeState.some_state)
-async def greeting(message: types.Message, state: FSMContext):
-    """Обработчик состояния some_state, он же пост приветствия"""
-    text = message.text  # Получаем текст сообщения
-    # Используем with open для открытия файла с использованием кодека utf-8
-    with open("setting/password/TelegramMaster-PRO/password.txt", "w", encoding='utf-8') as file:
-        file.write(text)
-    await state.clear()
 
 
 @router.message(Command('start'))
@@ -91,23 +74,6 @@ async def payment_goods_and_services_handler(callback_query: types.CallbackQuery
         reply_markup=payment_keyboards(),
         parse_mode="HTML",
     )
-
-
-@router.message(Command('id'))
-async def process_id_command(message: types.Message):
-    """Обработчик команды /id"""
-    try:
-        user_id = int(message.text.split()[1])
-        result = is_user_in_db(user_id)  # Запись ID в базу данных
-        if result is None:
-            add_user_to_db(user_id)
-            await message.reply(f"ID {user_id} успешно записан в базу данных.")
-        else:
-            await message.reply(f"ID {user_id} уже существует в базе данных.")
-    except (IndexError, ValueError):
-        await message.reply("Используйте команду /id followed by ваш ID.")
-    except Exception as error:
-        logger.exception(error)
 
 
 

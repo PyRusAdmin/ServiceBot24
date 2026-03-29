@@ -17,16 +17,16 @@ class Form(StatesGroup):
     file = State()
 
 
-class SomeState(StatesGroup):
-    """
-    Пример группы состояний.
-
-    Состояния:
-        some_state (State): Пример состояния, которое можно использовать для демонстрации
-        или как шаблон для создания новых состояний.
-    """
-    some_state = State()  # Пример состояния, можно добавить дополнительные состояния
-
-
 class WishState(StatesGroup):
+    """
+    Состояния для обработки пожеланий пользователей.
+    """
     waiting_for_wish = State()
+
+
+class AdminState(StatesGroup):
+    """
+    Состояния для админских команд.
+    """
+    waiting_for_broadcast_message = State()
+    waiting_for_password = State()

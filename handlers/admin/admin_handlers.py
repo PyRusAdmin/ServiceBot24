@@ -1,21 +1,16 @@
 # -*- coding: utf-8 -*-
 import datetime
 
-from aiogram import Router, types
+from aiogram import F, Router, types
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
-from aiogram.fsm.state import State, StatesGroup
 from loguru import logger
 
-from db.settings_db import get_all_users
+from db.settings_db import get_all_users, is_user_in_db, add_user_to_db
+from states.states import AdminState
 from system.dispatcher import bot, ADMIN_CHAT_ID
 
 router = Router(name=__name__)
-
-
-class AdminState(StatesGroup):
-    """Состояния для админских команд"""
-    waiting_for_broadcast_message = State()
 
 
 @router.message(Command('admin_help'))
@@ -32,21 +27,34 @@ async def admin_help_handler(message: types.Message):
 🔧 <b>Админские команды бота</b> 🔧
 
 📋 <b>Доступные команды:</b>
+
 1️⃣ <b>/admin_help</b> - Показать эту справку
+
 2️⃣ <b>/broadcast</b> - Начать рассылку сообщения всем пользователям
+
 3️⃣ <b>/stats</b> - Показать статистику пользователей бота
+
+4️⃣ <b>/pass</b> - Установить пароль для TelegramMaster-PRO
+
+5️⃣ <b>/id</b> - Добавить пользователя в базу данных по ID
 
 📝 <b>Как использовать рассылку:</b>
 
 Шаг 1. Отправьте команду /broadcast
+
 Шаг 2. Бот попросит вас ввести текст сообщения для рассылки
+
 Шаг 3. Введите текст сообщения (можно использовать HTML-разметку)
+
 Шаг 4. Бот покажет статистику: сколько всего пользователей и сколько сообщений отправлено
 
 ⚠️ <b>Важно:</b>
 • Рассылка отправляется всем пользователям, которые хотя бы раз запускали бота
 • Используйте разметку осторожно (HTML)
 • Большие рассылки могут занять некоторое время
+
+🔐 <b>Как установить пароль:</b>
+<code>/pass</code> → <code>Введите новый пароль</code> → Пароль сохранен
 
 📊 <b>Пример использования:</b>
 <code>/broadcast</code> → <code>Уважаемые пользователи! У нас обновился функционал...</code>
@@ -148,3 +156,88 @@ async def stats_handler(message: types.Message):
     )
 
     await message.answer(stats_text, parse_mode="HTML")
+
+
+# ============================================================================
+# Админские команды для управления паролем
+# ============================================================================
+
+@router.message(Command('pass'))
+async def send_pass(message: types.Message, state: FSMContext):
+    """
+    Обработчик команды /pass для установки пароля в бота
+    Доступно только администратору
+    """
+    # Проверяем, является ли пользователь администратором
+    if str(message.from_user.id) != str(ADMIN_CHAT_ID):
+        await message.answer("❌ У вас нет доступа к этой команде.")
+        return
+
+    await message.answer('🔐 Введите новый пароль для TelegramMaster-PRO:')
+    await state.set_state(AdminState.waiting_for_password)
+
+
+@router.message(AdminState.waiting_for_password)
+async def save_password(message: types.Message, state: FSMContext):
+    """
+    Обработчик состояния waiting_for_password
+    Сохраняет пароль в файл
+    """
+    # Проверяем, является ли пользователь администратором
+    if str(message.from_user.id) != str(ADMIN_CHAT_ID):
+        await message.answer("❌ У вас нет доступа к этой команде.")
+        await state.clear()
+        return
+
+    text = message.text  # Получаем текст сообщения
+    
+    try:
+        # Используем with open для открытия файла с использованием кодека utf-8
+        with open("setting/password/TelegramMaster-PRO/password.txt", "w", encoding='utf-8') as file:
+            file.write(text)
+        
+        logger.info(f"Администратор {message.from_user.id} обновил пароль для TelegramMaster-PRO")
+        await message.answer("✅ Пароль успешно сохранен!")
+    except Exception as e:
+        logger.exception(f"Ошибка при сохранении пароля: {e}")
+        await message.answer("❌ Ошибка при сохранении пароля. Проверьте права доступа к файлу.")
+    
+    await state.clear()
+
+
+# ============================================================================
+# Админские команды для работы с пользователями
+# ============================================================================
+
+@router.message(Command('id'))
+async def process_id_command(message: types.Message):
+    """
+    Обработчик команды /id для добавления пользователя в базу данных
+    Доступно только администратору
+    Использование: /id <user_id>
+    """
+    # Проверяем, является ли пользователь администратором
+    if str(message.from_user.id) != str(ADMIN_CHAT_ID):
+        await message.answer("❌ У вас нет доступа к этой команде.")
+        return
+
+    try:
+        user_id = int(message.text.split()[1])
+        result = is_user_in_db(user_id)  # Проверка наличия ID в базе данных
+        
+        if result is None:
+            add_user_to_db(user_id)
+            await message.reply(f"✅ ID {user_id} успешно записан в базу данных.")
+            logger.info(f"Администратор {message.from_user.id} добавил пользователя {user_id} в базу данных")
+        else:
+            await message.reply(f"⚠️ ID {user_id} уже существует в базе данных.")
+    except (IndexError, ValueError):
+        await message.reply(
+            "❌ Неверный формат команды.\n\n"
+            "Используйте: <code>/id &lt;user_id&gt;</code>\n"
+            "Пример: <code>/id 123456789</code>",
+            parse_mode="HTML"
+        )
+    except Exception as error:
+        logger.exception(f"Ошибка при обработке команды /id: {error}")
+        await message.reply("❌ Произошла ошибка при выполнении команды.")
