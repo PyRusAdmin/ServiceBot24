@@ -32,7 +32,6 @@ ServiceBot24/
 
 * Добавлена оплата криптой
 
-
 Для обратной связи:
 
 * TG - https://t.me/PyAdminRU
