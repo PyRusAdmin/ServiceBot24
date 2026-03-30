@@ -2,6 +2,22 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 
+def payment_yookassa_check_keyboard(payment_id: str) -> InlineKeyboardMarkup:
+    """Создает клавиатуру с кнопкой проверки оплаты YooKassa и возвратом в меню"""
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text='✅ Проверить оплату (Юкасса)', callback_data=f"cccheck_pay_{payment_id}")],
+        [InlineKeyboardButton(text='🏠 В начальное меню', callback_data='start_menu_keyboard')],
+    ])
+
+
+def payment_yookassa_check_keyboard_custom(payment_id: str, callback_prefix: str) -> InlineKeyboardMarkup:
+    """Создает клавиатуру с кнопкой проверки оплаты YooKassa (с кастомным префиксом callback) и возвратом в меню"""
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text='✅ Проверить оплату (Юкасса)', callback_data=f"{callback_prefix}_{payment_id}")],
+        [InlineKeyboardButton(text='🏠 В начальное меню', callback_data='start_menu_keyboard')],
+    ])
+
+
 def payment_keyboard_telegram_master_search_gpt(payment_id) -> InlineKeyboardMarkup:
     """Создает клавиатуру для оплаты TelegramMaster-Search-GPT и возврата в главное меню"""
     return InlineKeyboardMarkup(inline_keyboard=[

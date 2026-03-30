@@ -60,10 +60,10 @@ async def check_payment_program_setup_service(callback_query: types.CallbackQuer
                  f"Приобрел 'Помощь в настройке ПО (консультация)'"
         )
         await bot.send_message(
-            callback_query.from_user.id,
-            "Оплата прошла успешно‼️ \nДля согласования даты и времени , свяжитесь с администратором"
-            " через личные сообщения, используя указанный никнейм: @PyAdminRU. 🤖🔒\n\n"
-            "Для возврата в начальное меню, нажмите: /start"
+            chat_id=callback_query.from_user.id,
+            text="Оплата прошла успешно‼️ \nДля согласования даты и времени , свяжитесь с администратором"
+                 " через личные сообщения, используя указанный никнейм: @PyAdminRU. 🤖🔒\n\n"
+                 "Для возврата в начальное меню, нажмите: /start"
         )
     else:
         await bot.send_message(callback_query.message.chat.id, "Payment failed.")

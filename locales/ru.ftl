@@ -132,3 +132,26 @@ tgmaster-search-gpt-payment-success =
     <code>{ $password }</code>
 
     { $footer_text }
+
+tgmaster-commentator-payment-success =
+    ✅ <b>Платеж на сумму { $price } руб прошел успешно‼️</b>
+
+    📦 Продукт: <b>TelegramMaster_Commentator</b>
+
+    🔑 <b>Ваш пароль:</b>
+    <code>{ $password }</code>
+
+    { $footer_text }
+
+payment-not-completed =
+    ❌ Платеж еще не оплачен. Пожалуйста, завершите оплату и нажмите кнопку 'Проверить оплату' еще раз.
+
+tgmaster-commentator-password-payment-success =
+    ✅ <b>Платеж на сумму { $price } руб прошел успешно‼️</b>
+
+    📦 Продукт: <b>Пароль TelegramMaster_Commentator</b>
+
+    🔑 <b>Ваш пароль:</b>
+    <code>{ $password }</code>
+
+    Для возврата в начальное меню нажмите /start
