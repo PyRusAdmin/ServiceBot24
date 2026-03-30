@@ -9,6 +9,7 @@ from handlers.payment_yookassa import payment_yookassa_com
 from handlers.payments.products_goods_services import payment_installation
 from keyboards.payments_keyboards import payment_yookassa_check_keyboard_custom
 from messages.messages import message_payment
+from services.i18n import t
 from system.dispatcher import bot, ADMIN_CHAT_ID
 
 router = Router(name=__name__)
@@ -66,9 +67,10 @@ async def check_payment_program_setup_service(callback_query: types.CallbackQuer
         )
         await bot.send_message(
             chat_id=callback_query.from_user.id,
-            text="Оплата прошла успешно‼️ \nДля согласования даты и времени , свяжитесь с администратором"
-                 " через личные сообщения, используя указанный никнейм: @PyAdminRU. 🤖🔒\n\n"
-                 "Для возврата в начальное меню, нажмите: /start"
+            text=t("training-payment-success")
         )
     else:
-        await bot.send_message(callback_query.message.chat.id, "Payment failed.")
+        await bot.send_message(
+            callback_query.message.chat.id,
+            text=t("payment-not-completed")
+        )

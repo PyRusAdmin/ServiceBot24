@@ -69,12 +69,15 @@ async def check_payments_commentator_password(callback_query: types.CallbackQuer
         result = is_user_in_db(callback_query.from_user.id)
         if result is None:
             add_user_if_not_exists(callback_query.from_user.id)
-            await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
-                                                               f"ID {callback_query.from_user.id},\n"
-                                                               f"Username: @{callback_query.from_user.username},\n"
-                                                               f"Имя: {callback_query.from_user.first_name},\n"
-                                                               f"Фамилия: {callback_query.from_user.last_name},\n\n"
-                                                               f"Приобрел пароль от TelegramMaster_Commentator")
+            await bot.send_message(
+                chat_id=ADMIN_CHAT_ID,
+                text=f"Пользователь:\n"
+                     f"ID {callback_query.from_user.id},\n"
+                     f"Username: @{callback_query.from_user.username},\n"
+                     f"Имя: {callback_query.from_user.first_name},\n"
+                     f"Фамилия: {callback_query.from_user.last_name},\n\n"
+                     f"Приобрел пароль от TelegramMaster_Commentator"
+            )
     else:
         await bot.send_message(
             callback_query.message.chat.id,

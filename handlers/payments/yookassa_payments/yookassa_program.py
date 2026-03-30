@@ -24,10 +24,18 @@ async def payment_url_handler(callback_query: types.CallbackQuery):
         product_price=TelegramMaster_PRO  # Цена товара в рублях
     )
     # Создаем клавиатуру с кнопкой для проверки оплаты и возврата в меню
-    keyboard = payment_yookassa_check_keyboard_custom(payment_id, "checsk_payment")
-    await bot.send_message(chat_id=callback_query.from_user.id,
-                           text=message_payment("TelegramMaster-PRO", payment_url),
-                           reply_markup=keyboard, parse_mode="HTML")
+    await bot.send_message(
+        chat_id=callback_query.from_user.id,
+        text=message_payment(
+            "TelegramMaster-PRO",
+            payment_url
+        ),
+        reply_markup=payment_yookassa_check_keyboard_custom(
+            payment_id,
+            "checsk_payment"
+        ),
+        parse_mode="HTML"
+    )
 
 
 @router.callback_query(F.data.startswith("checsk_payment"))

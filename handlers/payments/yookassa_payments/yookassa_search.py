@@ -47,23 +47,24 @@ async def check_pay_telegram_master_search_gpt(callback_query: types.CallbackQue
             # Запись в базу данных пользователя, который оплатил счет в рублях
             save_payment_info_user(
                 table_name="users_pay_search", user_id=callback_query.from_user.id,
-                first_name=callback_query.from_user.first_name, last_name=callback_query.from_user.last_name,
-                username=callback_query.from_user.username, invoice_json=payment_info.id,
+                first_name=callback_query.from_user.first_name,
+                last_name=callback_query.from_user.last_name,
+                username=callback_query.from_user.username,
+                invoice_json=payment_info.id,
                 product="TelegramMaster-Search-GPT",
-                date=payment_info.captured_at, status="succeeded", price=TelegramMaster_Search_GPT
+                date=payment_info.captured_at,
+                status="succeeded",
+                price=TelegramMaster_Search_GPT
             )
 
-            # Получаем пароль из базы данных
-            password = get_product_password("TelegramMaster_Search_GPT")
-            caption = t(
-                "tgmaster-search-gpt-payment-success",
-                price=TelegramMaster_Search_GPT,
-                password=password,
-                footer_text=t("tgmaster-payment-footer")
-            )
             await bot.send_message(
                 chat_id=callback_query.from_user.id,
-                text=caption,
+                text=t(
+                    "tgmaster-search-gpt-payment-success",
+                    price=TelegramMaster_Search_GPT,
+                    password=get_product_password("TelegramMaster_Search_GPT"),  # Получаем пароль из базы данных
+                    footer_text=t("tgmaster-payment-footer")
+                ),
                 reply_markup=start_menu(),  # Отправляемся в главное меню
                 parse_mode="HTML"
             )
