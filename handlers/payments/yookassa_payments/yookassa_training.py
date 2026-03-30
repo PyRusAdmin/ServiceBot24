@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 from aiogram import F, Router, types
 from aiogram.fsm.context import FSMContext
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from loguru import logger  # Логирование с помощью loguru
 from yookassa import Payment
 
 from db.settings_db import save_payment_info
 from handlers.payment_yookassa import payment_yookassa_com
 from handlers.payments.products_goods_services import payment_installation
+from keyboards.payments_keyboards import payment_yookassa_check_keyboard_custom
 from messages.messages import message_payment
 from system.dispatcher import bot, ADMIN_CHAT_ID
 
@@ -22,10 +22,7 @@ async def payment_url_handler(callback_query: types.CallbackQuery):
         product_price=payment_installation  # Цена товара в рублях
     )
     # Создаем клавиатуру с кнопкой для проверки оплаты и возврата в меню
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text='✅ Проверить оплату (Юкасса)', callback_data=f"csheck_service_{payment_id}")],
-        [InlineKeyboardButton(text='🏠 В начальное меню', callback_data='start_menu_keyboard')],
-    ])
+    keyboard = payment_yookassa_check_keyboard_custom(payment_id, "csheck_service")
     await bot.send_message(chat_id=callback_query.from_user.id,
                            text=message_payment("Помощь в настройке ПО (консультация)", payment_url),
                            reply_markup=keyboard, parse_mode="HTML")
