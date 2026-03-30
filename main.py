@@ -6,32 +6,24 @@ import sys
 from loguru import logger  # https://github.com/Delgan/loguru
 
 from db.settings_db import init_password_tables, init_new_products_tables
-
-from handlers.payments.cryptomus_payments import router as cryptomus_payments
-
-from system.server_rent_checker import run_periodic_check
+from handlers.admin.admin_handlers import router as admin_handlers
 from handlers.group_handlers import router as group_handlers
-
-from handlers.payments.payments import router as payments
-from handlers.payments.yookassa_payments.yookassa_commentator import router as yookassa_commentator
-from handlers.payments.yookassa_payments.yookassa_commentator_password import router as yookassa_commentator_password
-from handlers.payments.yookassa_payments.yookassa_password import router as yookassa_password
-from handlers.payments.yookassa_payments.yookassa_program import router as yookassa_program
-from handlers.payments.yookassa_payments.yookassa_search import router as yookassa_search
-from handlers.payments.yookassa_payments.yookassa_training import router as yookassa_training
-from handlers.payments.telegram_stars_payments import router as telegram_stars_payments
+from handlers.payments.cryptomus_payments import router as cryptomus_payments
 from handlers.payments.maxmaster_payments import router as maxmaster_payments
 from handlers.payments.maxmaster_stars import router as maxmaster_stars
+from handlers.payments.payments import router as payments
 from handlers.payments.server_rent_payments import router as server_rent_payments
 from handlers.payments.server_rent_stars import router as server_rent_stars
+from handlers.payments.telegram_stars_payments import router as telegram_stars_payments
+from handlers.payments.yookassa_payments import router as yookassa_payments
 from handlers.user.ai_handlers import router as ai_handlers
 from handlers.user.fag_handlers import router as fag_handlers
 from handlers.user.reference_handlers import router as faq_handler
 from handlers.user.sending_log_file import router as sending_log_file
 from handlers.user.user_account import router as user_account
 from handlers.user.user_handlers import router as user_handlers
-from handlers.admin.admin_handlers import router as admin_handlers
 from system.dispatcher import dp, bot
+from system.server_rent_checker import run_periodic_check
 
 logger.add("logs/log.log", rotation="1 MB", compression="zip", level="INFO")  # Логирование программы
 logger.add("logs/log_ERROR.log", rotation="1 MB", compression="zip", level="ERROR")  # Логирование программы
@@ -79,16 +71,8 @@ async def main() -> None:
     # Меню оплата
     dp.include_router(payments)  # Купить TelegramMaster-PRO, Помощь в настройке ПО, Пароль от TelegramMaster-PRO
 
-    # Оплата yookassa
-    dp.include_router(yookassa_password)  # Покупка пароля TelegramMaster-PRO
-    dp.include_router(yookassa_commentator_password)  # Покупка пароля TelegramMaster_Commentator
-    dp.include_router(yookassa_commentator)  # Купить TelegramMaster_Commentator
-    dp.include_router(yookassa_program)  # Купить TelegramMaster-PRO
-    dp.include_router(yookassa_training)  # Оплата настройки ПО
-
+    dp.include_router(yookassa_payments)  # Оплата yookassa
     dp.include_router(cryptomus_payments)  # Оплата Криптой
-    # Покупка TelegramMaster_Search_GPT
-    dp.include_router(yookassa_search)
 
     # Оплата Telegram Stars
     dp.include_router(telegram_stars_payments)  # Оплата звездами всех услуг
