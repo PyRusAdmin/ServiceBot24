@@ -40,18 +40,30 @@ async def check_payment_program_setup_service(callback_query: types.CallbackQuer
     logger.info(payment_info)
     if payment_info.status == "succeeded":  # Обработка статуса платежа
         # Запись в базу данных пользователя, который оплатил счет в рублях
-        save_payment_info(callback_query.from_user.id, callback_query.from_user.first_name,
-                          callback_query.from_user.last_name, callback_query.from_user.username, payment_info.id,
-                          "Помощь в настройке ПО (консультация)", payment_info.captured_at, "succeeded")
-        await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
-                                                           f"ID {callback_query.from_user.id},\n"
-                                                           f"Username: @{callback_query.from_user.username},\n"
-                                                           f"Имя: {callback_query.from_user.first_name},\n"
-                                                           f"Фамилия: {callback_query.from_user.last_name},\n\n"
-                                                           f"Приобрел 'Помощь в настройке ПО (консультация)'")
-        await bot.send_message(callback_query.from_user.id,
-                               "Оплата прошла успешно‼️ \nДля согласования даты и времени , свяжитесь с администратором"
-                               " через личные сообщения, используя указанный никнейм: @PyAdminRU. 🤖🔒\n\n"
-                               "Для возврата в начальное меню, нажмите: /start")
+        save_payment_info(
+            callback_query.from_user.id,
+            callback_query.from_user.first_name,
+            callback_query.from_user.last_name,
+            callback_query.from_user.username,
+            payment_info.id,
+            "Помощь в настройке ПО (консультация)",
+            payment_info.captured_at,
+            "succeeded"
+        )
+        await bot.send_message(
+            chat_id=ADMIN_CHAT_ID,
+            text=f"Пользователь:\n"
+                 f"ID {callback_query.from_user.id},\n"
+                 f"Username: @{callback_query.from_user.username},\n"
+                 f"Имя: {callback_query.from_user.first_name},\n"
+                 f"Фамилия: {callback_query.from_user.last_name},\n\n"
+                 f"Приобрел 'Помощь в настройке ПО (консультация)'"
+        )
+        await bot.send_message(
+            callback_query.from_user.id,
+            "Оплата прошла успешно‼️ \nДля согласования даты и времени , свяжитесь с администратором"
+            " через личные сообщения, используя указанный никнейм: @PyAdminRU. 🤖🔒\n\n"
+            "Для возврата в начальное меню, нажмите: /start"
+        )
     else:
         await bot.send_message(callback_query.message.chat.id, "Payment failed.")

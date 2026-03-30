@@ -49,18 +49,11 @@ async def check_pay_telegram_master_search_gpt(callback_query: types.CallbackQue
 
             # Получаем пароль из базы данных
             password = get_product_password("TelegramMaster_Search_GPT")
-
-            if password:
-                caption = (f"✅ <b>Платеж на сумму {TelegramMaster_Search_GPT} руб прошел успешно‼️</b>\n\n"
-                           f"📦 Продукт: <b>TelegramMaster-Search-GPT</b>\n\n"
-                           f"🔑 <b>Ваш пароль:</b>\n"
-                           f"<code>{password}</code>\n\n"
-                           f"{message_check_payment(product_price=TelegramMaster_Search_GPT, product="TelegramMaster-Search-GPT")}")
-            else:
-                caption = (f"✅ <b>Платеж на сумму {TelegramMaster_Search_GPT} руб прошел успешно‼️</b>\n\n"
-                           f"⚠️ <b>Внимание!</b> Пароль еще не установлен администратором.\n\n"
-                           f"Пожалуйста, обратитесь к @PyAdminRU")
-
+            caption = (f"✅ <b>Платеж на сумму {TelegramMaster_Search_GPT} руб прошел успешно‼️</b>\n\n"
+                       f"📦 Продукт: <b>TelegramMaster-Search-GPT</b>\n\n"
+                       f"🔑 <b>Ваш пароль:</b>\n"
+                       f"<code>{password}</code>\n\n"
+                       f"{message_check_payment(product_price=TelegramMaster_Search_GPT, product="TelegramMaster-Search-GPT")}")
             await bot.send_message(
                 chat_id=callback_query.from_user.id,
                 text=caption,

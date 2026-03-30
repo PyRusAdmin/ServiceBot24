@@ -54,17 +54,11 @@ async def check_payments_commentator_password(callback_query: types.CallbackQuer
 
         # Получаем пароль из базы данных
         password = get_product_password("TelegramMaster_Commentator")
-
-        if password:
-            caption = (f"✅ <b>Платеж на сумму {TelegramMaster_Commentator.get("price")} руб прошел успешно‼️</b>\n\n"
-                       f"📦 Продукт: <b>Пароль TelegramMaster_Commentator</b>\n\n"
-                       f"🔑 <b>Ваш пароль:</b>\n"
-                       f"<code>{password}</code>\n\n"
-                       f"Для возврата в начальное меню нажмите /start")
-        else:
-            caption = (f"✅ <b>Платеж на сумму {TelegramMaster_Commentator.get("price")} руб прошел успешно‼️</b>\n\n"
-                       f"⚠️ <b>Внимание!</b> Пароль еще не установлен администратором.\n\n"
-                       f"Пожалуйста, обратитесь к @PyAdminRU")
+        caption = (f"✅ <b>Платеж на сумму {TelegramMaster_Commentator.get("price")} руб прошел успешно‼️</b>\n\n"
+                   f"📦 Продукт: <b>Пароль TelegramMaster_Commentator</b>\n\n"
+                   f"🔑 <b>Ваш пароль:</b>\n"
+                   f"<code>{password}</code>\n\n"
+                   f"Для возврата в начальное меню нажмите /start")
 
         await bot.send_message(
             chat_id=callback_query.from_user.id,

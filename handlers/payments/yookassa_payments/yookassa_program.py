@@ -48,18 +48,11 @@ async def check_payment(callback_query: types.CallbackQuery, state: FSMContext):
 
         # Получаем пароль из базы данных
         password = get_product_password("TelegramMaster-PRO")
-
-        if password:
-            caption = (f"✅ <b>Платеж на сумму {TelegramMaster_PRO} руб прошел успешно‼️</b>\n\n"
-                       f"📦 Продукт: <b>TelegramMaster-PRO</b>\n\n"
-                       f"🔑 <b>Ваш пароль:</b>\n"
-                       f"<code>{password}</code>\n\n"
-                       f"{message_check_payment(product_price=TelegramMaster_PRO, product="TelegramMaster-PRO")}")
-        else:
-            caption = (f"✅ <b>Платеж на сумму {TelegramMaster_PRO} руб прошел успешно‼️</b>\n\n"
-                       f"⚠️ <b>Внимание!</b> Пароль еще не установлен администратором.\n\n"
-                       f"Пожалуйста, обратитесь к @PyAdminRU")
-
+        caption = (f"✅ <b>Платеж на сумму {TelegramMaster_PRO} руб прошел успешно‼️</b>\n\n"
+                   f"📦 Продукт: <b>TelegramMaster-PRO</b>\n\n"
+                   f"🔑 <b>Ваш пароль:</b>\n"
+                   f"<code>{password}</code>\n\n"
+                   f"{message_check_payment(product_price=TelegramMaster_PRO, product="TelegramMaster-PRO")}")
         await bot.send_message(
             chat_id=callback_query.from_user.id,
             text=caption,
