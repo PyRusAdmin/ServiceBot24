@@ -74,16 +74,34 @@ def save_payment_info_user(table_name, user_id, first_name, last_name, username,
 
 def save_payment_info(data_payment):
     """Сохраняет информацию о платеже"""
-    UserPayment.create(
-        user_id=data_payment.get('user_id'),
-        first_name=data_payment.get('first_name'),
-        last_name=data_payment.get('last_name'),
-        username=data_payment.get('username'),
-        payment_info=data_payment.get('payment_info'),
-        product=data_payment.get('product'),
-        date=data_payment.get('date'),
-        payment_status=data_payment.get('payment_status')
-    )
+    table_name = data_payment.get('table_name', 'users_pay')
+    
+    if table_name == 'users_pay_search':
+        # Для TelegramMaster-Search-GPT используем отдельную таблицу
+        save_payment_info_user(
+            table_name=table_name,
+            user_id=data_payment.get('user_id'),
+            first_name=data_payment.get('first_name'),
+            last_name=data_payment.get('last_name'),
+            username=data_payment.get('username'),
+            invoice_json=data_payment.get('payment_info'),
+            product=data_payment.get('product'),
+            date=data_payment.get('date'),
+            status=data_payment.get('payment_status'),
+            price=data_payment.get('price')
+        )
+    else:
+        # Для остальных продуктов используем стандартную таблицу users_pay
+        UserPayment.create(
+            user_id=data_payment.get('user_id'),
+            first_name=data_payment.get('first_name'),
+            last_name=data_payment.get('last_name'),
+            username=data_payment.get('username'),
+            payment_info=data_payment.get('payment_info'),
+            product=data_payment.get('product'),
+            date=data_payment.get('date'),
+            payment_status=data_payment.get('payment_status')
+        )
 
 
 def check_user_payment(user_id, product_name):

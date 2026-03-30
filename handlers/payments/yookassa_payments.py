@@ -1,36 +1,23 @@
 # -*- coding: utf-8 -*-
 from aiogram import F, Router, types
-
-from aiogram import F, Router, types
 from aiogram.fsm.context import FSMContext
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-
-from aiogram import F, Router, types
 from loguru import logger  # Логирование с помощью loguru
 from yookassa import Payment
 
-from db.settings_db import save_payment_info_user, get_product_password
+from db.settings_db import get_product_password, save_payment_info, add_user_if_not_exists, is_user_in_db
 from handlers.payment_yookassa import payment_yookassa_com
-from handlers.payments.products_goods_services import TelegramMaster_Search_GPT
-from keyboards.payments_keyboards import payment_keyboard_telegram_master_search_gpt
+from handlers.payments.generates_payment_data import generates_payment_data
+from handlers.payments.products_goods_services import (
+    TelegramMaster_Search_GPT, TelegramMaster_Commentator, TelegramMaster_PRO, payment_installation
+)
+from keyboards.payments_keyboards import (
+    payment_keyboard_telegram_master_search_gpt, payment_yookassa_check_keyboard,
+    payment_yookassa_check_keyboard_custom
+)
 from keyboards.user_keyboards import start_menu
 from messages.messages import message_payment
 from services.i18n import t
-from system.dispatcher import bot
-from aiogram import F, Router, types
-from aiogram.fsm.context import FSMContext
-from handlers.payments.products_goods_services import TelegramMaster_Commentator
-from handlers.payments.products_goods_services import payment_installation
-from keyboards.payments_keyboards import payment_yookassa_check_keyboard
-from aiogram import F, Router, types
-from aiogram import F, Router, types
-from aiogram.fsm.context import FSMContext
-
-from db.settings_db import save_payment_info, add_user_if_not_exists, is_user_in_db
-from handlers.payments.generates_payment_data import generates_payment_data
-from handlers.payments.products_goods_services import TelegramMaster_PRO
-from keyboards.payments_keyboards import payment_yookassa_check_keyboard_custom
-from system.dispatcher import ADMIN_CHAT_ID
+from system.dispatcher import bot, ADMIN_CHAT_ID
 
 router = Router(name=__name__)
 
@@ -339,16 +326,15 @@ async def check_pay_telegram_master_search_gpt(callback_query: types.CallbackQue
 
         if payment_info.status == "succeeded":  # Обработка статуса платежа
             # Запись в базу данных пользователя, который оплатил счет в рублях
-            save_payment_info_user(
-                table_name="users_pay_search", user_id=callback_query.from_user.id,
-                first_name=callback_query.from_user.first_name,
-                last_name=callback_query.from_user.last_name,
-                username=callback_query.from_user.username,
-                invoice_json=payment_info.id,
-                product="TelegramMaster-Search-GPT",
-                date=payment_info.captured_at,
-                status="succeeded",
-                price=TelegramMaster_Search_GPT
+            save_payment_info(
+                generates_payment_data(
+                    callback_query=callback_query,
+                    payment_info=payment_info.id,
+                    product="TelegramMaster-Search-GPT",
+                    date=payment_info.captured_at,
+                    table_name="users_pay_search",
+                    price=TelegramMaster_Search_GPT
+                )
             )
 
             await bot.send_message(

@@ -30,7 +30,11 @@ async def buy(callback_query: types.CallbackQuery):
                    "Если по какой-либо причине бот не выдал пароль или произошла ошибка платежа, писать: "
                    "@PyAdminRU. 🤖🔒\n\n"
                    "Для возврата в начальное меню, нажмите: /start")
-    await bot.send_message(callback_query.message.chat.id, payment_mes, reply_markup=payment_keyboard_key)
+    await bot.send_message(
+        callback_query.message.chat.id,
+        payment_mes,
+        reply_markup=payment_keyboard_key
+    )
 
 
 @router.callback_query(F.data == "delivery_telegrammaster_search_gpt")
@@ -41,8 +45,11 @@ async def buy_com(callback_query: types.CallbackQuery):
                    "Если по какой-либо причине бот не выдал пароль или произошла ошибка платежа, писать: "
                    "@PyAdminRU. 🤖🔒\n\n"
                    "Для возврата в начальное меню, нажмите: /start")
-    await bot.send_message(callback_query.message.chat.id, payment_mes,
-                           reply_markup=payment_keyboard_telegram_master_search_gpt_1())
+    await bot.send_message(
+        callback_query.message.chat.id,
+        payment_mes,
+        reply_markup=payment_keyboard_telegram_master_search_gpt_1()
+    )
 
 
 @router.callback_query(F.data == "delivery_com")
@@ -53,7 +60,11 @@ async def buy_com(callback_query: types.CallbackQuery):
                    "Если по какой-либо причине бот не выдал пароль или произошла ошибка платежа, писать: "
                    "@PyAdminRU. 🤖🔒\n\n"
                    "Для возврата в начальное меню, нажмите: /start")
-    await bot.send_message(callback_query.message.chat.id, payment_mes, reply_markup=payment_keyboard_com())
+    await bot.send_message(
+        callback_query.message.chat.id,
+        payment_mes,
+        reply_markup=payment_keyboard_com()
+    )
 
 
 @router.callback_query(F.data == "purchasing_a_program_setup_service")
@@ -65,11 +76,13 @@ async def buy_program_setup_service(callback_query: types.CallbackQuery):
                    "После завершения процесса оплаты, свяжитесь с администратором через личные сообщения, используя "
                    "указанный никнейм: @PyAdminRU. 🤖🔒\n\n"
                    "Для возврата в начальное меню, нажмите: /start")
-    await bot.edit_message_text(chat_id=callback_query.message.chat.id,
-                                message_id=callback_query.message.message_id,
-                                text=payment_mes,
-                                reply_markup=payment_keyboard_key,
-                                disable_web_page_preview=True)
+    await bot.edit_message_text(
+        chat_id=callback_query.message.chat.id,
+        message_id=callback_query.message.message_id,
+        text=payment_mes,
+        reply_markup=purchasing_a_program_setup_service(),
+        disable_web_page_preview=True
+    )
 
 
 @router.callback_query(F.data == "delivery_maxmaster")
