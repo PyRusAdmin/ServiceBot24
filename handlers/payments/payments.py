@@ -9,7 +9,6 @@ from handlers.payments.products_goods_services import (
     TelegramMaster_PRO, payment_installation, TelegramMaster_Commentator,
     TelegramMaster_Search_GPT, MaxMaster, SERVER_RENT_PRICE
 )
-from handlers.payments.products_goods_services import password_TelegramMaster_PRO
 from keyboards.payments_keyboards import (
     payment_keyboard, payment_keyboard_password, payment_keyboard_com,
     payment_yookassa_password_commentator_password_keyboard, payment_keyboard_telegram_master_search_gpt_1,
@@ -181,7 +180,7 @@ async def get_password(callback: types.CallbackQuery):
                 await bot.send_message(
                     callback.message.chat.id,
                     text=t("payment-pro", current_date=datetime.datetime.now().strftime("%Y-%m-%d"),
-                           password_TelegramMaster=password_TelegramMaster_PRO),
+                           password_TelegramMaster=TelegramMaster_PRO.get("price_password")),
                     reply_markup=payment_keyboard_password()
                 )
                 await bot.send_message(

@@ -16,7 +16,6 @@ from db.settings_db import (
 from handlers.payments.products_goods_services import (
     TelegramMaster_Commentator, TelegramMaster_PRO, TelegramMaster_Search_GPT, payment_installation
 )
-from handlers.payments.products_goods_services import password_TelegramMaster_PRO
 from keyboards.user_keyboards import start_menu
 from messages.messages import message_check_payment
 from system.dispatcher import CRYPTOMUS_API_KEY, CRYPTOMUS_MERCHANT_ID, bot, ADMIN_CHAT_ID
@@ -323,11 +322,11 @@ async def buy_handler(callback_query: types.CallbackQuery):
     await bot.send_message(
         chat_id=callback_query.message.chat.id,
         text=message_payment_for_user(
-            payment_info=password_TelegramMaster_PRO,
-            name_goods="TelegramMaster-PRO",
+            payment_info=TelegramMaster_PRO.get("price_password"),
+            name_goods=TelegramMaster_PRO.get("name_password"),
         ),
         reply_markup=keyboard_check_payment(
-            f"check_paymentPAS_{format_payment_info(password_TelegramMaster_PRO)['result']['uuid']}"),
+            f"check_paymentPAS_{format_payment_info(TelegramMaster_PRO.get("price_password"))['result']['uuid']}"),
         parse_mode="HTML"
     )
 
@@ -335,7 +334,7 @@ async def buy_handler(callback_query: types.CallbackQuery):
 # Обработчик для кнопки "Проверить оплату"
 @router.callback_query(F.data.startswith("check_paymentPAS_"))
 async def check_payment_handler(callback_query: types.CallbackQuery):
-    """Ручная проверка статуса оплаты"""
+    """Ручная проверка статуса оплаты пароля TelegramMaster-PRO"""
     # Проверяем статус оплаты
     try:
         invoice_data = await get_payment_info(callback_query)
@@ -346,18 +345,18 @@ async def check_payment_handler(callback_query: types.CallbackQuery):
                 generates_payment_data(
                     callback_query=callback_query,
                     payment_info=json.dumps(invoice_data),
-                    product="Пароль TelegramMaster-PRO",
+                    product=TelegramMaster_PRO.get("name_password"),
                     date=datetime.datetime.now().strftime("%Y-%m-%d")
                 )
             )
             await bot.send_message(
                 chat_id=callback_query.from_user.id,
                 text=(
-                    f"✅ <b>Платеж на сумму {password_TelegramMaster_PRO} руб прошел успешно‼️</b>\n\n"
+                    f"✅ <b>Платеж на сумму {TelegramMaster_PRO.get("price_password")} руб прошел успешно‼️</b>\n\n"
                     f"📦 Продукт: <b>Пароль TelegramMaster-PRO</b>\n\n"
                     f"🔑 <b>Ваш пароль:</b>\n"
                     f"<code>{get_product_password("TelegramMaster-PRO")}</code>\n\n"
-                    f"{message_check_payment(product_price=password_TelegramMaster_PRO, product="Пароль TelegramMaster-PRO")}"
+                    f"{message_check_payment(product_price=TelegramMaster_PRO.get("price_password"), product=TelegramMaster_PRO.get("name_password"))}"
                 ),
                 reply_markup=start_menu(),  # Отправляемся в главное меню
                 parse_mode="HTML"
