@@ -25,14 +25,9 @@ router = Router(name=__name__)
 async def buy(callback_query: types.CallbackQuery):
     """Покупка TelegramMaster-PRO"""
     payment_keyboard_key = payment_keyboard()
-    payment_mes = ("Купить TelegramMaster-PRO.\n\n"
-                   f"Цена на — {TelegramMaster_PRO} рублей.\n\n"
-                   "Если по какой-либо причине бот не выдал пароль или произошла ошибка платежа, писать: "
-                   "@PyAdminRU. 🤖🔒\n\n"
-                   "Для возврата в начальное меню, нажмите: /start")
     await bot.send_message(
         callback_query.message.chat.id,
-        payment_mes,
+        text=t("tgmaster-pro-buy-info", price=TelegramMaster_PRO),
         reply_markup=payment_keyboard_key
     )
 
@@ -40,14 +35,9 @@ async def buy(callback_query: types.CallbackQuery):
 @router.callback_query(F.data == "delivery_telegrammaster_search_gpt")
 async def buy_com(callback_query: types.CallbackQuery):
     """Покупка TelegramMaster_Search_GPT"""
-    payment_mes = ("Купить TelegramMaster_Search_GPT.\n\n"
-                   f"Цена на — {TelegramMaster_Search_GPT} рублей.\n\n"
-                   "Если по какой-либо причине бот не выдал пароль или произошла ошибка платежа, писать: "
-                   "@PyAdminRU. 🤖🔒\n\n"
-                   "Для возврата в начальное меню, нажмите: /start")
     await bot.send_message(
         callback_query.message.chat.id,
-        payment_mes,
+        text=t("tgmaster-search-gpt-buy-info", price=TelegramMaster_Search_GPT),
         reply_markup=payment_keyboard_telegram_master_search_gpt_1()
     )
 
@@ -55,14 +45,9 @@ async def buy_com(callback_query: types.CallbackQuery):
 @router.callback_query(F.data == "delivery_com")
 async def buy_com(callback_query: types.CallbackQuery):
     """Покупка TelegramMaster_Commentator"""
-    payment_mes = ("Купить TelegramMaster_Commentator.\n\n"
-                   f"Цена на — {TelegramMaster_Commentator} рублей.\n\n"
-                   "Если по какой-либо причине бот не выдал пароль или произошла ошибка платежа, писать: "
-                   "@PyAdminRU. 🤖🔒\n\n"
-                   "Для возврата в начальное меню, нажмите: /start")
     await bot.send_message(
         callback_query.message.chat.id,
-        payment_mes,
+        text=t("tgmaster-commentator-buy-info", price=TelegramMaster_Commentator),
         reply_markup=payment_keyboard_com()
     )
 
@@ -70,16 +55,10 @@ async def buy_com(callback_query: types.CallbackQuery):
 @router.callback_query(F.data == "purchasing_a_program_setup_service")
 async def buy_program_setup_service(callback_query: types.CallbackQuery):
     """Оплата услуг по установке ПО"""
-    payment_keyboard_key = purchasing_a_program_setup_service()
-    payment_mes = ("Оплатите услуги по настройке и консультации.\n\n"
-                   f"Цена на — {payment_installation} рублей.\n\n"
-                   "После завершения процесса оплаты, свяжитесь с администратором через личные сообщения, используя "
-                   "указанный никнейм: @PyAdminRU. 🤖🔒\n\n"
-                   "Для возврата в начальное меню, нажмите: /start")
     await bot.edit_message_text(
         chat_id=callback_query.message.chat.id,
         message_id=callback_query.message.message_id,
-        text=payment_mes,
+        text=t("program-setup-service-info", price=payment_installation),
         reply_markup=purchasing_a_program_setup_service(),
         disable_web_page_preview=True
     )
@@ -219,7 +198,7 @@ async def get_password(callback: types.CallbackQuery):
                        f"Имя: {callback.from_user.first_name},\n"
                        f"Фамилия: {callback.from_user.last_name},\n"
                        f"Запросил пароль от TelegramMaster-PRO")
-                else:
+            else:
                 await bot.send_message(
                     chat_id=callback.message.chat.id,
                     text=t("subscription-required-pro")
