@@ -185,7 +185,7 @@ async def check_server_rent_payment(callback_query: types.CallbackQuery, state: 
         else:
             await bot.send_message(
                 chat_id=callback_query.message.chat.id,
-                text="❌ Платеж еще не оплачен. Пожалуйста, завершите оплату и нажмите кнопку 'Проверить оплату' еще раз."
+                text=t("payment-not-completed")
             )
     except Exception as e:
         logger.exception(f"Ошибка при проверке оплаты аренды сервера: {e}")

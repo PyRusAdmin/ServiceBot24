@@ -82,17 +82,14 @@ async def process_successful_payment_maxmaster(message: types.Message):
             payment_amount=MaxMaster,
             payment_method="stars"
         )
-        # Получаем пароль из БД
-        password = get_maxmaster_password()
-        caption = t(
-            "maxmaster-stars-payment-success",
-            product_name=product,
-            password=password,
-            footer_text=t("maxmaster-payment-footer")
-        )
         await bot.send_message(
             chat_id=message.from_user.id,
-            text=caption,
+            text=t(
+                "maxmaster-stars-payment-success",
+                product_name=product,
+                password=get_maxmaster_password(),  # Получаем пароль из БД
+                footer_text=t("maxmaster-payment-footer")
+            ),
             reply_markup=start_menu(),
             parse_mode="HTML"
         )

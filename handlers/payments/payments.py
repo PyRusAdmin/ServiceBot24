@@ -114,8 +114,11 @@ async def get_password_tg_com(callback: types.CallbackQuery):
                 current_date = datetime.datetime.now().strftime("%Y-%m-%d")
                 await bot.send_message(
                     chat_id=callback.message.chat.id,
-                    text=t("payment-commentator", current_date=current_date,
-                           password_TelegramMaster_Commentator=TelegramMaster_Commentator.get("price_password")),
+                    text=t(
+                        "payment-commentator",
+                        current_date=current_date,
+                        password_TelegramMaster_Commentator=TelegramMaster_Commentator.get("price_password")
+                    ),
                     reply_markup=payment_yookassa_password_commentator_password_keyboard()
                 )
                 await bot.send_message(
@@ -173,8 +176,11 @@ async def get_password(callback: types.CallbackQuery):
                 # Сообщение пользователю
                 await bot.send_message(
                     callback.message.chat.id,
-                    text=t("payment-pro", current_date=datetime.datetime.now().strftime("%Y-%m-%d"),
-                           password_TelegramMaster=TelegramMaster_PRO.get("price_password")),
+                    text=t(
+                        "payment-pro",
+                        current_date=datetime.datetime.now().strftime("%Y-%m-%d"),
+                        password_TelegramMaster=TelegramMaster_PRO.get("price_password")
+                    ),
                     reply_markup=payment_keyboard_password()
                 )
                 await bot.send_message(

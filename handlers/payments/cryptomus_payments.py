@@ -19,6 +19,7 @@ from handlers.payments.products_goods_services import (
 )
 from keyboards.user_keyboards import start_menu
 from messages.messages import message_check_payment
+from services.i18n import t
 from system.dispatcher import CRYPTOMUS_API_KEY, CRYPTOMUS_MERCHANT_ID, bot, ADMIN_CHAT_ID
 
 router = Router(name=__name__)
@@ -159,7 +160,7 @@ async def check_invoice_paid_training(callback_query: types.CallbackQuery):
             # Если оплата еще не прошла
             await bot.send_message(
                 chat_id=callback_query.message.chat.id,
-                text="❌ Платеж еще не оплачен. Пожалуйста, завершите оплату и нажмите кнопку 'Проверить оплату' еще раз."
+                text=t("payment-not-completed")
             )
     except Exception as e:
         # Обработка ошибок
@@ -219,7 +220,7 @@ async def check_invoice_paid_program_com_tm_search_gpt_crypta(callback_query: ty
             # Если оплата еще не прошла
             await bot.send_message(
                 chat_id=callback_query.message.chat.id,
-                text="❌ Платеж еще не оплачен. Пожалуйста, завершите оплату и нажмите кнопку 'Проверить оплату' еще раз."
+                text=t("payment-not-completed")
             )
     except Exception as e:
         # Обработка ошибок
@@ -290,7 +291,7 @@ async def check_invoice_paid_program(callback_query: types.CallbackQuery):
             # Если оплата еще не прошла
             await bot.send_message(
                 chat_id=callback_query.message.chat.id,
-                text="❌ Платеж еще не оплачен. Пожалуйста, завершите оплату и нажмите кнопку 'Проверить оплату' еще раз."
+                text=t("payment-not-completed")
             )
     except Exception as e:
         # Обработка ошибок
@@ -363,7 +364,7 @@ async def check_payment_handler(callback_query: types.CallbackQuery):
                 # Если оплата еще не прошла
                 await bot.send_message(
                     chat_id=callback_query.message.chat.id,
-                    text="❌ Платеж еще не оплачен. Пожалуйста, завершите оплату и нажмите кнопку 'Проверить оплату' еще раз."
+                    text=t("payment-not-completed")
                 )
     except Exception as e:
         # Обработка ошибок
@@ -434,7 +435,7 @@ async def check_payment_handler_commentator(callback_query: types.CallbackQuery)
                 # Если оплата еще не прошла
                 await bot.send_message(
                     chat_id=callback_query.message.chat.id,
-                    text="❌ Платеж еще не оплачен. Пожалуйста, завершите оплату и нажмите кнопку 'Проверить оплату' еще раз."
+                    text=t("payment-not-completed")
                 )
     except Exception as e:
         # Обработка ошибок
@@ -504,7 +505,7 @@ async def check_invoice_paid_program_com(callback_query: types.CallbackQuery):
             # Если оплата еще не прошла
             await bot.send_message(
                 chat_id=callback_query.message.chat.id,
-                text="❌ Платеж еще не оплачен. Пожалуйста, завершите оплату и нажмите кнопку 'Проверить оплату' еще раз."
+                text=t("payment-not-completed")
             )
     except Exception as e:
         # Обработка ошибок

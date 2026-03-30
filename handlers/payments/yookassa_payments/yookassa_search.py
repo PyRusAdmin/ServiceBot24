@@ -69,7 +69,9 @@ async def check_pay_telegram_master_search_gpt(callback_query: types.CallbackQue
                 parse_mode="HTML"
             )
         else:
-            await bot.send_message(callback_query.message.chat.id,
-                                   "❌ Платеж еще не оплачен. Пожалуйста, завершите оплату и нажмите кнопку 'Проверить оплату' еще раз.")
+            await bot.send_message(
+                callback_query.message.chat.id,
+                text=t("payment-not-completed")
+            )
     except Exception as e:
         logger.exception(e)

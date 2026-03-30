@@ -101,7 +101,7 @@ async def check_maxmaster_payment(callback_query: types.CallbackQuery):
         else:
             await bot.send_message(
                 chat_id=callback_query.message.chat.id,
-                text="❌ Платеж еще не оплачен. Пожалуйста, завершите оплату и нажмите кнопку 'Проверить оплату' еще раз."
+                text=t("payment-not-completed")
             )
     except Exception as e:
         logger.exception(f"Ошибка при проверке оплаты MaxMaster: {e}")
