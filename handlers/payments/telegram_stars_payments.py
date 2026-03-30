@@ -150,8 +150,7 @@ async def process_successful_payment(message: types.Message):
 @router.callback_query(F.data == "payment_stars_program")
 async def payment_stars_program_handler(callback_query: types.CallbackQuery):
     """Оплата TelegramMaster-PRO звездами"""
-    rub_price = TelegramMaster_PRO
-    stars_amount = get_stars_amount(rub_price)
+    stars_amount = get_stars_amount(TelegramMaster_PRO)
 
     try:
         await bot.send_invoice(
@@ -189,8 +188,7 @@ async def payment_stars_program_handler(callback_query: types.CallbackQuery):
 @router.callback_query(F.data == "payment_stars_commentator")
 async def payment_stars_commentator_handler(callback_query: types.CallbackQuery):
     """Оплата TelegramMaster_Commentator звездами"""
-    rub_price = TelegramMaster_Commentator
-    stars_amount = get_stars_amount(rub_price)
+    stars_amount = get_stars_amount(TelegramMaster_Commentator)
 
     try:
         await bot.send_invoice(
@@ -224,8 +222,7 @@ async def payment_stars_commentator_handler(callback_query: types.CallbackQuery)
 @router.callback_query(F.data == "payment_stars_password")
 async def payment_stars_password_handler(callback_query: types.CallbackQuery):
     """Оплата пароля TelegramMaster-PRO звездами"""
-    rub_price = TelegramMaster_PRO.get()
-    stars_amount = get_stars_amount(rub_price)
+    stars_amount = get_stars_amount(TelegramMaster_PRO.get())
 
     try:
         await bot.send_invoice(
@@ -259,8 +256,7 @@ async def payment_stars_password_handler(callback_query: types.CallbackQuery):
 @router.callback_query(F.data == "payment_stars_commentator_password")
 async def payment_stars_commentator_password_handler(callback_query: types.CallbackQuery):
     """Оплата пароля TelegramMaster_Commentator звездами"""
-    rub_price = TelegramMaster_Commentator.get("price_password")
-    stars_amount = get_stars_amount(rub_price)
+    stars_amount = get_stars_amount(TelegramMaster_Commentator.get("price_password"))
 
     try:
         await bot.send_invoice(
@@ -294,8 +290,7 @@ async def payment_stars_commentator_password_handler(callback_query: types.Callb
 @router.callback_query(F.data == "payment_stars_training")
 async def payment_stars_training_handler(callback_query: types.CallbackQuery):
     """Оплата настройки ПО звездами"""
-    rub_price = payment_installation
-    stars_amount = get_stars_amount(rub_price)
+    stars_amount = get_stars_amount(payment_installation)
 
     try:
         await bot.send_invoice(
