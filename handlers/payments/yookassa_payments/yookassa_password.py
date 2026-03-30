@@ -7,7 +7,7 @@ from yookassa import Payment
 
 from db.settings_db import save_payment_info, add_user_if_not_exists, is_user_in_db, get_product_password
 from handlers.payment_yookassa import payment_yookassa_com
-from handlers.payments.products_goods_services import password_TelegramMaster_PRO
+from handlers.payments.products_goods_services import TelegramMaster_PRO
 from keyboards.user_keyboards import start_menu
 from messages.messages import message_payment
 from system.dispatcher import bot, ADMIN_CHAT_ID
@@ -20,7 +20,7 @@ async def payment_url_handler(callback_query: types.CallbackQuery):
     """Отправка ссылки для оплаты пароля от TelegramMaster-PRO"""
     payment_url, payment_id = payment_yookassa_com(
         description_text=f"Пароль TelegramMaster-PRO",
-        product_price=password_TelegramMaster_PRO
+        product_price=TelegramMaster_PRO.get("price")
     )
     # Создаем клавиатуру с кнопкой для проверки оплаты и возврата в меню
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
@@ -50,13 +50,13 @@ async def check_payments(callback_query: types.CallbackQuery, state: FSMContext)
         password = get_product_password("TelegramMaster-PRO")
 
         if password:
-            caption = (f"✅ <b>Платеж на сумму {password_TelegramMaster_PRO} руб прошел успешно‼️</b>\n\n"
+            caption = (f"✅ <b>Платеж на сумму {TelegramMaster_PRO.get("price")} руб прошел успешно‼️</b>\n\n"
                        f"📦 Продукт: <b>Пароль TelegramMaster-PRO</b>\n\n"
                        f"🔑 <b>Ваш пароль:</b>\n"
                        f"<code>{password}</code>\n\n"
                        f"Для возврата в начальное меню нажмите /start")
         else:
-            caption = (f"✅ <b>Платеж на сумму {password_TelegramMaster_PRO} руб прошел успешно‼️</b>\n\n"
+            caption = (f"✅ <b>Платеж на сумму {TelegramMaster_PRO.get("price")} руб прошел успешно‼️</b>\n\n"
                        f"⚠️ <b>Внимание!</b> Пароль еще не установлен администратором.\n\n"
                        f"Пожалуйста, обратитесь к @PyAdminRU\n\n"
                        f"Для возврата в начальное меню нажмите /start")

@@ -13,8 +13,7 @@ from loguru import logger
 from db.settings_db import save_payment_info, get_product_password
 
 from handlers.payments.products_goods_services import (
-    TelegramMaster_PRO, TelegramMaster_Commentator, password_TelegramMaster_PRO,
-    password_TelegramMaster_Commentator, payment_installation, TelegramMaster_Search_GPT, get_stars_amount
+    TelegramMaster_PRO, TelegramMaster_Commentator, payment_installation, TelegramMaster_Search_GPT, get_stars_amount
 )
 from messages.messages import message_check_payment
 from system.dispatcher import bot, ADMIN_CHAT_ID
@@ -49,10 +48,10 @@ async def process_successful_payment(message: types.Message):
             price = TelegramMaster_Commentator
         elif payload.startswith("stars_pass_"):
             product_name = "TelegramMaster-PRO"  # Пароль для TelegramMaster-PRO
-            price = password_TelegramMaster_PRO
+            price = TelegramMaster_PRO.get("price_password")
         elif payload.startswith("stars_com_pass_"):
             product_name = "TelegramMaster_Commentator"  # Пароль для TelegramMaster_Commentator
-            price = password_TelegramMaster_Commentator
+            price = TelegramMaster_Commentator.get("price_password")
         elif payload.startswith("stars_training_"):
             product_name = "Настройка ПО"
             price = payment_installation
@@ -225,7 +224,7 @@ async def payment_stars_commentator_handler(callback_query: types.CallbackQuery)
 @router.callback_query(F.data == "payment_stars_password")
 async def payment_stars_password_handler(callback_query: types.CallbackQuery):
     """Оплата пароля TelegramMaster-PRO звездами"""
-    rub_price = password_TelegramMaster_PRO
+    rub_price = TelegramMaster_PRO.get()
     stars_amount = get_stars_amount(rub_price)
 
     try:
@@ -260,7 +259,7 @@ async def payment_stars_password_handler(callback_query: types.CallbackQuery):
 @router.callback_query(F.data == "payment_stars_commentator_password")
 async def payment_stars_commentator_password_handler(callback_query: types.CallbackQuery):
     """Оплата пароля TelegramMaster_Commentator звездами"""
-    rub_price = password_TelegramMaster_Commentator
+    rub_price = TelegramMaster_Commentator.get("price_password")
     stars_amount = get_stars_amount(rub_price)
 
     try:
