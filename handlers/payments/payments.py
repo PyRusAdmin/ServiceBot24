@@ -112,15 +112,6 @@ async def get_password_tg_com(callback: types.CallbackQuery):
         user = await bot.get_chat_member(chat_id="@master_tg_d", user_id=callback.from_user.id)  # Проверка подписки
         logger.info(f"User Status: {user.status}")
 
-        text = (
-            "Для того чтобы воспользоваться всеми возможностями бота 🤖, вам необходимо подписаться на канал "
-            "🔗 https://t.me/+uE6L_wey4c43YWEy и купить TelegramMaster_Commentator.\n\n"
-
-            "Это позволит вам получить самую свежую версию TelegramMaster_Commentator и воспользоваться всеми новыми "
-            "функциями.\n\n"
-
-            "Если вы ранее уже приобретали TelegramMaster_Commentator, но бот 🤖 не выдаёт пароль, обратитесь к "
-            "🔗 @PyAdminRU.")
         if user.status in ['member', 'administrator', 'creator']:
             # Проверка наличия записи о покупке в базе данных
             product_name = "TelegramMaster_Commentator"
@@ -144,7 +135,10 @@ async def get_password_tg_com(callback: types.CallbackQuery):
                          f"Запросил пароль от TelegramMaster_Commentator"
                 )
             else:
-                await bot.send_message(chat_id=callback.message.chat.id, text=text)  # ID пользователя нет в базе данных
+                await bot.send_message(
+                    chat_id=callback.message.chat.id,
+                    text=t("subscription-required-commentator")
+                )
                 await bot.send_message(
                     chat_id=ADMIN_CHAT_ID,
                     text=f"Пользователь:\n"
@@ -155,13 +149,18 @@ async def get_password_tg_com(callback: types.CallbackQuery):
                          f"Запросил пароль от TelegramMaster_Commentator"
                 )
         else:
-            await bot.send_message(chat_id=callback.message.chat.id, text=text)  # ID пользователя нет в базе данных
-            await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
-                                                               f"ID {callback.from_user.id},\n"
-                                                               f"Username: @{callback.from_user.username},\n"
-                                                               f"Имя: {callback.from_user.first_name},\n"
-                                                               f"Фамилия: {callback.from_user.last_name},\n"
-                                                               f"Запросил пароль от TelegramMaster_Commentator")
+            await bot.send_message(
+                chat_id=callback.message.chat.id,
+                text=t("subscription-required-commentator")
+            )
+            await bot.send_message(chat_id=ADMIN_CHAT_ID,
+                                   text=f"Пользователь:\n"
+                                        f"ID {callback.from_user.id},\n"
+                                        f"Username: @{callback.from_user.username},\n"
+                                        f"Имя: {callback.from_user.first_name},\n"
+                                        f"Фамилия: {callback.from_user.last_name},\n"
+                                        f"Запросил пароль от TelegramMaster_Commentator"
+                                   )
     except Exception as e:
         logger.exception(e)
 
@@ -178,13 +177,26 @@ async def get_password(callback: types.CallbackQuery):
         if user.status in ['member', 'administrator', 'creator']:
             result = is_user_in_db(callback.from_user.id)
             if result:
-                current_date = datetime.datetime.now().strftime("%Y-%m-%d")
-                payment_keyboard_key = payment_keyboard_password()
                 # Сообщение пользователю
                 await bot.send_message(
                     callback.message.chat.id,
-                    text=t("payment-pro", current_date=current_date, password_TelegramMaster=password_TelegramMaster_PRO),
-                    reply_markup=payment_keyboard_key
+                    text=t("payment-pro", current_date=datetime.datetime.now().strftime("%Y-%m-%d"),
+                           password_TelegramMaster=password_TelegramMaster_PRO),
+                    reply_markup=payment_keyboard_password()
+                )
+                await bot.send_message(
+                    chat_id=ADMIN_CHAT_ID,
+                    text=f"Пользователь:\n"
+                         f"ID {callback.from_user.id},\n"
+                         f"Username: @{callback.from_user.username},\n"
+                         f"Имя: {callback.from_user.first_name},\n"
+                         f"Фамилия: {callback.from_user.last_name},\n"
+                         f"Запросил пароль от TelegramMaster-PRO"
+                )
+            else:
+                await bot.send_message(
+                    chat_id=callback.message.chat.id,
+                    text=t("subscription-required-pro")
                 )
                 await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
                                                                    f"ID {callback.from_user.id},\n"
@@ -192,33 +204,11 @@ async def get_password(callback: types.CallbackQuery):
                                                                    f"Имя: {callback.from_user.first_name},\n"
                                                                    f"Фамилия: {callback.from_user.last_name},\n"
                                                                    f"Запросил пароль от TelegramMaster-PRO")
-            else:
-                text = (
-                    "Для того чтобы воспользоваться всеми возможностями бота 🤖, вам необходимо подписаться на канал "
-                    "🔗 https://t.me/+uE6L_wey4c43YWEy и купить TelegramMaster-PRO.\n\n"
-
-                    "Это позволит вам получить самую свежую версию TelegramMaster-PRO и воспользоваться всеми новыми "
-                    "функциями.\n\n"
-
-                    "Если вы ранее уже приобретали TelegramMaster-PRO, но бот 🤖 не выдаёт пароль, обратитесь к "
-                    "🔗 @PyAdminRU.")
-                await bot.send_message(chat_id=callback.message.chat.id, text=text)  # ID пользователя нет в базе данных
-                await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
-                                                                   f"ID {callback.from_user.id},\n"
-                                                                   f"Username: @{callback.from_user.username},\n"
-                                                                   f"Имя: {callback.from_user.first_name},\n"
-                                                                   f"Фамилия: {callback.from_user.last_name},\n"
-                                                                   f"Запросил пароль от TelegramMaster-PRO")
         else:
-            text = ("Для того чтобы воспользоваться всеми возможностями бота 🤖, вам необходимо подписаться на канал "
-                    "🔗 https://t.me/+uE6L_wey4c43YWEy и купить TelegramMaster-PRO.\n\n"
-
-                    "Это позволит вам получить самую свежую версию TelegramMaster-PRO и воспользоваться всеми новыми "
-                    "функциями.\n\n"
-
-                    "Если вы ранее уже приобретали TelegramMaster-PRO, но бот 🤖 не выдаёт пароль, обратитесь к "
-                    "🔗 @PyAdminRU.")
-            await bot.send_message(chat_id=callback.message.chat.id, text=text)  # ID пользователя нет в базе данных
+            await bot.send_message(
+                chat_id=callback.message.chat.id,
+                text=t("subscription-required-pro")
+            )
             await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
                                                                f"ID {callback.from_user.id},\n"
                                                                f"Username: @{callback.from_user.username},\n"

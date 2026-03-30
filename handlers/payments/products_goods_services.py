@@ -2,13 +2,15 @@
 """
 Цены на продукты
 """
-password_TelegramMaster_PRO = 300.00  # Сумма товара пароль TelegramMaster-PRO
+# password_TelegramMaster_PRO = 300.00  # Сумма товара пароль TelegramMaster-PRO
 
 # password_TelegramMaster_Commentator = 300.00  # Сумма товара пароль TelegramMaster_Commentator
 
 TelegramMaster_PRO = {
     "name": "TelegramMaster-PRO",  # Название товара
-    "price": 1600.00  # Стоимость товара TelegramMaster-PRO
+    "price": 1600.00,  # Стоимость товара TelegramMaster-PRO
+    "name_password": "TelegramMaster-PRO",
+    "price_password": 300.00  # Стоимость товара "TelegramMaster_Commentator"
 }
 
 TelegramMaster_Commentator = {
