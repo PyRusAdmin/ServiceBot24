@@ -25,7 +25,10 @@ async def payment_yookassa_program_com(callback_query: types.CallbackQuery):
     # Создаем клавиатуру с кнопкой для проверки оплаты и возврата в меню
     await bot.send_message(
         chat_id=callback_query.from_user.id,
-        text=message_payment("TelegramMaster_Commentator", payment_url),
+        text=message_payment(
+            "TelegramMaster_Commentator",
+            payment_url
+        ),
         reply_markup=payment_yookassa_check_keyboard(payment_id),
         parse_mode="HTML"
     )

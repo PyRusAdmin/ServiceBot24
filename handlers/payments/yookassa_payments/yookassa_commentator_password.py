@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from aiogram import F, Router, types
 from aiogram.fsm.context import FSMContext
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from loguru import logger  # Логирование с помощью loguru
 from yookassa import Payment
 

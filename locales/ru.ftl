@@ -155,3 +155,13 @@ tgmaster-commentator-password-payment-success =
     <code>{ $password }</code>
 
     Для возврата в начальное меню нажмите /start
+
+tgmaster-pro-password-payment-success =
+    ✅ <b>Платеж на сумму { $price } руб прошел успешно‼️</b>
+
+    📦 Продукт: <b>Пароль TelegramMaster-PRO</b>
+
+    🔑 <b>Ваш пароль:</b>
+    <code>{ $password }</code>
+
+    Для возврата в начальное меню нажмите /start

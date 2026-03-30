@@ -21,11 +21,19 @@ async def payment_url_handler(callback_query: types.CallbackQuery):
         description_text=f"Помощь в настройке ПО (консультация)",  # Текст описания товара
         product_price=payment_installation  # Цена товара в рублях
     )
-    # Создаем клавиатуру с кнопкой для проверки оплаты и возврата в меню
-    keyboard = payment_yookassa_check_keyboard_custom(payment_id, "csheck_service")
-    await bot.send_message(chat_id=callback_query.from_user.id,
-                           text=message_payment("Помощь в настройке ПО (консультация)", payment_url),
-                           reply_markup=keyboard, parse_mode="HTML")
+    await bot.send_message(
+        chat_id=callback_query.from_user.id,
+        text=message_payment(
+            "Помощь в настройке ПО (консультация)",
+            payment_url
+        ),
+        reply_markup=payment_yookassa_check_keyboard_custom(
+            # Создаем клавиатуру с кнопкой для проверки оплаты и возврата в меню
+            payment_id,
+            "csheck_service"
+        ),
+        parse_mode="HTML"
+    )
 
 
 @router.callback_query(F.data.startswith("csheck_service"))

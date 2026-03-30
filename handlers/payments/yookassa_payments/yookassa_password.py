@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
 from aiogram import F, Router, types
 from aiogram.fsm.context import FSMContext
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from loguru import logger  # Логирование с помощью loguru
 from yookassa import Payment
 
 from db.settings_db import save_payment_info, add_user_if_not_exists, is_user_in_db, get_product_password
 from handlers.payment_yookassa import payment_yookassa_com
 from handlers.payments.products_goods_services import TelegramMaster_PRO
+from keyboards.payments_keyboards import payment_yookassa_check_keyboard_custom
 from keyboards.user_keyboards import start_menu
 from messages.messages import message_payment
+from services.i18n import t
 from system.dispatcher import bot, ADMIN_CHAT_ID
 
 router = Router(name=__name__)
@@ -23,10 +24,7 @@ async def payment_url_handler(callback_query: types.CallbackQuery):
         product_price=TelegramMaster_PRO.get("price")
     )
     # Создаем клавиатуру с кнопкой для проверки оплаты и возврата в меню
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text='✅ Проверить оплату (Юкасса)', callback_data=f"payment_pass_{payment_id}")],
-        [InlineKeyboardButton(text='🏠 В начальное меню', callback_data='start_menu_keyboard')],
-    ])
+    keyboard = payment_yookassa_check_keyboard_custom(payment_id, "payment_pass")
     await bot.send_message(chat_id=callback_query.from_user.id,
                            text=message_payment("Пароль TelegramMaster-PRO", payment_url),
                            reply_markup=keyboard, parse_mode="HTML")
@@ -55,11 +53,11 @@ async def check_payments(callback_query: types.CallbackQuery, state: FSMContext)
 
         # Получаем пароль из базы данных
         password = get_product_password("TelegramMaster-PRO")
-        caption = (f"✅ <b>Платеж на сумму {TelegramMaster_PRO.get("price")} руб прошел успешно‼️</b>\n\n"
-                   f"📦 Продукт: <b>Пароль TelegramMaster-PRO</b>\n\n"
-                   f"🔑 <b>Ваш пароль:</b>\n"
-                   f"<code>{password}</code>\n\n"
-                   f"Для возврата в начальное меню нажмите /start")
+        caption = t(
+            "tgmaster-pro-password-payment-success",
+            price=TelegramMaster_PRO.get("price"),
+            password=password
+        )
         await bot.send_message(
             chat_id=callback_query.from_user.id,
             text=caption,
@@ -80,5 +78,7 @@ async def check_payments(callback_query: types.CallbackQuery, state: FSMContext)
                      f"Приобрел пароль от TelegramMaster-PRO"
             )
     else:
-        await bot.send_message(callback_query.message.chat.id,
-                               "❌ Платеж еще не оплачен. Пожалуйста, завершите оплату и нажмите кнопку 'Проверить оплату' еще раз.")
+        await bot.send_message(
+            callback_query.message.chat.id,
+            text=t("payment-not-completed")
+        )

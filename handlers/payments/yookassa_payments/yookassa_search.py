@@ -23,10 +23,15 @@ async def payment_yookassa_telegram_master_search_gpt(callback_query: types.Call
             description_text=f"Оплата: TelegramMaster-Search-GPT",  # Текст описания товара
             product_price=TelegramMaster_Search_GPT  # Цена товара в рублях
         )
-        await bot.send_message(chat_id=callback_query.from_user.id,
-                               text=message_payment(product="TelegramMaster-Search-GPT", payment_url=payment_url),
-                               reply_markup=payment_keyboard_telegram_master_search_gpt(payment_id),
-                               parse_mode="HTML")
+        await bot.send_message(
+            chat_id=callback_query.from_user.id,
+            text=message_payment(
+                product="TelegramMaster-Search-GPT",
+                payment_url=payment_url
+            ),
+            reply_markup=payment_keyboard_telegram_master_search_gpt(payment_id),
+            parse_mode="HTML"
+        )
     except Exception as e:
         logger.exception(e)
 
