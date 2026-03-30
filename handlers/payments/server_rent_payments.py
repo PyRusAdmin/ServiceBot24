@@ -14,6 +14,7 @@ from db.settings_db import add_server_rent, get_active_server_rent
 from handlers.payment_yookassa import payment_yookassa_com
 from handlers.payments.products_goods_services import SERVER_RENT_PRICE
 from keyboards.user_keyboards import start_menu
+from services.i18n import t
 from states.states import ServerRentState
 from system.dispatcher import bot, ADMIN_CHAT_ID
 
@@ -53,13 +54,7 @@ async def server_rent_handler(callback_query: types.CallbackQuery, state: FSMCon
 
     await bot.send_message(
         chat_id=callback_query.from_user.id,
-        text="🖥️ <b>Аренда сервера</b>\n\n"
-             "Выберите срок аренды сервера:\n\n"
-             "💰 <b>Цена:</b> 250 ₽/месяц\n"
-             "⚡️ <b>Скидки:</b>\n"
-             "• 6 месяцев - 1500 ₽ (экономия 1500 ₽)\n"
-             "• 12 месяцев - 3000 ₽ (экономия 3000 ₽)\n\n"
-             "📡 Сервер будет доступен 24/7 для ваших задач",
+        text=t("server-rent-select"),
         reply_markup=keyboard,
         parse_mode="HTML"
     )
@@ -94,11 +89,13 @@ async def select_months_handler(callback_query: types.CallbackQuery, state: FSMC
 
         await bot.send_message(
             chat_id=callback_query.from_user.id,
-            text=f"💳 <b>Оплата аренды сервера</b>\n\n"
-                 f"📅 Срок: <b>{months} {'месяц' if months == 1 else 'месяца' if months < 5 else 'месяцев'}</b>\n"
-                 f"💰 Сумма: <b>{price} ₽</b>\n\n"
-                 f"🔗 <a href='{payment_url}'>Перейти к оплате</a>\n\n"
-                 f"После оплаты нажмите кнопку 'Проверить оплату'",
+            text=t(
+                "server-rent-payment",
+                months=months,
+                months_text=f"{months} {'месяц' if months == 1 else 'месяца' if months < 5 else 'месяцев'}",
+                price=price,
+                payment_url=payment_url
+            ),
             reply_markup=keyboard,
             parse_mode="HTML"
         )

@@ -12,7 +12,7 @@ from handlers.payments.products_goods_services import MaxMaster
 from handlers.payments.telegram_stars_payments import get_stars_amount
 
 from keyboards.user_keyboards import start_menu
-from messages.messages import message_check_payment
+from services.i18n import t
 from system.dispatcher import bot, ADMIN_CHAT_ID
 
 router = Router(name=__name__)
@@ -82,21 +82,14 @@ async def process_successful_payment_maxmaster(message: types.Message):
             payment_amount=MaxMaster,
             payment_method="stars"
         )
-
         # Получаем пароль из БД
         password = get_maxmaster_password()
-
-        if password:
-            caption = (f"✅ <b>Оплата подтверждена!</b>\n\n"
-                       f"📦 Продукт: <b>{product}</b>\n\n"
-                       f"🔑 <b>Ваш пароль от архива:</b>\n"
-                       f"<code>{password}</code>\n\n"
-                       f"{message_check_payment(product_price=MaxMaster, product=product)}")
-        else:
-            caption = (f"✅ <b>Оплата подтверждена!</b>\n\n"
-                       f"⚠️ <b>Внимание!</b> Пароль еще не установлен администратором.\n\n"
-                       f"Пожалуйста, обратитесь к @PyAdminRU")
-
+        caption = t(
+            "maxmaster-stars-payment-success",
+            product_name=product,
+            password=password,
+            footer_text=t("maxmaster-payment-footer")
+        )
         await bot.send_message(
             chat_id=message.from_user.id,
             text=caption,

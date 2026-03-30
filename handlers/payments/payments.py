@@ -89,16 +89,12 @@ async def buy_maxmaster(callback_query: types.CallbackQuery):
 async def buy_server_rent(callback_query: types.CallbackQuery):
     """Аренда сервера"""
     payment_keyboard_key = payment_keyboard_server_rent()
-    payment_mes = ("🖥️ <b>Аренда сервера</b>\n\n"
-                   f"💰 Цена: <b>{SERVER_RENT_PRICE} ₽/месяц</b>\n\n"
-                   "📡 Аренда сервера для ваших задач.\n"
-                   "⚡️ Доступен 24/7.\n\n"
-                   "📅 Доступные сроки аренды:\n"
-                   "• 1-12 месяцев\n"
-                   "💳 Оплата через YooKassa или Telegram Stars\n\n"
-                   "Для возврата в начальное меню, нажмите: /start")
-    await bot.send_message(callback_query.message.chat.id, payment_mes, reply_markup=payment_keyboard_key,
-                           parse_mode="HTML")
+    await bot.send_message(
+        callback_query.message.chat.id,
+        text=t("server-rent-info", price=SERVER_RENT_PRICE),
+        reply_markup=payment_keyboard_key,
+        parse_mode="HTML"
+    )
 
 
 @router.callback_query(F.data == "commentator_password")
