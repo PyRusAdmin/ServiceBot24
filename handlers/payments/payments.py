@@ -76,13 +76,11 @@ async def buy_program_setup_service(callback_query: types.CallbackQuery):
 async def buy_maxmaster(callback_query: types.CallbackQuery):
     """Покупка MaxMaster"""
     payment_keyboard_key = payment_keyboard_maxmaster()
-    payment_mes = ("Купить MaxMaster.\n\n"
-                   f"Цена на — {MaxMaster} рублей.\n\n"
-                   "📌 MaxMaster - программа для перебора номеров на наличие регистрации в мессенджере Max.\n\n"
-                   "Если по какой-либо причине бот не выдал пароль или произошла ошибка платежа, писать: "
-                   "@PyAdminRU. 🤖🔒\n\n"
-                   "Для возврата в начальное меню, нажмите: /start")
-    await bot.send_message(callback_query.message.chat.id, payment_mes, reply_markup=payment_keyboard_key)
+    await bot.send_message(
+        callback_query.message.chat.id,
+        text=t("maxmaster-buy-info", price=MaxMaster),
+        reply_markup=payment_keyboard_key
+    )
 
 
 @router.callback_query(F.data == "delivery_server_rent")

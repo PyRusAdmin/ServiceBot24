@@ -9,7 +9,8 @@ from db.settings_db import save_payment_info, add_user_if_not_exists, is_user_in
 from handlers.payment_yookassa import payment_yookassa_com
 from handlers.payments.products_goods_services import TelegramMaster_PRO
 from keyboards.user_keyboards import start_menu
-from messages.messages import message_payment, message_check_payment
+from messages.messages import message_payment
+from services.i18n import t
 from system.dispatcher import bot, ADMIN_CHAT_ID
 
 router = Router(name=__name__)
@@ -48,11 +49,12 @@ async def check_payment(callback_query: types.CallbackQuery, state: FSMContext):
 
         # Получаем пароль из базы данных
         password = get_product_password("TelegramMaster-PRO")
-        caption = (f"✅ <b>Платеж на сумму {TelegramMaster_PRO} руб прошел успешно‼️</b>\n\n"
-                   f"📦 Продукт: <b>TelegramMaster-PRO</b>\n\n"
-                   f"🔑 <b>Ваш пароль:</b>\n"
-                   f"<code>{password}</code>\n\n"
-                   f"{message_check_payment(product_price=TelegramMaster_PRO, product="TelegramMaster-PRO")}")
+        caption = t(
+            "tgmaster-pro-payment-success",
+            price=TelegramMaster_PRO,
+            password=password,
+            footer_text=t("tgmaster-payment-footer")
+        )
         await bot.send_message(
             chat_id=callback_query.from_user.id,
             text=caption,

@@ -109,3 +109,16 @@ maxmaster-buy-info =
     Если по какой-либо причине бот не выдал пароль или произошла ошибка платежа, писать: @PyAdminRU. 🤖🔒
 
     Для возврата в начальное меню, нажмите: /start
+
+tgmaster-pro-payment-success =
+    ✅ <b>Платеж на сумму { $price } руб прошел успешно‼️</b>
+
+    📦 Продукт: <b>TelegramMaster-PRO</b>
+
+    🔑 <b>Ваш пароль:</b>
+    <code>{ $password }</code>
+
+    { $footer_text }
+
+tgmaster-payment-footer =
+    Для возврата в начальное меню нажмите /start
