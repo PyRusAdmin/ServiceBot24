@@ -15,7 +15,6 @@ from keyboards.payments_keyboards import (
     payment_yookassa_password_commentator_password_keyboard, payment_keyboard_telegram_master_search_gpt_1,
     payment_keyboard_maxmaster, payment_keyboard_server_rent, purchasing_a_program_setup_service
 )
-from messages.messages import generate_payment_message
 from services.i18n import t
 from system.dispatcher import ADMIN_CHAT_ID
 from system.dispatcher import bot
@@ -132,7 +131,7 @@ async def get_password_tg_com(callback: types.CallbackQuery):
                 await bot.send_message(
                     chat_id=callback.message.chat.id,
                     text=t("payment-commentator", current_date=current_date,
-                           password_TelegramMaster_Commentator=password_TelegramMaster_Commentator),
+                           password_TelegramMaster_Commentator=TelegramMaster_Commentator.get("price_password")),
                     reply_markup=payment_yookassa_password_commentator_password_keyboard()
                 )
                 await bot.send_message(
@@ -182,8 +181,11 @@ async def get_password(callback: types.CallbackQuery):
                 current_date = datetime.datetime.now().strftime("%Y-%m-%d")
                 payment_keyboard_key = payment_keyboard_password()
                 # Сообщение пользователю
-                payment_mes = generate_payment_message(current_date, password_TelegramMaster_PRO)
-                await bot.send_message(callback.message.chat.id, payment_mes, reply_markup=payment_keyboard_key)
+                await bot.send_message(
+                    callback.message.chat.id,
+                    text=t("payment-pro", current_date=current_date, password_TelegramMaster=password_TelegramMaster_PRO),
+                    reply_markup=payment_keyboard_key
+                )
                 await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
                                                                    f"ID {callback.from_user.id},\n"
                                                                    f"Username: @{callback.from_user.username},\n"

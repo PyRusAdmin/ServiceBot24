@@ -68,15 +68,6 @@ fag_post = ("<i>Основные функции бота 🤖</i>\n\n"
             "Для возврата нажмите на /start")
 
 
-def generate_payment_message(current_date, password_TelegramMaster):
-    return ("Получить пароль от TelegramMaster-PRO. \n\n"
-            f"Цена на {current_date} — {password_TelegramMaster} рублей.\n\n"
-            "🔑 <b>После успешной оплаты бот отправит вам пароль в сообщении.</b>\n\n"
-            "Если по какой-либо причине бот не выдал пароль или произошла ошибка платежа, писать: "
-            "@PyAdminRU. 🤖🔒\n\n"
-            "Для возврата в начальное меню, нажмите: /start")
-
-
 def message_check_payment(product_price, product):
     caption = (f"✅ <b>Платеж на сумму {product_price} руб прошел успешно!</b>\n\n"
                f"📦 Продукт: <b>{product}</b>\n\n"
