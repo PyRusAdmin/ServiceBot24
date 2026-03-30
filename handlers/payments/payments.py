@@ -149,14 +149,15 @@ async def get_password_tg_com(callback: types.CallbackQuery):
                 chat_id=callback.message.chat.id,
                 text=t("subscription-required-commentator")
             )
-            await bot.send_message(chat_id=ADMIN_CHAT_ID,
-                                   text=f"Пользователь:\n"
-                                        f"ID {callback.from_user.id},\n"
-                                        f"Username: @{callback.from_user.username},\n"
-                                        f"Имя: {callback.from_user.first_name},\n"
-                                        f"Фамилия: {callback.from_user.last_name},\n"
-                                        f"Запросил пароль от TelegramMaster_Commentator"
-                                   )
+            await bot.send_message(
+                chat_id=ADMIN_CHAT_ID,
+                text=f"Пользователь:\n"
+                     f"ID {callback.from_user.id},\n"
+                     f"Username: @{callback.from_user.username},\n"
+                     f"Имя: {callback.from_user.first_name},\n"
+                     f"Фамилия: {callback.from_user.last_name},\n"
+                     f"Запросил пароль от TelegramMaster_Commentator"
+            )
     except Exception as e:
         logger.exception(e)
 
@@ -197,22 +198,26 @@ async def get_password(callback: types.CallbackQuery):
                     chat_id=callback.message.chat.id,
                     text=t("subscription-required-pro")
                 )
-                await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
-                                                                   f"ID {callback.from_user.id},\n"
-                                                                   f"Username: @{callback.from_user.username},\n"
-                                                                   f"Имя: {callback.from_user.first_name},\n"
-                                                                   f"Фамилия: {callback.from_user.last_name},\n"
-                                                                   f"Запросил пароль от TelegramMaster-PRO")
-        else:
-            await bot.send_message(
-                chat_id=callback.message.chat.id,
-                text=t("subscription-required-pro")
-            )
-            await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
-                                                               f"ID {callback.from_user.id},\n"
-                                                               f"Username: @{callback.from_user.username},\n"
-                                                               f"Имя: {callback.from_user.first_name},\n"
-                                                               f"Фамилия: {callback.from_user.last_name},\n"
-                                                               f"Запросил пароль от TelegramMaster-PRO")
-    except Exception as e:
+                await bot.send_message(c
+                hat_id = ADMIN_CHAT_ID,
+                text = f"Пользователь:\n"
+                       f"ID {callback.from_user.id},\n"
+                       f"Username: @{callback.from_user.username},\n"
+                       f"Имя: {callback.from_user.first_name},\n"
+                       f"Фамилия: {callback.from_user.last_name},\n"
+                       f"Запросил пароль от TelegramMaster-PRO")
+                else:
+                await bot.send_message(
+                    chat_id=callback.message.chat.id,
+                    text=t("subscription-required-pro")
+                )
+                await bot.send_message(
+                    chat_id=ADMIN_CHAT_ID,
+                    text=f"Пользователь:\n"
+                         f"ID {callback.from_user.id},\n"
+                         f"Username: @{callback.from_user.username},\n"
+                         f"Имя: {callback.from_user.first_name},\n"
+                         f"Фамилия: {callback.from_user.last_name},\n"
+                         f"Запросил пароль от TelegramMaster-PRO")
+        except Exception as e:
         logger.exception(e)
