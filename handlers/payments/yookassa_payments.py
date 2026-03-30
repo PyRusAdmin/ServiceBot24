@@ -27,6 +27,7 @@ from aiogram import F, Router, types
 from aiogram.fsm.context import FSMContext
 
 from db.settings_db import save_payment_info, add_user_if_not_exists, is_user_in_db
+from handlers.payments.generates_payment_data import generates_payment_data
 from handlers.payments.products_goods_services import TelegramMaster_PRO
 from keyboards.payments_keyboards import payment_yookassa_check_keyboard_custom
 from system.dispatcher import ADMIN_CHAT_ID
@@ -64,14 +65,12 @@ async def check_payment_com(callback_query: types.CallbackQuery):
     if payment_info.status == "succeeded":  # Обработка статуса платежа
         # Запись в базу данных пользователя, который оплатил счет в рублях
         save_payment_info(
-            callback_query.from_user.id,
-            callback_query.from_user.first_name,
-            callback_query.from_user.last_name,
-            callback_query.from_user.username,
-            payment_info.id,
-            "TelegramMaster_Commentator",
-            payment_info.captured_at,
-            "succeeded"
+            generates_payment_data(
+                callback_query=callback_query,
+                payment_info=payment_info.id,
+                product="TelegramMaster_Commentator",
+                date=payment_info.captured_at
+            )
         )
         await bot.send_message(
             chat_id=callback_query.from_user.id,
@@ -102,9 +101,6 @@ async def check_payment_com(callback_query: types.CallbackQuery):
             callback_query.message.chat.id,
             text=t("payment-not-completed")
         )
-
-
-router = Router(name=__name__)
 
 
 @router.callback_query(F.data.startswith("payment_yookassa_password_commentator_password"))
@@ -138,13 +134,12 @@ async def check_payments_commentator_password(callback_query: types.CallbackQuer
     if payment_info.status == "succeeded":  # Обработка статуса платежа
         # Запись в базу данных пользователя, который оплатил счет в рублях
         save_payment_info(
-            callback_query.from_user.id,
-            callback_query.from_user.first_name,
-            callback_query.from_user.last_name,
-            callback_query.from_user.username,
-            payment_info.id,
-            "Пароль TelegramMaster_Commentator",
-            payment_info.captured_at, "succeeded"
+            generates_payment_data(
+                callback_query=callback_query,
+                payment_info=payment_info.id,
+                product="Пароль TelegramMaster_Commentator",
+                date=payment_info.captured_at
+            )
         )
         await bot.send_message(
             chat_id=callback_query.from_user.id,
@@ -176,9 +171,6 @@ async def check_payments_commentator_password(callback_query: types.CallbackQuer
         )
 
 
-router = Router(name=__name__)
-
-
 @router.callback_query(F.data == "payment_yookassa_password")
 async def payment_url_handler(callback_query: types.CallbackQuery):
     """Отправка ссылки для оплаты пароля от TelegramMaster-PRO"""
@@ -204,14 +196,12 @@ async def check_payments(callback_query: types.CallbackQuery, state: FSMContext)
     if payment_info.status == "succeeded":  # Обработка статуса платежа
         # Запись в базу данных пользователя, который оплатил счет в рублях
         save_payment_info(
-            callback_query.from_user.id,
-            callback_query.from_user.first_name,
-            callback_query.from_user.last_name,
-            callback_query.from_user.username,
-            payment_info.id,
-            "Пароль TelegramMaster-PRO",
-            payment_info.captured_at,
-            "succeeded"
+            generates_payment_data(
+                callback_query=callback_query,
+                payment_info=payment_info.id,
+                product="Пароль TelegramMaster-PRO",
+                date=payment_info.captured_at
+            )
         )
 
         # Получаем пароль из базы данных
@@ -247,9 +237,6 @@ async def check_payments(callback_query: types.CallbackQuery, state: FSMContext)
         )
 
 
-router = Router(name=__name__)
-
-
 @router.callback_query(F.data.startswith("payment_yookassa_program"))
 async def payment_url_handler(callback_query: types.CallbackQuery):
     """Отправка ссылки для оплаты TelegramMaster-PRO"""
@@ -283,14 +270,12 @@ async def check_payment(callback_query: types.CallbackQuery, state: FSMContext):
     if payment_info.status == "succeeded":  # Обработка статуса платежа
         # Запись в базу данных пользователя, который оплатил счет в рублях
         save_payment_info(
-            callback_query.from_user.id,
-            callback_query.from_user.first_name,
-            callback_query.from_user.last_name,
-            callback_query.from_user.username,
-            payment_info.id,
-            "TelegramMaster-PRO",
-            payment_info.captured_at,
-            "succeeded"
+            generates_payment_data(
+                callback_query=callback_query,
+                payment_info=payment_info.id,
+                product="TelegramMaster-PRO",
+                date=payment_info.captured_at
+            )
         )
 
         await bot.send_message(
@@ -322,9 +307,6 @@ async def check_payment(callback_query: types.CallbackQuery, state: FSMContext):
             callback_query.message.chat.id,
             text=t("payment-not-completed")
         )
-
-
-router = Router(name=__name__)
 
 
 @router.callback_query(F.data == "payment_yookassa_Search_GPT")
@@ -389,9 +371,6 @@ async def check_pay_telegram_master_search_gpt(callback_query: types.CallbackQue
         logger.exception(e)
 
 
-router = Router(name=__name__)
-
-
 @router.callback_query(F.data.startswith("payment_yookassa_training"))
 async def payment_url_handler(callback_query: types.CallbackQuery):
     """Отправка ссылки для оплаты TelegramMaster-PRO"""
@@ -424,14 +403,12 @@ async def check_payment_program_setup_service(callback_query: types.CallbackQuer
     if payment_info.status == "succeeded":  # Обработка статуса платежа
         # Запись в базу данных пользователя, который оплатил счет в рублях
         save_payment_info(
-            callback_query.from_user.id,
-            callback_query.from_user.first_name,
-            callback_query.from_user.last_name,
-            callback_query.from_user.username,
-            payment_info.id,
-            "Помощь в настройке ПО (консультация)",
-            payment_info.captured_at,
-            "succeeded"
+            generates_payment_data(
+                callback_query=callback_query,
+                payment_info=payment_info.id,
+                product="Помощь в настройке ПО (консультация)",
+                date=payment_info.captured_at
+            )
         )
         await bot.send_message(
             chat_id=ADMIN_CHAT_ID,
