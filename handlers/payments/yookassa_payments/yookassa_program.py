@@ -43,21 +43,25 @@ async def check_payment(callback_query: types.CallbackQuery, state: FSMContext):
 
     if payment_info.status == "succeeded":  # Обработка статуса платежа
         # Запись в базу данных пользователя, который оплатил счет в рублях
-        save_payment_info(callback_query.from_user.id, callback_query.from_user.first_name,
-                          callback_query.from_user.last_name, callback_query.from_user.username, payment_info.id,
-                          "TelegramMaster-PRO", payment_info.captured_at, "succeeded")
-
-        # Получаем пароль из базы данных
-        password = get_product_password("TelegramMaster-PRO")
-        caption = t(
-            "tgmaster-pro-payment-success",
-            price=TelegramMaster_PRO,
-            password=password,
-            footer_text=t("tgmaster-payment-footer")
+        save_payment_info(
+            callback_query.from_user.id,
+            callback_query.from_user.first_name,
+            callback_query.from_user.last_name,
+            callback_query.from_user.username,
+            payment_info.id,
+            "TelegramMaster-PRO",
+            payment_info.captured_at,
+            "succeeded"
         )
+
         await bot.send_message(
             chat_id=callback_query.from_user.id,
-            text=caption,
+            text=t(
+                "tgmaster-pro-payment-success",
+                price=TelegramMaster_PRO,
+                password=get_product_password("TelegramMaster-PRO"),  # Получаем пароль из базы данных
+                footer_text=t("tgmaster-payment-footer")
+            ),
             reply_markup=start_menu(),  # Отправляемся в главное меню
             parse_mode="HTML"
         )

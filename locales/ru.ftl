@@ -122,3 +122,13 @@ tgmaster-pro-payment-success =
 
 tgmaster-payment-footer =
     Для возврата в начальное меню нажмите /start
+
+tgmaster-search-gpt-payment-success =
+    ✅ <b>Платеж на сумму { $price } руб прошел успешно‼️</b>
+
+    📦 Продукт: <b>TelegramMaster-Search-GPT</b>
+
+    🔑 <b>Ваш пароль:</b>
+    <code>{ $password }</code>
+
+    { $footer_text }

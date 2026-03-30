@@ -8,7 +8,8 @@ from handlers.payment_yookassa import payment_yookassa_com
 from handlers.payments.products_goods_services import TelegramMaster_Search_GPT
 from keyboards.payments_keyboards import payment_keyboard_telegram_master_search_gpt
 from keyboards.user_keyboards import start_menu
-from messages.messages import message_payment, message_check_payment
+from messages.messages import message_payment
+from services.i18n import t
 from system.dispatcher import bot
 
 router = Router(name=__name__)
@@ -49,11 +50,12 @@ async def check_pay_telegram_master_search_gpt(callback_query: types.CallbackQue
 
             # Получаем пароль из базы данных
             password = get_product_password("TelegramMaster_Search_GPT")
-            caption = (f"✅ <b>Платеж на сумму {TelegramMaster_Search_GPT} руб прошел успешно‼️</b>\n\n"
-                       f"📦 Продукт: <b>TelegramMaster-Search-GPT</b>\n\n"
-                       f"🔑 <b>Ваш пароль:</b>\n"
-                       f"<code>{password}</code>\n\n"
-                       f"{message_check_payment(product_price=TelegramMaster_Search_GPT, product="TelegramMaster-Search-GPT")}")
+            caption = t(
+                "tgmaster-search-gpt-payment-success",
+                price=TelegramMaster_Search_GPT,
+                password=password,
+                footer_text=t("tgmaster-payment-footer")
+            )
             await bot.send_message(
                 chat_id=callback_query.from_user.id,
                 text=caption,
