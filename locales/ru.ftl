@@ -39,3 +39,16 @@ subscription-required-commentator =
 
     Если вы ранее уже приобретали TelegramMaster_Commentator, но бот 🤖 не выдаёт пароль, обратитесь к
     🔗 @PyAdminRU.
+
+maxmaster-payment-success =
+    ✅ <b>Платеж на сумму { $price } руб прошел успешно‼️</b>
+
+    📦 Продукт: <b>{ $product_name }</b>
+
+    🔑 <b>Ваш пароль от архива:</b>
+    <code>{ $password }</code>
+
+    { $footer_text }
+
+maxmaster-payment-footer =
+    Для возврата в начальное меню нажмите /start

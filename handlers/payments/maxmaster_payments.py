@@ -13,12 +13,11 @@ from db.settings_db import add_user_if_not_exists, is_user_in_db, get_maxmaster_
 from handlers.payment_yookassa import payment_yookassa_com
 from handlers.payments.products_goods_services import MaxMaster
 from keyboards.user_keyboards import start_menu
-from messages.messages import message_payment, message_check_payment
+from messages.messages import message_payment
+from services.i18n import t
 from system.dispatcher import bot, ADMIN_CHAT_ID
 
 router = Router(name=__name__)
-
-product = "MaxMaster"
 
 
 @router.callback_query(F.data == "payment_yookassa_maxmaster")
@@ -26,7 +25,7 @@ async def payment_yookassa_maxmaster_handler(callback_query: types.CallbackQuery
     """Отправка ссылки для оплаты MaxMaster через YooKassa"""
     try:
         payment_url, payment_id = payment_yookassa_com(
-            description_text=f"Оплата: {product}",
+            description_text=f"Оплата: {MaxMaster.get("name")}",
             product_price=MaxMaster
         )
 
@@ -37,7 +36,7 @@ async def payment_yookassa_maxmaster_handler(callback_query: types.CallbackQuery
 
         await bot.send_message(
             chat_id=callback_query.from_user.id,
-            text=message_payment(product, payment_url),
+            text=message_payment(MaxMaster.get("name"), payment_url),
             reply_markup=keyboard,
             parse_mode="HTML"
         )
@@ -66,21 +65,15 @@ async def check_maxmaster_payment(callback_query: types.CallbackQuery):
                 payment_amount=MaxMaster,
                 payment_method="yookassa"
             )
-
             # Получаем пароль из БД
             password = get_maxmaster_password()
-
-            if password:
-                caption = (f"✅ <b>Платеж на сумму {MaxMaster} руб прошел успешно‼️</b>\n\n"
-                           f"📦 Продукт: <b>{product}</b>\n\n"
-                           f"🔑 <b>Ваш пароль от архива:</b>\n"
-                           f"<code>{password}</code>\n\n"
-                           f"{message_check_payment(product_price=MaxMaster, product=product)}")
-            else:
-                caption = (f"✅ <b>Платеж на сумму {MaxMaster} руб прошел успешно‼️</b>\n\n"
-                           f"⚠️ <b>Внимание!</b> Пароль еще не установлен администратором.\n\n"
-                           f"Пожалуйста, обратитесь к @PyAdminRU")
-
+            caption = t(
+                "maxmaster-payment-success",
+                price=MaxMaster,
+                product_name=MaxMaster.get("name"),
+                password=password,
+                footer_text=t("maxmaster-payment-footer")
+            )
             await bot.send_message(
                 chat_id=callback_query.from_user.id,
                 text=caption,

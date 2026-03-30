@@ -5,6 +5,7 @@
 # password_TelegramMaster_PRO = 300.00  # Сумма товара пароль TelegramMaster-PRO
 # password_TelegramMaster_Commentator = 300.00  # Сумма товара пароль TelegramMaster_Commentator
 # TelegramMaster_Commentator = 1300.00  # Сумма товара "TelegramMaster_Commentator"
+# MaxMaster = 500.00  # Стоимость программы MaxMaster
 
 TelegramMaster_PRO = {
     "name": "TelegramMaster-PRO",  # Название товара
@@ -20,9 +21,16 @@ TelegramMaster_Commentator = {
     "price_password": 300.00  # Стоимость товара "TelegramMaster_Commentator"
 }
 
+MaxMaster = {
+    "name": "MaxMaster",  # Название товара MaxMaster
+    "price": 500.00,  # Стоимость товара MaxMaster
+    "name_password": "MaxMaster",  # Название товара MaxMaster
+    "price_password": 300.00  # Стоимость товара MaxMaster
+}
+
 payment_installation = 800.00  # Сумма товара "Установка ПО"
 TelegramMaster_Search_GPT = 1000.00  # Стоимость товара "TelegramMaster_Search_GPT"
-MaxMaster = 500.00  # Стоимость программы MaxMaster
+
 SERVER_RENT_PRICE = 250.00  # Стоимость аренды сервера в месяц (руб)
 
 # ============================================================================
