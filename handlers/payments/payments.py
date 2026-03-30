@@ -6,7 +6,7 @@ from loguru import logger  # Логирование с помощью loguru
 
 from db.settings_db import check_user_payment, is_user_in_db
 from handlers.payments.products_goods_services import (
-    TelegramMaster_PRO, payment_installation, TelegramMaster_Commentator, password_TelegramMaster_Commentator,
+    TelegramMaster_PRO, payment_installation, TelegramMaster_Commentator,
     TelegramMaster_Search_GPT, MaxMaster, SERVER_RENT_PRICE
 )
 from handlers.payments.products_goods_services import password_TelegramMaster_PRO
@@ -15,7 +15,8 @@ from keyboards.payments_keyboards import (
     payment_yookassa_password_commentator_password_keyboard, payment_keyboard_telegram_master_search_gpt_1,
     payment_keyboard_maxmaster, payment_keyboard_server_rent, purchasing_a_program_setup_service
 )
-from messages.messages import generate_payment_message, generate_payment_message_commentator
+from messages.messages import generate_payment_message
+from services.i18n import t
 from system.dispatcher import ADMIN_CHAT_ID
 from system.dispatcher import bot
 
@@ -127,26 +128,33 @@ async def get_password_tg_com(callback: types.CallbackQuery):
             result = check_user_payment(callback.from_user.id, product_name)
             if result:
                 # Сообщение пользователю
+                current_date = datetime.datetime.now().strftime("%Y-%m-%d")
                 await bot.send_message(
-                    callback.message.chat.id,
-                    generate_payment_message_commentator(datetime.datetime.now().strftime("%Y-%m-%d"),
-                                                         password_TelegramMaster_Commentator),
+                    chat_id=callback.message.chat.id,
+                    text=t("payment-commentator", current_date=current_date,
+                           password_TelegramMaster_Commentator=password_TelegramMaster_Commentator),
                     reply_markup=payment_yookassa_password_commentator_password_keyboard()
                 )
-                await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
-                                                                   f"ID {callback.from_user.id},\n"
-                                                                   f"Username: @{callback.from_user.username},\n"
-                                                                   f"Имя: {callback.from_user.first_name},\n"
-                                                                   f"Фамилия: {callback.from_user.last_name},\n"
-                                                                   f"Запросил пароль от TelegramMaster_Commentator")
+                await bot.send_message(
+                    chat_id=ADMIN_CHAT_ID,
+                    text=f"Пользователь:\n"
+                         f"ID {callback.from_user.id},\n"
+                         f"Username: @{callback.from_user.username},\n"
+                         f"Имя: {callback.from_user.first_name},\n"
+                         f"Фамилия: {callback.from_user.last_name},\n"
+                         f"Запросил пароль от TelegramMaster_Commentator"
+                )
             else:
                 await bot.send_message(chat_id=callback.message.chat.id, text=text)  # ID пользователя нет в базе данных
-                await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"
-                                                                   f"ID {callback.from_user.id},\n"
-                                                                   f"Username: @{callback.from_user.username},\n"
-                                                                   f"Имя: {callback.from_user.first_name},\n"
-                                                                   f"Фамилия: {callback.from_user.last_name},\n"
-                                                                   f"Запросил пароль от TelegramMaster_Commentator")
+                await bot.send_message(
+                    chat_id=ADMIN_CHAT_ID,
+                    text=f"Пользователь:\n"
+                         f"ID {callback.from_user.id},\n"
+                         f"Username: @{callback.from_user.username},\n"
+                         f"Имя: {callback.from_user.first_name},\n"
+                         f"Фамилия: {callback.from_user.last_name},\n"
+                         f"Запросил пароль от TelegramMaster_Commentator"
+                )
         else:
             await bot.send_message(chat_id=callback.message.chat.id, text=text)  # ID пользователя нет в базе данных
             await bot.send_message(chat_id=ADMIN_CHAT_ID, text=f"Пользователь:\n"

@@ -9,3 +9,5 @@ groq~=1.1.2
 peewee~=4.0.3
 logging~=0.4.9.6
 dotenv~=0.9.9
+# Localization
+fluent-runtime~=0.3.2

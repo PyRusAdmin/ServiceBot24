@@ -1,0 +1,10 @@
+payment-commentator = 
+    Получить пароль от TelegramMaster_Commentator.
+
+    Цена на { $current_date } — { $password_TelegramMaster_Commentator } рублей.
+
+    🔑 <b>После успешной оплаты бот отправит вам пароль в сообщении.</b>
+
+    Если по какой-либо причине бот не выдал пароль или произошла ошибка платежа, писать: @PyAdminRU. 🤖🔒
+
+    Для возврата в начальное меню, нажмите: /start
