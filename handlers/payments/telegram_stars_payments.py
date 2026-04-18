@@ -188,7 +188,7 @@ async def payment_stars_program_handler(callback_query: types.CallbackQuery):
 @router.callback_query(F.data == "payment_stars_commentator")
 async def payment_stars_commentator_handler(callback_query: types.CallbackQuery):
     """Оплата TelegramMaster_Commentator звездами"""
-    stars_amount = get_stars_amount(TelegramMaster_Commentator)
+    stars_amount = get_stars_amount(TelegramMaster_Commentator.get("price"))
 
     try:
         await bot.send_invoice(

@@ -23,7 +23,7 @@ product = "MaxMaster"
 @router.callback_query(F.data == "payment_stars_maxmaster")
 async def payment_stars_maxmaster_handler(callback_query: types.CallbackQuery):
     """Оплата MaxMaster звездами"""
-    rub_price = MaxMaster
+    rub_price = MaxMaster.get("price")
     stars_amount = get_stars_amount(rub_price)
 
     try:
