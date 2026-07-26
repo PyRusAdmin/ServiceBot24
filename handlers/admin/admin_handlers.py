@@ -119,7 +119,7 @@ async def process_broadcast_message(message: types.Message, state: FSMContext):
             )
             success_count += 1
         except Exception as e:
-            logger.error(f"Не удалось отправить сообщение пользователю {user['user_id']}: {e}")
+            logger.exception(f"Не удалось отправить сообщение пользователю {user['user_id']}: {e}")
             error_count += 1
 
     # Отправляем отчет администратору

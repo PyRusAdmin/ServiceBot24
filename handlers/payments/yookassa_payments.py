@@ -173,7 +173,7 @@ async def payment_url_handler(callback_query: types.CallbackQuery):
 
 
 @router.callback_query(F.data.startswith("payment_pass"))
-async def check_payments(callback_query: types.CallbackQuery, state: FSMContext):
+async def check_payments(callback_query: types.CallbackQuery):
     """Проверка платежа 'Пароль обновления: TelegramMaster-PRO'"""
     split_data = callback_query.data.split("_")
     logger.info(split_data[2])
@@ -247,7 +247,7 @@ async def payment_url_handler(callback_query: types.CallbackQuery):
 
 
 @router.callback_query(F.data.startswith("checsk_payment"))
-async def check_payment(callback_query: types.CallbackQuery, state: FSMContext):
+async def check_payment(callback_query: types.CallbackQuery):
     """"Проверка платежа TelegramMaster-PRO"""
     split_data = callback_query.data.split("_")
     logger.info(split_data[2])
@@ -380,7 +380,7 @@ async def payment_url_handler(callback_query: types.CallbackQuery):
 
 
 @router.callback_query(F.data.startswith("csheck_service"))
-async def check_payment_program_setup_service(callback_query: types.CallbackQuery, state: FSMContext):
+async def check_payment_program_setup_service(callback_query: types.CallbackQuery):
     split_data = callback_query.data.split("_")
     logger.info(split_data[2])
     # Проверьте статус платежа с помощью API yookassa

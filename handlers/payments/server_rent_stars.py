@@ -21,7 +21,7 @@ product = "Аренда сервера"
 
 
 @router.callback_query(F.data == "payment_stars_server_rent")
-async def server_rent_stars_handler(callback_query: types.CallbackQuery, state: FSMContext):
+async def server_rent_stars_handler(callback_query: types.CallbackQuery):
     """Выбор количества месяцев для аренды сервера через Stars"""
 
     # Проверяем, есть ли активная аренда

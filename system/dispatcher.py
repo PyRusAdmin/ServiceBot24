@@ -40,6 +40,8 @@ else:
 
 bot = Bot(
     token=TELEGRAM_BOT_TOKEN,
-    default=DefaultBotProperties(parse_mode=ParseMode.HTML),  # Устанавливаем parse_mode для HTML
+    default=DefaultBotProperties(
+        parse_mode=ParseMode.HTML
+    ),  # Устанавливаем parse_mode для HTML
     session=session  # Устанавливаем сессию для бота и прокси
 )

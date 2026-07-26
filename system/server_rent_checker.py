@@ -44,7 +44,7 @@ async def check_server_rent_expiration():
                 logger.info(
                     f"Отправлено уведомление пользователю {rent.user_id} об истечении аренды через {days_left} дн.")
             except Exception as e:
-                logger.error(f"Не удалось отправить уведомление пользователю {rent.user_id}: {e}")
+                logger.exception(f"Не удалось отправить уведомление пользователю {rent.user_id}: {e}")
 
             # Отправляем уведомление админу
             try:
@@ -62,7 +62,7 @@ async def check_server_rent_expiration():
                 )
                 logger.info(f"Отправлено уведомление админу об истечении аренды пользователя {rent.user_id}")
             except Exception as e:
-                logger.error(f"Не удалось отправить уведомление админу: {e}")
+                logger.exception(f"Не удалось отправить уведомление админу: {e}")
 
         # Получаем просроченные аренды
         expired_rents = get_expired_rents()
@@ -83,7 +83,7 @@ async def check_server_rent_expiration():
                 )
                 logger.info(f"Отправлено уведомление пользователю {rent.user_id} об истечении аренды")
             except Exception as e:
-                logger.error(f"Не удалось отправить уведомление пользователю {rent.user_id}: {e}")
+                logger.exception(f"Не удалось отправить уведомление пользователю {rent.user_id}: {e}")
 
             # Отправляем уведомление админу
             try:
@@ -99,7 +99,7 @@ async def check_server_rent_expiration():
                 )
                 logger.info(f"Деактивирована аренда пользователя {rent.user_id}")
             except Exception as e:
-                logger.error(f"Не удалось отправить уведомление админу: {e}")
+                logger.exception(f"Не удалось отправить уведомление админу: {e}")
 
         if expiring_rents or expired_rents:
             logger.info(f"Проверка завершена. Истекающих: {len(expiring_rents)}, Истекших: {len(expired_rents)}")

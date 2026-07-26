@@ -163,7 +163,7 @@ async def check_invoice_paid_training(callback_query: types.CallbackQuery):
             )
     except Exception as e:
         # Обработка ошибок
-        logger.error(f"Ошибка при проверке оплаты: {e}")
+        logger.exception(f"Ошибка при проверке оплаты: {e}")
         await bot.send_message(
             chat_id=callback_query.message.chat.id,
             text="⚠️ Произошла ошибка при проверке оплаты. Пожалуйста, попробуйте позже."
@@ -223,7 +223,7 @@ async def check_invoice_paid_program_com_tm_search_gpt_crypta(callback_query: ty
             )
     except Exception as e:
         # Обработка ошибок
-        logger.error(f"Ошибка при проверке оплаты: {e}")
+        logger.exception(f"Ошибка при проверке оплаты: {e}")
         await bot.send_message(
             chat_id=callback_query.message.chat.id,
             text="⚠️ Произошла ошибка при проверке оплаты. Пожалуйста, попробуйте позже."
@@ -294,7 +294,7 @@ async def check_invoice_paid_program(callback_query: types.CallbackQuery):
             )
     except Exception as e:
         # Обработка ошибок
-        logger.error(f"Ошибка при проверке оплаты: {e}")
+        logger.exception(f"Ошибка при проверке оплаты: {e}")
         await bot.send_message(
             chat_id=callback_query.message.chat.id,
             text="⚠️ Произошла ошибка при проверке оплаты. Пожалуйста, попробуйте позже."
@@ -367,7 +367,7 @@ async def check_payment_handler(callback_query: types.CallbackQuery):
                 )
     except Exception as e:
         # Обработка ошибок
-        logger.error(f"Ошибка при проверке оплаты: {e}")
+        logger.exception(f"Ошибка при проверке оплаты: {e}")
         await bot.send_message(
             chat_id=callback_query.message.chat.id,
             text="⚠️ Произошла ошибка при проверке оплаты. Пожалуйста, попробуйте позже."
@@ -438,7 +438,7 @@ async def check_payment_handler_commentator(callback_query: types.CallbackQuery)
                 )
     except Exception as e:
         # Обработка ошибок
-        logger.error(f"Ошибка при проверке оплаты: {e}")
+        logger.exception(f"Ошибка при проверке оплаты: {e}")
         await bot.send_message(
             chat_id=callback_query.message.chat.id,
             text="⚠️ Произошла ошибка при проверке оплаты. Пожалуйста, попробуйте позже."
@@ -508,7 +508,7 @@ async def check_invoice_paid_program_com(callback_query: types.CallbackQuery):
             )
     except Exception as e:
         # Обработка ошибок
-        logger.error(f"Ошибка при проверке оплаты: {e}")
+        logger.exception(f"Ошибка при проверке оплаты: {e}")
         await bot.send_message(
             chat_id=callback_query.message.chat.id,
             text="⚠️ Произошла ошибка при проверке оплаты. Пожалуйста, попробуйте позже."

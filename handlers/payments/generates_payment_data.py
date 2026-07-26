@@ -1,6 +1,3 @@
-
-
-
 def generates_payment_data(callback_query, payment_info, product, date, table_name=None, price=None):
     """Генерация данных для оплаты"""
     data = {
