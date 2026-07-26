@@ -13,6 +13,7 @@ from keyboards.payments_keyboards import (
     payment_yookassa_password_commentator_password_keyboard, payment_keyboard_telegram_master_search_gpt_1,
     payment_keyboard_maxmaster, payment_keyboard_server_rent, purchasing_a_program_setup_service
 )
+from keyboards.user_keyboards import start_menu
 from services.i18n import t
 from system.dispatcher import ADMIN_CHAT_ID
 from system.dispatcher import bot
@@ -187,7 +188,8 @@ async def get_password(callback: types.CallbackQuery):
             else:
                 await bot.send_message(
                     chat_id=callback.message.chat.id,
-                    text=t("subscription-required-pro")
+                    text=t("subscription-required-pro"),
+                    reply_markup=start_menu()  # Клавиатура возврата в начальное меню
                 )
                 await bot.send_message(chat_id=ADMIN_CHAT_ID,
                                        text=f"Пользователь:\n"
@@ -195,11 +197,13 @@ async def get_password(callback: types.CallbackQuery):
                                             f"Username: @{callback.from_user.username},\n"
                                             f"Имя: {callback.from_user.first_name},\n"
                                             f"Фамилия: {callback.from_user.last_name},\n"
-                                            f"Запросил пароль от TelegramMaster-PRO")
+                                            f"Запросил пароль от TelegramMaster-PRO"
+                                       )
         else:
             await bot.send_message(
                 chat_id=callback.message.chat.id,
-                text=t("subscription-required-pro")
+                text=t("subscription-required-pro"),
+                reply_markup=start_menu()  # Клавиатура возврата в начальное меню
             )
             await bot.send_message(
                 chat_id=ADMIN_CHAT_ID,
@@ -208,6 +212,7 @@ async def get_password(callback: types.CallbackQuery):
                      f"Username: @{callback.from_user.username},\n"
                      f"Имя: {callback.from_user.first_name},\n"
                      f"Фамилия: {callback.from_user.last_name},\n"
-                     f"Запросил пароль от TelegramMaster-PRO")
+                     f"Запросил пароль от TelegramMaster-PRO"
+            )
     except Exception as e:
         logger.exception(e)
