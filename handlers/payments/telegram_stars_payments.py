@@ -41,10 +41,10 @@ async def process_successful_payment(message: types.Message):
         # Определяем продукт по payload
         if payload.startswith("stars_program_"):
             product_name = "TelegramMaster-PRO"
-            price = TelegramMaster_PRO
+            price = TelegramMaster_PRO.get('price')
         elif payload.startswith("stars_com_"):
             product_name = "TelegramMaster_Commentator"
-            price = TelegramMaster_Commentator
+            price = TelegramMaster_Commentator.get('price')
         elif payload.startswith("stars_pass_"):
             product_name = "TelegramMaster-PRO"  # Пароль для TelegramMaster-PRO
             price = TelegramMaster_PRO.get("price_password")

@@ -17,7 +17,7 @@ else:
     logger.error("❌ YooKassa: ACCOUNT_ID и SECRET_KEY не заданы!")
 
 
-def payment_yookassa_com(description_text, product_price):
+def payment_yookassa_com(description_text, product_price: float):
     """
     Создание платежа YooKassa
     

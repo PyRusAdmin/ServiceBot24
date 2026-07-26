@@ -25,7 +25,7 @@ async def payment_yookassa_maxmaster_handler(callback_query: types.CallbackQuery
     try:
         payment_url, payment_id = payment_yookassa_com(
             description_text=f"Оплата: {MaxMaster.get("name")}",
-            product_price=MaxMaster
+            product_price=MaxMaster.get('price')
         )
 
         keyboard = InlineKeyboardMarkup(inline_keyboard=[

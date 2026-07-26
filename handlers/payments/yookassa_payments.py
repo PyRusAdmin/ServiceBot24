@@ -27,7 +27,7 @@ async def payment_yookassa_program_com(callback_query: types.CallbackQuery):
     """Отправка ссылки для оплаты TelegramMaster_Commentator"""
     payment_url, payment_id = payment_yookassa_com(
         description_text=f"Оплата: TelegramMaster_Commentator",  # Текст описания товара
-        product_price=TelegramMaster_Commentator  # Цена товара в рублях
+        product_price=TelegramMaster_Commentator.get('price')  # Цена товара в рублях
     )
     # Создаем клавиатуру с кнопкой для проверки оплаты и возврата в меню
     await bot.send_message(
@@ -63,7 +63,7 @@ async def check_payment_com(callback_query: types.CallbackQuery):
             chat_id=callback_query.from_user.id,
             text=t(
                 "tgmaster-commentator-payment-success",
-                price=TelegramMaster_Commentator,
+                price=TelegramMaster_Commentator.get('price'),
                 password=get_product_password("TelegramMaster_Commentator"),  # Получаем пароль из базы данных
                 footer_text=t("tgmaster-payment-footer")
             ),
@@ -227,23 +227,26 @@ async def check_payments(callback_query: types.CallbackQuery):
 @router.callback_query(F.data.startswith("payment_yookassa_program"))
 async def payment_url_handler(callback_query: types.CallbackQuery):
     """Отправка ссылки для оплаты TelegramMaster-PRO"""
-    payment_url, payment_id = payment_yookassa_com(
-        description_text=f"Оплата: TelegramMaster-PRO",  # Текст описания товара
-        product_price=TelegramMaster_PRO  # Цена товара в рублях
-    )
-    # Создаем клавиатуру с кнопкой для проверки оплаты и возврата в меню
-    await bot.send_message(
-        chat_id=callback_query.from_user.id,
-        text=message_payment(
-            "TelegramMaster-PRO",
-            payment_url
-        ),
-        reply_markup=payment_yookassa_check_keyboard_custom(
-            payment_id,
-            "checsk_payment"
-        ),
-        parse_mode="HTML"
-    )
+    try:
+        payment_url, payment_id = payment_yookassa_com(
+            description_text=f"Оплата: TelegramMaster-PRO",  # Текст описания товара
+            product_price=TelegramMaster_PRO.get('price')  # Цена товара в рублях
+        )
+        # Создаем клавиатуру с кнопкой для проверки оплаты и возврата в меню
+        await bot.send_message(
+            chat_id=callback_query.from_user.id,
+            text=message_payment(
+                "TelegramMaster-PRO",
+                payment_url
+            ),
+            reply_markup=payment_yookassa_check_keyboard_custom(
+                payment_id,
+                "checsk_payment"
+            ),
+            parse_mode="HTML"
+        )
+    except Exception as e:
+        logger.exception(e)
 
 
 @router.callback_query(F.data.startswith("checsk_payment"))
@@ -269,7 +272,7 @@ async def check_payment(callback_query: types.CallbackQuery):
             chat_id=callback_query.from_user.id,
             text=t(
                 "tgmaster-pro-payment-success",
-                price=TelegramMaster_PRO,
+                price=TelegramMaster_PRO.get('price'),
                 password=get_product_password("TelegramMaster-PRO"),  # Получаем пароль из базы данных
                 footer_text=t("tgmaster-payment-footer")
             ),
