@@ -1,13 +1,13 @@
 aiogram~=3.30.0
 yookassa~=3.11.0
 loguru~=0.7.3
-environs~=14.6.0
-aiohttp~=3.13.4
+environs~=15.0.1
+aiohttp~=3.14.3
 configparser~=7.2.0
 python-dotenv~=1.2.2
-groq~=1.1.2
-peewee~=4.0.3
+groq~=1.6.0
+peewee~=4.2.6
 logging~=0.4.9.6
 dotenv~=0.9.9
 # Localization
-fluent-runtime~=0.3.2
+fluent-runtime~=0.4.0
