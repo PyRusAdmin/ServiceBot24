@@ -24,13 +24,13 @@ async def check_server_rent_expiration():
     """
     try:
         logger.info("Запуск проверки сроков аренды сервера...")
-        
+
         # Получаем аренды, которые истекают через 3 дня
         expiring_rents = get_expiring_rents(days_until=3)
-        
+
         for rent in expiring_rents:
             days_left = (rent.end_date - datetime.datetime.now()).days
-            
+
             # Отправляем уведомление пользователю
             try:
                 await bot.send_message(
@@ -42,10 +42,11 @@ async def check_server_rent_expiration():
                          f"Для продления аренды обратитесь к @PyAdminRU или используйте команду /start для выбора нового срока.",
                     parse_mode="HTML"
                 )
-                logger.info(f"Отправлено уведомление пользователю {rent.user_id} об истечении аренды через {days_left} дн.")
+                logger.info(
+                    f"Отправлено уведомление пользователю {rent.user_id} об истечении аренды через {days_left} дн.")
             except Exception as e:
                 logger.error(f"Не удалось отправить уведомление пользователю {rent.user_id}: {e}")
-            
+
             # Отправляем уведомление админу
             try:
                 await bot.send_message(
@@ -63,14 +64,14 @@ async def check_server_rent_expiration():
                 logger.info(f"Отправлено уведомление админу об истечении аренды пользователя {rent.user_id}")
             except Exception as e:
                 logger.error(f"Не удалось отправить уведомление админу: {e}")
-        
+
         # Получаем просроченные аренды
         expired_rents = get_expired_rents()
-        
+
         for rent in expired_rents:
             # Деактивируем аренду
             deactivate_server_rent(rent.id)
-            
+
             # Отправляем уведомление пользователю
             try:
                 await bot.send_message(
@@ -84,7 +85,7 @@ async def check_server_rent_expiration():
                 logger.info(f"Отправлено уведомление пользователю {rent.user_id} об истечении аренды")
             except Exception as e:
                 logger.error(f"Не удалось отправить уведомление пользователю {rent.user_id}: {e}")
-            
+
             # Отправляем уведомление админу
             try:
                 await bot.send_message(
@@ -100,12 +101,12 @@ async def check_server_rent_expiration():
                 logger.info(f"Деактивирована аренда пользователя {rent.user_id}")
             except Exception as e:
                 logger.error(f"Не удалось отправить уведомление админу: {e}")
-        
+
         if expiring_rents or expired_rents:
             logger.info(f"Проверка завершена. Истекающих: {len(expiring_rents)}, Истекших: {len(expired_rents)}")
         else:
             logger.info("Проверка завершена. Нет истекающих или истекших аренд.")
-            
+
     except Exception as e:
         logger.exception(f"Ошибка при проверке сроков аренды: {e}")
 
@@ -116,7 +117,7 @@ async def run_periodic_check(interval_hours: int = 24):
     :param interval_hours: интервал проверки в часах
     """
     logger.info(f"Запуск периодической проверки аренды сервера (интервал: {interval_hours} ч.)")
-    
+
     while True:
         await check_server_rent_expiration()
         await asyncio.sleep(interval_hours * 60 * 60)  # Конвертируем часы в секунды

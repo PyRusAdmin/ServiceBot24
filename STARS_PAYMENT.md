@@ -83,12 +83,12 @@ keyboards/
 
 4. Добавьте обработку в `process_successful_payment()`:
 
-   ```python
-   elif payload.startswith("stars_new_"):
+```python
+elif payload.startswith("stars_new_"):
    product_name = "Новый Товар"
    price = Новый_Товар
    password_file = "setting/password/Новый_Товар/password.txt"
-   ```
+```
 
 ## Автоматическая обработка платежей
 

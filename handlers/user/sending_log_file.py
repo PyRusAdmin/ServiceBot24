@@ -30,12 +30,16 @@ async def sending_log_file_handler(message: Message, state: FSMContext) -> None:
     if file_id:
         # Отправка файла администратору по его file_id
         admin_chat_id = ADMIN_CHAT_ID  # Замените на ID чата администратора
-        await bot.send_document(admin_chat_id, document=file_id, caption=f"Пользователь:\n"
-                                                                         f"ID {message.from_user.id},\n"
-                                                                         f"Username: @{message.from_user.username},\n"
-                                                                         f"Имя: {message.from_user.first_name},\n"
-                                                                         f"Фамилия: {message.from_user.last_name},\n\n"
-                                                                         f"Отправил файл")
+        await bot.send_document(
+            admin_chat_id,
+            document=file_id,
+            caption=f"Пользователь:\n"
+                    f"ID {message.from_user.id},\n"
+                    f"Username: @{message.from_user.username},\n"
+                    f"Имя: {message.from_user.first_name},\n"
+                    f"Фамилия: {message.from_user.last_name},\n\n"
+                    f"Отправил файл"
+        )
         # Очищаем состояние
         await state.clear()
         await message.reply("Ваш файл успешно отправлен администратору.")

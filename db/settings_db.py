@@ -75,7 +75,7 @@ def save_payment_info_user(table_name, user_id, first_name, last_name, username,
 def save_payment_info(data_payment):
     """Сохраняет информацию о платеже"""
     table_name = data_payment.get('table_name', 'users_pay')
-    
+
     if table_name == 'users_pay_search':
         # Для TelegramMaster-Search-GPT используем отдельную таблицу
         save_payment_info_user(
