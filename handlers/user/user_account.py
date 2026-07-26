@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from aiogram import F, Router, types
 
 from db.settings_db import UserPayment

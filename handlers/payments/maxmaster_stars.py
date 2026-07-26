@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Обработчики оплаты MaxMaster через Telegram Stars
 """

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+
 
 
 def generates_payment_data(callback_query, payment_info, product, date, table_name=None, price=None):

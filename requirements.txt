@@ -1,5 +1,5 @@
-aiogram~=3.26.0
-yookassa~=3.10.0
+aiogram~=3.30.0
+yookassa~=3.11.0
 loguru~=0.7.3
 environs~=14.6.0
 aiohttp~=3.13.4

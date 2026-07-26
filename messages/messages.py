@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 greeting_post = (
     "<b>👋 Добро пожаловать в моего 🤖 Telegram-бота!</b>\n\n"
 

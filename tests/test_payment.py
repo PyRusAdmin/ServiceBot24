@@ -1,15 +1,13 @@
-# -*- coding: utf-8 -*-
 """
 Тесты для проверки оплаты
 """
 import sys
 import os
 
+from handlers.payments.products_goods_services import STARS_TO_RUB_RATE, SERVER_RENT_PRICE, get_stars_amount
+
 # Добавляем корень проекта в path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from handlers.payments.payment_config import get_stars_amount, STARS_TO_RUB_RATE
-from handlers.payments.products_goods_services import SERVER_RENT_PRICE
 
 
 def test_stars_conversion():

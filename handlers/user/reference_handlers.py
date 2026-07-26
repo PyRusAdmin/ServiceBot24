@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from aiogram import F, Router, types
 
 from keyboards.user_keyboards import start_menu

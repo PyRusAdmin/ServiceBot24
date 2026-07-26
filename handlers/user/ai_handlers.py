@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from aiogram import F, Router
 from aiogram.enums import ChatAction
 from aiogram.fsm.context import FSMContext
